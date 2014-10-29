@@ -1,0 +1,77 @@
+weather app that tells you the basic info and what other place on earth has very similar weather at that
+moment. could link to info on the internets (i.e. wikipedia). not a hard core weather app but something
+mildly informative and entertaining. Like, "It feels like Manaus outside!"
+
+random thoughts:
+ accuweather site is TOO graphic - like, too many pics, not enough straight info. i feel like it's harder 
+ to get the facts of the weather right away - i guess the numbers. just too much crap on the screen. their
+ iphone app is much better for having things simple and straightforward
+
+ basic info comes up right away, but more details available easily - drop down menu? customizable?
+ i just hate it when there's too much info cluttering up the page. but i also hate it when there's
+ not enough info (i.e. weathercube)
+
+ make a basic mockup with CSS, with fake data, to see how you'd like to set it up
+
+ current: *temp
+  				*sunny/cloudy/overcast/rainy etc
+ 					*"feels like"?
+ 					*pop
+  				*highs/lows
+
+
+ 					humidity
+ 					dewpoint
+ 					wind speed (sustained & gusts)
+ 					wind direction
+ 					pressure
+ 					uv
+ 					windchill (winter)
+ 					visibility
+ 					snow depth
+ 					rainfall
+ 					cloud ceiling
+
+
+so, for your app, you wouldn't need to include much of this extra info, just the basics, cuz it's just
+supposed to be fun and slightly informative
+
+-temp
+-humidity, dewpoint
+-sky conditions
+-"realfeel" - because you're basing your comparisons on how it "feels" outside, right?
+-wind
+-precip
+
+so for your comparison tool, you would only need current conditions
+
+
+ok, andy's suggestions were:
+
+create a class with the attributes(?)  values(?) characteristics that are necessary for each instance - so,
+each city. what info do you need to determine which cities are like the query city? keep it simple to start
+off, obviously it won't be super-scientific at the start. just get something working!
+- find what info you can get from wunderground's api
+- a. suggested grouping cities according to their conditions each time you make a request to the server (whether
+	it's every hour you make the request, or whatever), so that when you want to display which cities are like
+	"your own", they'll be in the same group as the requested city.
+	- so these cities get grouped each time, automatically? according to pre-specified conditions
+	- so conditions most important: temperature, humidity, conditions like is it sunny, cloudy, rainy, and so on
+	- i think dewpoint will be important to the "feels like" component - which is really the focus of this app
+	anyway. what does it feel like where you are and where else on earth feels the same?
+	- start with just 3 main measures to base your comparisons on. temp, sky conditions, humidity and/or dewpoint
+	- all measurements would have to be very similar in order to say the weather is similar across locations. need
+	to figure out what your threshold for 'similarity' is (i.e. 2 degrees? exact same sky conditions?)
+	- remember you're basing it on what it "feels like" so that should govern how you use measurements (i.e. maybe
+	it's going to be dewpoint and not humidity cuz that affects how it really feels more). you want to create a 
+	connection for the user to other places they might not otherwise think of or feel a connection to. takes you
+	out of your own space for a bit.
+	- "Where is Your Weather Like?"
+
+	*It seems like most weather services update once an hour at the most, so developers are encouraged to cache API results to limit the number of calls for the same location
+
+more for a general weather app:
+- basic info comes up right away, but more details available easily. the info you want is customized by you, but
+	lots of factors available.
+- hate it when there's too much info cluttering up the screen. also dislike too little info (i.e. weathercube)
+- make a basic mockup with CSS and fake data to see how you'd like to set it up

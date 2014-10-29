@@ -1,0 +1,33 @@
+hamweather api notes
+
+endpoints are for requests - you request an endpoint, they are the types of data you can request
+
+place names with separate words use format new+york, kansas+city, san+francisco
+
+	{
+    "success": true,
+    "error": null,
+    "response": {
+        "id": "KBFI",
+        "loc": {
+            "long": -122.31666666667,
+            "lat": 47.55
+        },
+        "place": {
+            "name": "seattle/boeing",
+            "state": "wa",
+            "country": "us"
+        },
+        "obTimestamp": 1326552780,
+        "obDateTime": "2012-01-14T06:53:00-08:00",
+        "ob": {
+            "tempC": 3,
+            ....
+        },
+        "raw": "KBFI 141453Z 14010KT 8SM -RA OVC018 03/01 A2995",
+        "relativeTo": {
+            "lat": 47.60621,
+            ...
+        }
+    }
+}
