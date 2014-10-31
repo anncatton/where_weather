@@ -1,6 +1,8 @@
+require "active_support/core_ext/object/to_query.rb"
 require "json"
 require "open-uri"
-require "ruby-debug"
+require "uri"
+require "byebug"
 
 # can you combine APIs? just to get a larger amount of data?
 
@@ -22,26 +24,66 @@ require "ruby-debug"
 	# buffer = open(url, "UserAgent" => "Ruby-Wget").read
 	# response = JSON.parse(buffer)
 
-open('http://api.aerisapi.com/observations/94107?client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx') do |f|
+
+my_uri = URI::HTTP.build(
+	{
+		:host => "api.aerisapi.com", 
+		:path => "/observations/toronto,on,ca", 
+		:query => {
+			:client_id => "yotRMCnX8QTlcpwPx71pg", 
+			:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx"
+		}.to_query
+	}
+)
+
+puts my_uri
+
+open(my_uri) do |f|
 
 	json_string = f.read
 	parsed_json = JSON.parse(json_string)
-	#debugger
-	weather = parsed_json['response']['ob']['weather']
-	city = parsed_json['response']['place']['name']
+
+	#byebug
+
+	weather = parsed_json['response']['ob']['weatherShort']
+	city_name = parsed_json['response']['place']['name']
+	tempC = parsed_json['response']['ob']['tempC']
 	humidity = parsed_json['response']['ob']['humidity']
 	dewpointC = parsed_json['response']['ob']['dewpointC']
+	feelslikeC = parsed_json['response']['ob']['feelslikeC']
 	# country = response['response']['place']['name']
 	# print "The weather in " + city + " is " + weather + "."
-	puts city
+	puts city_name.capitalize
 	puts weather
-	
-	puts "#{humidity}" + "%"
-	puts "#{dewpointC}" + "C"
+	puts tempC.to_s + " C"
+	puts humidity.to_s + " %"
+	puts dewpointC.to_s + " C"
 
 end
+
+# from rubydocs:
+
+# build(args)
+
+# Create a new URI::HTTP object from components, with syntax checking.
+
+# The components accepted are userinfo, host, port, path, query and fragment.
+
+# The components should be provided either as an Array, or as a Hash with keys formed by preceding the component names with a colon.
+
+# If an Array is used, the components must be passed in the order [userinfo, host, port, path, query, fragment].
+
+# Example:
+
+# newuri = URI::HTTP.build({:host => 'www.example.com',
+#   :path => '/foo/bar'})
+
+# newuri = URI::HTTP.build([nil, "www.example.com", nil, "/path",
+#   "query", 'fragment'])
+# uri = URI::HTTP.build(:host => "www.google.com", :query => { :q => "test" }.to_query)
+
+
 	# so country is set to be the value of key 'place' inside key 'response'
-	# print "Seattle is in " + country + ".\n"
 
 	# is this again a hash within a hash? yes. is that just standard json data format? yes
 
