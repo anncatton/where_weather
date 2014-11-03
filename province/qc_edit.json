@@ -1,0 +1,23 @@
+{
+  "response": [
+    {
+      "id": "CWIP",
+      "loc": {
+        "long": -66.433333333333,
+        "lat": 50.166666666667
+      },
+      "place": {
+        "name": "pointe noires cs",
+        "state": "qc",
+        "country": "ca"
+      },
+      "obDateTime": "2014-11-01T16:00:00-04:00",
+      "ob": {
+        "tempC": 3,
+        "dewpointC": null,
+        "humidity": null,
+        "weatherShort": "Mostly Sunny"
+      }
+    }
+    ]
+}
