@@ -4,20 +4,91 @@ require 'byebug'
 #byebug
 
 # you could set the file name to be whatever was entered by the user in the command line
-qc_file = './qc_edit.json'
+weather_input = ARGV[0]
 
-open(qc_file) do |f|
+class Station
+	def initialize(id, temp, dewpoint, humidity, conditions)
+		@id = id
+		@temp = temp
+		@dewpoint = dewpoint
+		@humidity = humidity
+		@conditions = conditions
+	end
+
+	def print
+		puts "#{@id}: #{@temp}"
+	end
+
+	def self.from_hash(hash)
+		observations = hash['ob']
+		self.new(hash['id'], observations['tempC'], observations['dewpoint'], observations['humidity'], observations['weatherShort'])
+	end	
+
+end
+
+open(weather_input) do |f|
 
 	json_file = f.read
 	parsed_file = JSON.parse(json_file)
+	response = parsed_file['response']
 
-	current = parsed_file['response'][0]['ob']
-	tempC = current['tempC']
+	# [{'id': 123, 'ob': {...} }]
 
+	response.each { |ea| ea['ob']}
+	response[0]
 
-	puts tempC
+	response[0]['ob']
+
+	stations = response.map { |ea| Station.from_hash(ea) }
+
+	stations.each do |ea|
+		ea.print
+	end
+
+	# current = parsed_file['response'][0]['ob']
+	# tempC = current['tempC']
+	# dewpointC = current['dewpointC']
+	# humidity = current['humidity']
+	# conditions = current['weatherShort']
+
+	# puts tempC.to_s + " C"
+	# puts dewpointC.to_s + " C"
+	# puts humidity.to_s + " %"
+	# puts conditions
+
+	# station_hashes = parsed_file['response']
+
+	# puts station_id.is_a? Hash => true
+	# puts station_id.inspect
+
+	#select {|key, value| block} → a_hash
+
+	# measurements = {}
+
+	# station_id.select { |key, val| 
+	# 	if key == 'id'
+	# 		measurements[key] = val
+	# 	end
+	# }
+	# puts measurements
+	# returns first station id only. how to return all of them?
+	#puts station_id
+
+	# ['response'][0]['ob']['key'] => value
+	# for each station (inside the hash that is the first and only element of the array inside 'response'), i want the values
+	# 	from 4 keys: tempC, humidity, dewpointC, weatherShort
+	# 	- so you'd need the station id too otherwise the numbers won't belong to a location
+	# 	- for each unique station id, grab 4 observation values
 
 end
+
+# so, you need to call something like .each but its a hash so what method does a similar thing. can you use .each?
+
+# so now this grabs data from one station only. if the file contains more than one station it will just return the
+# first humidity file. i got confused and thought it was returning nothing, but the ab file just happened to have 
+# null as its first humidity value.
+# so now we need a method that will return ALL the values, from each station
+# let's use the pei file cuz it's the smallest
 
 # puts @current.inspect
 # So solution is to use [0], or #first method, in the assignment:

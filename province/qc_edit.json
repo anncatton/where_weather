@@ -14,8 +14,8 @@
       "obDateTime": "2014-11-01T16:00:00-04:00",
       "ob": {
         "tempC": 3,
-        "dewpointC": null,
-        "humidity": null,
+        "dewpointC": -1,
+        "humidity": 76,
         "weatherShort": "Mostly Sunny"
       }
     }

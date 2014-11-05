@@ -66,9 +66,10 @@ open(my_uri) do |f|
 
 end
 
-now, try to access values from just one of the hashes. they're all in json format, so you'll have to parse them into ruby.
-can you parse a whole json file? or should i create a set of smaller hashes with the relevant data and just parse and access
-those?
+# now, try to access values from just one of the hashes. they're all in json format, so you'll have to parse them into ruby.
+# can you parse a whole json file? or should i create a set of smaller hashes with the relevant data and just parse and access
+# those?
+
 # so now, what do you need to do?
 
 # 	- get data on several cities. when do you need to get the data? how many cities will you look for?

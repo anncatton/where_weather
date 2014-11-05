@@ -1,3 +1,9 @@
+// main hash
+//     response array - 1 element
+//         station hash - 6 stations
+//             containing keys: id, loc, place, profile, obTimestamp, obDateTime, ob, raw
+//                  these keys have hashes: loc, place, profile, ob
+//  so you have array -> hash -> hash for the observations you want
 {
   "success": true,
   "error": null,
@@ -27,7 +33,7 @@
         "tempF": 41,
         "dewpointC": 3,
         "dewpointF": 37,
-        "humidity": 87,
+        "humidity": 14,
         "pressureMB": null,
         "pressureIN": null,
         "spressureMB": null,
@@ -79,6 +85,7 @@
       },
       "raw": "CWSD 020100Z AUTO 05023G31KT 05\/03 RMK AO1 3PAST HR 5008 PK WND 06031\/0059 SLP136 P0001 T00520031 50003"
     },
+
     {
       "id": "CZSP",
       "loc": {
