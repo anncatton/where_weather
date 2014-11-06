@@ -1,28 +1,43 @@
 require 'json'
 require 'byebug'
 
-#byebug
-
-# you could set the file name to be whatever was entered by the user in the command line
 weather_input = ARGV[0]
 
 class Station
-	def initialize(id, temp, dewpoint, humidity, conditions)
+
+	attr_reader :id, :time, :dewpoint, :humidity, :conditions
+
+	def initialize(id, time, temp, dewpoint, humidity, conditions)
 		@id = id
+		@time = time
 		@temp = temp
 		@dewpoint = dewpoint
 		@humidity = humidity
 		@conditions = conditions
 	end
 
+	def to_s
+		id
+	end
+
 	def print
-		puts "#{@id}: #{@temp}"
+		puts "Location: #{@id}"
+		puts "Time observed: #{@time}"
+		puts "Temperature: #{@temp} C"
+		puts "Dewpoint: #{@dewpoint} C"
+		puts "Relative humidity: #{@humidity} %"
+		puts "Current conditions: #{@conditions}"
+		puts
 	end
 
 	def self.from_hash(hash)
 		observations = hash['ob']
-		self.new(hash['id'], observations['tempC'], observations['dewpoint'], observations['humidity'], observations['weatherShort'])
+		self.new(hash['id'], observations['dateTimeISO'], observations['tempC'], observations['dewpointC'], observations['humidity'], observations['weatherShort'])
 	end	
+
+	def matches?(other_station)
+		other_station.conditions == self.conditions
+	end
 
 end
 
@@ -32,47 +47,31 @@ open(weather_input) do |f|
 	parsed_file = JSON.parse(json_file)
 	response = parsed_file['response']
 
-	# [{'id': 123, 'ob': {...} }]
-
-	response.each { |ea| ea['ob']}
-	response[0]
-
-	response[0]['ob']
-
+	# map returns an array
 	stations = response.map { |ea| Station.from_hash(ea) }
+	
+	# why do i need this to print out the values?
+	# stations.each do |ea|
+	# 	ea.print
+	# end
 
-	stations.each do |ea|
-		ea.print
+# @time needs to be an exact match
+# @conditions should be exact match
+# @temp within 2? degrees either side? maybe just 1. then its only a 3 degree range
+# @dewpoint also within 1 i think. cuz theres a big difference from, say, 15 C to 19 C (if your comparison is with 17 C)
+# @humidity i think can have a bigger range. i may even get rid of it altogether cuz dewpoint is more important to feel. lets say 5%
+
+
+	a_station = stations.first
+	matching = stations[1..-1].find_all do |ea|
+		a_station.matches?(ea)
 	end
 
-	# current = parsed_file['response'][0]['ob']
-	# tempC = current['tempC']
-	# dewpointC = current['dewpointC']
-	# humidity = current['humidity']
-	# conditions = current['weatherShort']
-
-	# puts tempC.to_s + " C"
-	# puts dewpointC.to_s + " C"
-	# puts humidity.to_s + " %"
-	# puts conditions
+  ids = matching.map { |ea| ea.id }
+  str = ids.join(", ")
+	puts "#{a_station} matches #{str}"
 
 	# station_hashes = parsed_file['response']
-
-	# puts station_id.is_a? Hash => true
-	# puts station_id.inspect
-
-	#select {|key, value| block} → a_hash
-
-	# measurements = {}
-
-	# station_id.select { |key, val| 
-	# 	if key == 'id'
-	# 		measurements[key] = val
-	# 	end
-	# }
-	# puts measurements
-	# returns first station id only. how to return all of them?
-	#puts station_id
 
 	# ['response'][0]['ob']['key'] => value
 	# for each station (inside the hash that is the first and only element of the array inside 'response'), i want the values
@@ -81,14 +80,6 @@ open(weather_input) do |f|
 	# 	- for each unique station id, grab 4 observation values
 
 end
-
-# so, you need to call something like .each but its a hash so what method does a similar thing. can you use .each?
-
-# so now this grabs data from one station only. if the file contains more than one station it will just return the
-# first humidity file. i got confused and thought it was returning nothing, but the ab file just happened to have 
-# null as its first humidity value.
-# so now we need a method that will return ALL the values, from each station
-# let's use the pei file cuz it's the smallest
 
 # puts @current.inspect
 # So solution is to use [0], or #first method, in the assignment:
