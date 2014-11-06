@@ -5,15 +5,16 @@ weather_input = ARGV[0]
 
 class Station
 
-	attr_reader :id, :time, :dewpoint, :humidity, :conditions
+	attr_reader :id, :time, :temp, :dewpoint, :humidity, :conditions, :name
 
-	def initialize(id, time, temp, dewpoint, humidity, conditions)
+	def initialize(id, time, temp, dewpoint, humidity, conditions, name)
 		@id = id
 		@time = time
 		@temp = temp
 		@dewpoint = dewpoint
 		@humidity = humidity
 		@conditions = conditions
+		@name = name
 	end
 
 	def to_s
@@ -32,11 +33,33 @@ class Station
 
 	def self.from_hash(hash)
 		observations = hash['ob']
-		self.new(hash['id'], observations['dateTimeISO'], observations['tempC'], observations['dewpointC'], observations['humidity'], observations['weatherShort'])
+		self.new(
+			hash['id'], 
+			observations['dateTimeISO'], 
+			observations['tempC'], 
+			observations['dewpointC'], 
+			observations['humidity'], 
+			observations['weatherShort'], 
+			hash['place']['name']
+			)
 	end	
 
+	def valid?
+		!temp.nil? && !dewpoint.nil? && !humidity.nil? && !conditions.nil?
+	end
+
+	def matches_temp?(other_station)
+		other_station.temp <= (self.temp + 1) && other_station.temp >= (self.temp - 1)
+	end
+
+	def matches_dewpoint?(other_station)
+		other_station.dewpoint <= (self.dewpoint + 1) && other_station.dewpoint >= (self.dewpoint - 1)
+	end
+
 	def matches?(other_station)
-		other_station.conditions == self.conditions
+		other_station.conditions == self.conditions && 
+			matches_temp?(other_station) &&
+			matches_dewpoint?(other_station)
 	end
 
 end
@@ -49,7 +72,7 @@ open(weather_input) do |f|
 
 	# map returns an array
 	stations = response.map { |ea| Station.from_hash(ea) }
-	
+	valid_stations = stations.select { |ea| ea.valid? }
 	# why do i need this to print out the values?
 	# stations.each do |ea|
 	# 	ea.print
@@ -62,14 +85,16 @@ open(weather_input) do |f|
 # @humidity i think can have a bigger range. i may even get rid of it altogether cuz dewpoint is more important to feel. lets say 5%
 
 
-	a_station = stations.first
-	matching = stations[1..-1].find_all do |ea|
+	a_station = valid_stations.first
+	matching = valid_stations[1..-1].find_all do |ea|
 		a_station.matches?(ea)
 	end
 
-  ids = matching.map { |ea| ea.id }
-  str = ids.join(", ")
-	puts "#{a_station} matches #{str}"
+  place_names = matching.map { |ea| ea.name }
+  str = place_names.join(", ")
+	puts "#{a_station} matches #{str}."
+
+# what does it say if there are no matches? could give options for 'rather similar' but not the same?
 
 	# station_hashes = parsed_file['response']
 
