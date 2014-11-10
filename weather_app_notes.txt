@@ -75,3 +75,18 @@ more for a general weather app:
 	lots of factors available.
 - hate it when there's too much info cluttering up the screen. also dislike too little info (i.e. weathercube)
 - make a basic mockup with CSS and fake data to see how you'd like to set it up
+
+	keep in mind that you'll probably need to change these parameters for a couple reasons - it's simpler to skip dewpoint and humidity
+	and just use 'feelslike' + weatherShort, and also maybe measurements like dewpoint aren't available at enough locations. you could run some tests
+	that check to see how many stations come back as not valid (and why) and decide based on that what the best measurement strategy is
+	you don't want to be rejecting a ton of interesting places just because you're missing a piece of data that could be replaced by 
+	another one that could serve the same purpose. although i would imagine if things like humidity and dewpoint aren't measured, feelslike temp
+	is probably also null. * i just found a case where this isn't true - no dewpoint or humidity, but a feelslike measure. what are they using to measure
+	feelslike temp?
+	at some point you're going to have to find out what the most accurate system is - the actual separate measurements, or relying on things like
+	feelslike etc. also thinking that different sites will have different systems for feelslike. that's why i like the separate measurements better.
+
+	so now i need a way to input files not from the command line? or just find a way to input more than one file from the command line
+the question is, do you want your app to gather a bunch of data from different locations, then compare to the origin station, or take
+the data from the origin, and search out locations that match the given criteria? i think either way you're going to end up having to
+access a lot of data
