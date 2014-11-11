@@ -6,8 +6,6 @@ require "byebug"
 
 # can you combine APIs? just to get a larger amount of data?
 
-# url = 'http://api.aerisapi.com/observations/94107?client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx'
-
 # Performing a query against a numerical property is handled slightly differently than a string property in that it is an >= - <= operation. If only the first value is provided, then all results whose value for that property is greater than or equal to (>=) the specified value is returned. The following request would return all storm cells that have an 80% probability or higher of containing hail:
 # /stormcells/closest?query=ob.hail.prob:80
 
@@ -24,7 +22,6 @@ my_uri = URI::HTTP.build(
 		}.to_query
 	}
 )
-# my_uri = 'http://api.aerisapi.com/observations/pe,ca?client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx'
 
 open(my_uri) do |f|
 
@@ -45,17 +42,6 @@ open(my_uri) do |f|
 	puts dewpointC.to_s + " C"
 
 end
-
-
-# so now, what do you need to do?
-
-# 	- get data on several cities. when do you need to get the data? how many cities will you look for?
-
-# first, get conditions for user location (and later on, any location the user specifies)
-# enter those values into a hash
-
-# query: ['response']['ob']['tempC'] = 7, ['limit'] = 50, radius (for now?)
-# limit is a parameter for action
 
 # ideas for the future:
 

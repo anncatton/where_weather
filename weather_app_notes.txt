@@ -90,3 +90,34 @@ more for a general weather app:
 the question is, do you want your app to gather a bunch of data from different locations, then compare to the origin station, or take
 the data from the origin, and search out locations that match the given criteria? i think either way you're going to end up having to
 access a lot of data
+
+basic info comes up right away for user location, but can be customized to show more details. i don't like too much info cluttering up the
+screen, but i also dislike not enough info (a la weathercube)
+make a basic mockup with CSS and fake data and see how you'd like to set it up
+
+suggested grouping cities when you get data from the API (i'll likely be grouping regions). 2 step process - 1) get data and store it 2) compare
+stored data to user location
+start with the 4 basic measurements of temp, dewpoint, humidity and conditions and get a working copy going. then you can add more details as you
+get functioning app happening, to increase accuracy
+trying to create a connection for the user with other places in the world, places one wouldn't normally think about, so i'll try hard to make the
+comparisons not obvious or repetitive. create some curiosity about other places in the world
+
+change user input from command line to web. right now i don't think i'll need to store anything in a database but that could totally come up. make 
+interactive web version first, to get a feel for how it'll work, then try mobile
+user inputs on web
+app contacts api for entered location, returns current conditions
+then finds, let's say 5 other locations worldwide that are the same (if there are that many), making sure they're from very different regions and
+not super local, so it's not boring or unsurprising.
+maybe store previous matches so they don't come up constantly? i'll have to study test matches to see how often pairs of locations have the same
+weather over a period of time (could use historical data if available). maybe repetition won't be a huge deal, we'll see
+having data stored in separate files could help with this, if you grouped by region (like, northern europe, australia, and so on)
+just saw a headline about Springfield, CO that described a temp drop from 78F to 47F in an hour. an extreme example, but it brings up the idea
+of showing users what their weather will be like in near future ("your weather is like x now, but in 3 hours it will be like y")
+
+# Issues:
+
+# display of station names - you don't want the station name displayed cuz no one's really going to know what those are. you could use
+# them behind the scenes to point to place names that ARE displayed to the user, database style. or you could write a method that converts
+# the weird-sounding place names (like 'leader arpt (aut') to something more recognizable (like "Leader, SK"). although i have no idea how
+# i would do that
+# what does it say if there are no matches? could give options for 'rather similar' but not the same?

@@ -8,6 +8,7 @@ require "byebug"
 class Station
 
 	attr_reader :id, :time, :temp, :dewpoint, :humidity, :conditions, :name, :state
+	@@station_count = 0
 
 	def initialize(id, time, temp, dewpoint, humidity, conditions, name, state)
 		@id = id
@@ -18,6 +19,7 @@ class Station
 		@conditions = conditions
 		@name = name
 		@state = state
+		@@station_count += 1
 	end
 
 	def to_s
@@ -48,6 +50,9 @@ class Station
 			)
 	end	
 
+  def self.number_of_instances
+    @@station_count
+  end
 # set up a validity check that rejects the bad ones, as opposed to selecting the good ones, so the bad ones are just tossed?
 # have a method that gets all the data, then sorts it. then, start the comparisons. ??
 # andy suggestec just starting out by gathering the data and storing it in files, then assessing it. i wonder if there's a way
@@ -90,38 +95,49 @@ end
 # 		}.to_query
 # 	}
 # )
+# file request for specific region:
+# http://api.aerisapi.com/observations/search?query=state:nu&limit=100&client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx
+
+# user enters location to match
+# first return values for that location
+# then return locations that match
+# so you'd have to specify that the app needs to look in every data file. how to do that?
+
+# write a method that reads data from each file, and tells you how many stations there are in each one (:id)
+# push each file to an array, then iterate through it to read all the data?
+
+# do i need to make a relative path for the directory name?
+# puts Dir.foreach("weather_data") { |filename| }
+# uri = ARGV[0]
+
+stations = []
+
+weather_files = Dir.glob('./weather_data/*.json') 
+weather_files.each do |file|
 
 
-uri = ARGV[0]
-
-	open(uri) do |f|
+	open(file) do |f|
 		json_file = f.read
 		parsed_file = JSON.parse(json_file)
 		response = parsed_file['response']
 
-	stations = response.map { |ea| Station.from_hash(ea) }
+		stations += response.map { |ea| Station.from_hash(ea) }
 
-	  # valid_stations = stations.select { |ea| ea.valid? }
+	end
+		#puts Station.number_of_instances
+end
+
+	puts stations.flatten.size
+
+		# valid_stations = stations.select { |ea| ea.valid? }
 
 		valid_stations = stations.reject { |ea| ea.not_valid? }
-		# puts valid_stations
+		
 		a_station = valid_stations.first
 		matching = valid_stations[1..-1].find_all do |ea|
-			a_station.matches?(ea)
+		 	a_station.matches?(ea)
 		end
 
   	place_names = matching.map { |ea| ea.name + " " + ea.state }
   	str = place_names.join(", ") 
 		puts "#{a_station} matches #{str}."
-	end
-
-# now want to get data from a wider source. put everything in one file or still separate files in one folder?
-# Issues:
-
-# display of station names - you don't want the station name displayed cuz no one's really going to know what those are. you could use
-# them behind the scenes to point to place names that ARE displayed to the user, database style. or you could write a method that converts
-# the weird-sounding place names (like 'leader arpt (aut') to something more recognizable (like "Leader, SK"). although i have no idea how
-# i would do that
-# what does it say if there are no matches? could give options for 'rather similar' but not the same?
-
-
