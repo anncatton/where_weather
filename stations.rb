@@ -129,7 +129,6 @@ stations = []
 weather_files = Dir.glob('./weather_data/*.json') 
 weather_files.each do |file|
 
-
 	open(file) do |f|
 		json_file = f.read
 		parsed_file = JSON.parse(json_file)
@@ -138,14 +137,13 @@ weather_files.each do |file|
 		stations += response.map { |ea| Station.from_hash(ea) }
 
 	end
-		#puts Station.number_of_instances
 end
 
-	puts stations.flatten.size
+puts stations.flatten.size
 
-	valid_stations = stations.reject { |ea| ea.not_valid? }
+valid_stations = stations.reject { |ea| ea.not_valid? }
 
-  valid_stations.each {|ea| ea.print_matches_in(valid_stations)}
+valid_stations.each {|ea| ea.print_matches_in(valid_stations)}
 
 
 
