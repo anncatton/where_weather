@@ -7,10 +7,10 @@ require "byebug"
 
 class Station
 
-	attr_reader :id, :time, :temp, :dewpoint, :humidity, :conditions, :name, :state
+	attr_reader :id, :time, :temp, :dewpoint, :humidity, :conditions, :name, :state, :latitude, :longitude
 	@@station_count = 0
 
-	def initialize(id, time, temp, dewpoint, humidity, conditions, name, state)
+	def initialize(id, time, temp, dewpoint, humidity, conditions, name, state, latitude, longitude)
 		@id = id
 		@time = time
 		@temp = temp
@@ -19,7 +19,8 @@ class Station
 		@conditions = conditions
 		@name = name
 		@state = state
-		@@station_count += 1
+		@latitude = latitude
+		@longitude = longitude
 	end
 
 	def to_s
@@ -46,13 +47,12 @@ class Station
 			observations['humidity'], 
 			observations['weatherShort'], 
 			hash['place']['name'],
-			hash['place']['state']
+			hash['place']['state'],
+			hash['loc']['lat'],
+			hash['loc']['long']
 			)
 	end	
 
-  def self.number_of_instances
-    @@station_count
-  end
 # set up a validity check that rejects the bad ones, as opposed to selecting the good ones, so the bad ones are just tossed?
 # have a method that gets all the data, then sorts it. then, start the comparisons. ??
 # andy suggestec just starting out by gathering the data and storing it in files, then assessing it. i wonder if there's a way
@@ -82,9 +82,14 @@ class Station
 			matches_dewpoint?(other_station)
 	end
 
+	# def too_close?(station)
+	# 	self.latitude
+	# 	self.longitude
+	# end
+
 	def print_matches_in(stations)
 		matching = stations.find_all do |ea|
-		 	ea != self && self.matches?(ea)
+		 	ea != self && !ea.too_close? && self.matches?(ea)
 		end
 
 		unless matching.empty?
