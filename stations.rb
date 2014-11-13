@@ -82,6 +82,20 @@ class Station
 			matches_dewpoint?(other_station)
 	end
 
+	def print_matches_in(stations)
+		matching = stations.find_all do |ea|
+		 	ea != self && self.matches?(ea)
+		end
+
+		unless matching.empty?
+	  	place_names = matching.map { |ea| ea.name + " " + ea.state }
+	  	str = place_names.join(", ") 
+			puts "#{self} matches #{str}."
+			puts
+		end
+
+	end
+
 end
 
 # 	uri = URI::HTTP.build(
@@ -129,15 +143,11 @@ end
 
 	puts stations.flatten.size
 
-		# valid_stations = stations.select { |ea| ea.valid? }
+	valid_stations = stations.reject { |ea| ea.not_valid? }
 
-		valid_stations = stations.reject { |ea| ea.not_valid? }
-		
-		a_station = valid_stations.first
-		matching = valid_stations[1..-1].find_all do |ea|
-		 	a_station.matches?(ea)
-		end
+  valid_stations.each {|ea| ea.print_matches_in(valid_stations)}
 
-  	place_names = matching.map { |ea| ea.name + " " + ea.state }
-  	str = place_names.join(", ") 
-		puts "#{a_station} matches #{str}."
+
+
+
+
