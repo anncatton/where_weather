@@ -3,7 +3,7 @@ require "json"
 require "open-uri"
 require "uri"
 require "byebug"
-
+require "haversine"
 
 class Station
 
@@ -82,23 +82,21 @@ class Station
 			matches_dewpoint?(other_station)
 	end
 
-	# def too_close?(station)
-	# 	self.latitude
-	# 	self.longitude
-	# end
+	def too_close?(station)
+		distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
+		distance.to_km < 1000
+	end
 
 	def print_matches_in(stations)
 		matching = stations.find_all do |ea|
-		 	ea != self && !ea.too_close? && self.matches?(ea)
+		 	ea != self && !self.too_close?(ea) && self.matches?(ea)
 		end
-
 		unless matching.empty?
-	  	place_names = matching.map { |ea| ea.name + " " + ea.state }
-	  	str = place_names.join(", ") 
+		  place_names = matching.map { |ea| ea.name + " " + ea.state }
+		  str = place_names.join(", ") 
 			puts "#{self} matches #{str}."
 			puts
 		end
-
 	end
 
 end
