@@ -121,3 +121,6 @@ of showing users what their weather will be like in near future ("your weather i
 # the weird-sounding place names (like 'leader arpt (aut') to something more recognizable (like "Leader, SK"). although i have no idea how
 # i would do that
 # what does it say if there are no matches? could give options for 'rather similar' but not the same?
+
+# file request for specific region:
+# http://api.aerisapi.com/observations/search?query=state:nu&limit=100&client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx
