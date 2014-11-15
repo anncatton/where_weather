@@ -124,3 +124,6 @@ of showing users what their weather will be like in near future ("your weather i
 
 # file request for specific region:
 # http://api.aerisapi.com/observations/search?query=state:nu&limit=100&client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx
+
+look up all the stations! and the country codes. decide which stations you want to be using for comparison. will this affect which stations can
+be used by users for comparison?

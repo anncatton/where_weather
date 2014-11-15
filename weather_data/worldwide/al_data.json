@@ -1,0 +1,80 @@
+{
+  "success": true,
+  "error": null,
+  "response": [
+    {
+      "id": "LATI",
+      "loc": {
+        "long": 19.716666666667,
+        "lat": 41.416666666667
+      },
+      "place": {
+        "name": "tirana",
+        "state": "",
+        "country": "al"
+      },
+      "profile": {
+        "tz": "Europe\/Tirane",
+        "elevM": 90,
+        "elevFT": 295
+      },
+      "obTimestamp": 1416016200,
+      "obDateTime": "2014-11-15T02:50:00+01:00",
+      "ob": {
+        "timestamp": 1416016200,
+        "dateTimeISO": "2014-11-15T02:50:00+01:00",
+        "tempC": 8,
+        "tempF": 46,
+        "dewpointC": 7,
+        "dewpointF": 45,
+        "humidity": 93,
+        "pressureMB": 1014,
+        "pressureIN": 29.94,
+        "spressureMB": 1003,
+        "spressureIN": 29.62,
+        "altimeterMB": null,
+        "altimeterIN": null,
+        "windKTS": 0,
+        "windKPH": 0,
+        "windMPH": 0,
+        "windSpeedKTS": 0,
+        "windSpeedKPH": 0,
+        "windSpeedMPH": 0,
+        "windDirDEG": 0,
+        "windDir": "N",
+        "windGustKTS": null,
+        "windGustKPH": null,
+        "windGustMPH": null,
+        "flightRule": "LIFR",
+        "visibilityKM": 0.9,
+        "visibilityMI": 0.56,
+        "weather": "Mostly Clear with Patchy Fog",
+        "weatherShort": "Patchy Fog",
+        "weatherCoded": "PA::F,::FW",
+        "weatherPrimary": "Patchy Fog",
+        "weatherPrimaryCoded": "PA::F",
+        "cloudsCoded": "FW",
+        "icon": "fogn.png",
+        "heatindexC": 8,
+        "heatindexF": 46,
+        "windchillC": 8,
+        "windchillF": 46,
+        "feelslikeC": 8,
+        "feelslikeF": 46,
+        "isDay": false,
+        "sunrise": 1416029399,
+        "sunriseISO": "2014-11-15T06:29:59+01:00",
+        "sunset": 1416064894,
+        "sunsetISO": "2014-11-15T16:21:34+01:00",
+        "snowDepthCM": null,
+        "snowDepthIN": null,
+        "precipMM": null,
+        "precipIN": null,
+        "solradWM2": null,
+        "sky": 19,
+        "light": 0
+      },
+      "raw": "LATI 150150Z 00000KT 0900 BCFG NSC 08\/07 Q1014 NOSIG"
+    }
+  ]
+}
