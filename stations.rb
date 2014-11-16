@@ -102,28 +102,62 @@ end
 # then return locations that match
 # so you'd have to specify that the app needs to look in every data file. how to do that?
 
-stations = []
+# stations = []
 
-weather_files = Dir.glob('./weather_data/*.json') 
-weather_files.each do |file|
+# weather_files = Dir.glob('./weather_data/worldwide/*.json') 
+# weather_files.each do |file|
 
-	open(file) do |f|
-		json_file = f.read
-		parsed_file = JSON.parse(json_file)
-		response = parsed_file['response']
+# 	open(file) do |f|
+# 		json_file = f.read
+# 		parsed_file = JSON.parse(json_file)
+# 		response = parsed_file['response']
 
-		stations += response.map { |ea| Station.from_hash(ea) }
+# 		stations += response.map { |ea| Station.from_hash(ea) }
+
+# 	end
+# end
+
+# puts stations.flatten.size
+
+# valid_stations = stations.reject { |ea| ea.not_valid? }
+
+# valid_stations.each {|ea| ea.print_matches_in(valid_stations)}
+
+# making a request should be separate from matching within the files
+# now i want every country in an array, then iterate through each one to make requests
+
+def request(country)
+
+	query = "country:" + country
+
+	my_uri = URI::HTTP.build(
+		{
+			:host => "api.aerisapi.com", 
+			:path => "/observations/search", 
+			:query => {
+				:client_id => "yotRMCnX8QTlcpwPx71pg", 
+				:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx",
+				:limit => 250,
+				:query => query
+			}.to_query
+		}
+	)
+	# puts my_uri
+end
+
+countries = ["fr", "it", "gi", "gb"]
+
+uri = countries.map do |ea|
+	request(ea)
+end
+
+uri.each do |ea|
+
+	open(ea) do |f|
+
+		json_string = f.read
+		parsed_json = JSON.parse(json_string)
+		puts parsed_json
 
 	end
 end
-
-puts stations.flatten.size
-
-valid_stations = stations.reject { |ea| ea.not_valid? }
-
-valid_stations.each {|ea| ea.print_matches_in(valid_stations)}
-
-
-
-
-
