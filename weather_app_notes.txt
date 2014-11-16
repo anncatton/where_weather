@@ -127,3 +127,8 @@ of showing users what their weather will be like in near future ("your weather i
 
 look up all the stations! and the country codes. decide which stations you want to be using for comparison. will this affect which stations can
 be used by users for comparison?
+
+also, what will you do about day vs night? anything? i think all i'd really worry about is the conditions comparison - i don't know if a nighttime "clear skies" would be different than a daytime "sunny". how does aeris handle that? do they just say "clear skies" day or night or what? because
+i'm not concerned about the day vs night tbh, it's still cool to think that our 25 degrees and humid here during the day could be the same as a hot night somewhere in the tropics!
+
+also, check some of the same countries a few times - i'm wondering if a different number of stations are showing up sometimes. for example, i thought i received more stations from france this time around 
