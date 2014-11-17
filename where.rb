@@ -51,4 +51,3 @@ end
 # 	- compare with locations on same latitude
 #   - gotta show you where this place is on the globe
 
-
