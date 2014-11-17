@@ -97,13 +97,7 @@ class Station
 
 end
 
-# user enters location to match
-# first return values for that location
-# then return locations that match
-# so you'd have to specify that the app needs to look in every data file. how to do that?
-
-# stations = []
-
+# this is what runs once the data has been written to the files in weather_data
 # weather_files = Dir.glob('./weather_data/worldwide/*.json') 
 # weather_files.each do |file|
 
@@ -123,10 +117,10 @@ end
 
 # valid_stations.each {|ea| ea.print_matches_in(valid_stations)}
 
-# making a request should be separate from matching within the files
-# now i want every country in an array, then iterate through each one to make requests
+stations = []
+countries = ["gl", "gi", "gr"]
 
-def request(country)
+def uri_for(country)
 
 	query = "country:" + country
 
@@ -142,22 +136,56 @@ def request(country)
 			}.to_query
 		}
 	)
-	# puts my_uri
 end
 
-countries = ["fr", "it", "gi", "gb"]
+countries.each do |ea|
+	uri = uri_for(ea)
+	target_filename = ea + "_data.json"
 
-uri = countries.map do |ea|
-	request(ea)
-end
-
-uri.each do |ea|
-
-	open(ea) do |f|
-
-		json_string = f.read
-		parsed_json = JSON.parse(json_string)
-		puts parsed_json
-
+	open(uri) do |io|
+		json_string = io.read
+		File.open(target_filename, 'w') { |file| file.write(json_string) }
 	end
 end
+
+# all countries except canada and us
+# countries = ["ad", "ae", "af", "ag", "ai", "al", "am", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bl", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bv", "bw", "by", "bz", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cw", "cx", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "eh", "er", "es", "et", "fi", "fj", "fk", "fm", "fo", "fr", "ga", "gb", "gd", "ge", "gf", "gg", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gy", "hk", "hm", "hn", "hr", "ht", "hu", "id", "ie", "il", "im", "in", "io", "iq", "ir", "is", "it", "je", "jm", "jo", "jp", "ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw", "ky", "kz", "la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly", "ma", "mc", "md", "me", "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "nc", "ne" , "nf", "ng", "ni", "nl", "no", "np", "nr", "nu", "nz", "om", "pa", "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "ps", "pt", "pw", "py", "qa", "re", "ro", "rs", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sj", "sk", "sl", "sm", "sn", "so", "sr", "ss", "st", "sv", "sx", "sy", "sz", "tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn", "to", "tr", "tt", "tv", "tw", "tz", "ua", "ug", "um", "uy", "uz", "va", "vc", "ve", "vg", "vi", "vn", "vu", "wf", "ws", "xk", "ye", "yt", "za", "zm", "zw"]
+
+# countries with this error:
+ - {"success":true,"error":{"code":"warn_no_data","description":"No data was returned for the request."},"response":[]}
+ad  mg
+ai  mh
+as  mn
+ax  mp
+bi  nc
+bl  nf
+bn  nr
+bq  nu
+bv  pf
+cc  pm
+cd  pn
+ck  pr
+cw  ps
+cx  pw
+eh  re
+er  rs
+fo  sj
+gf  sm
+gg  so
+gs  ss
+gu  sx
+hm  tc
+ht  tf
+im  tk
+io  tl
+je  to
+ki  tv
+kp  um
+li  va
+ls  vg
+mc  wf
+me  xk
+mf  yt
+
+# for those countries that don't show up on aeris, you could have a method that accesses data from wunderground, cuz
+# they seem to have a lot more locations, using the pws's. just because these places are ones that a user has likely never heard of or doesn't know much about! those are the ones you want to make sure you're including
