@@ -4,6 +4,7 @@ require "open-uri"
 require "uri"
 require "byebug"
 require "haversine"
+require "fileutils"
 
 class Station
 
@@ -97,28 +98,9 @@ class Station
 
 end
 
-# this is what runs once the data has been written to the files in weather_data
-# weather_files = Dir.glob('./weather_data/worldwide/*.json') 
-# weather_files.each do |file|
-
-# 	open(file) do |f|
-# 		json_file = f.read
-# 		parsed_file = JSON.parse(json_file)
-# 		response = parsed_file['response']
-
-# 		stations += response.map { |ea| Station.from_hash(ea) }
-
-# 	end
-# end
-
-# puts stations.flatten.size
-
-# valid_stations = stations.reject { |ea| ea.not_valid? }
-
-# valid_stations.each {|ea| ea.print_matches_in(valid_stations)}
-
 stations = []
-countries = ["gl", "gi", "gr"]
+# for tests:
+# countries = ["ni", "ae"]
 
 def uri_for(country)
 
@@ -139,8 +121,10 @@ def uri_for(country)
 end
 
 countries.each do |ea|
+
+	FileUtils.mkdir_p "./weather_data/world/"
 	uri = uri_for(ea)
-	target_filename = ea + "_data.json"
+	target_filename = "./weather_data/world/" + ea + "_data.json"
 
 	open(uri) do |io|
 		json_string = io.read
@@ -148,44 +132,39 @@ countries.each do |ea|
 	end
 end
 
-# all countries except canada and us
-# countries = ["ad", "ae", "af", "ag", "ai", "al", "am", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bl", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bv", "bw", "by", "bz", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cw", "cx", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "eh", "er", "es", "et", "fi", "fj", "fk", "fm", "fo", "fr", "ga", "gb", "gd", "ge", "gf", "gg", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gy", "hk", "hm", "hn", "hr", "ht", "hu", "id", "ie", "il", "im", "in", "io", "iq", "ir", "is", "it", "je", "jm", "jo", "jp", "ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw", "ky", "kz", "la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly", "ma", "mc", "md", "me", "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "nc", "ne" , "nf", "ng", "ni", "nl", "no", "np", "nr", "nu", "nz", "om", "pa", "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "ps", "pt", "pw", "py", "qa", "re", "ro", "rs", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sj", "sk", "sl", "sm", "sn", "so", "sr", "ss", "st", "sv", "sx", "sy", "sz", "tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn", "to", "tr", "tt", "tv", "tw", "tz", "ua", "ug", "um", "uy", "uz", "va", "vc", "ve", "vg", "vi", "vn", "vu", "wf", "ws", "xk", "ye", "yt", "za", "zm", "zw"]
+# run this once the data has been written to the files in weather_data
 
-# countries with this error:
- - {"success":true,"error":{"code":"warn_no_data","description":"No data was returned for the request."},"response":[]}
-ad  mg
-ai  mh
-as  mn
-ax  mp
-bi  nc
-bl  nf
-bn  nr
-bq  nu
-bv  pf
-cc  pm
-cd  pn
-ck  pr
-cw  ps
-cx  pw
-eh  re
-er  rs
-fo  sj
-gf  sm
-gg  so
-gs  ss
-gu  sx
-hm  tc
-ht  tf
-im  tk
-io  tl
-je  to
-ki  tv
-kp  um
-li  va
-ls  vg
-mc  wf
-me  xk
-mf  yt
+# weather_files = Dir.glob('./weather_data/worldwide/*.json') 
+# weather_files.each do |file|
+
+# 	open(file) do |f|
+# 		json_file = f.read
+# 		parsed_file = JSON.parse(json_file)
+# 		response = parsed_file['response']
+
+# 		stations += response.map { |ea| Station.from_hash(ea) }
+
+# 	end
+# end
+
+# puts stations.flatten.size
+
+# valid_stations = stations.reject { |ea| ea.not_valid? }
+
+# valid_stations.each {|ea| ea.print_matches_in(valid_stations)}
+
+# all countries except canada and us. 182 with data available on aeris, + us and canada
+# countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
+# countries with this error returns:
+# {"success":true,"error":{"code":"warn_no_data","description":"No data was returned for the request."},"response":[]}
+# which i guess is saying that contact with the api was successful but it had no data to transmit, which must mean there are no [official] weather stations in that region
+
+# 66 countries without data on aeris api
+countries_without_data = ["ad", "ai", "as", "ax", "bi", "bl", "bn", "bq", "bv", "cc", "cd", "ck", "cw", "cx", "eh", "er","fo", "gf", "gg", "gs", "gu", "hm", "ht", "im", "io", "je", "ki", "kp", "li", "ls", "mc", "me", "mf", "mg", "mh", "mn", "mp", "nc", "nf", "nr", "nu", "pf", "pm", "pn", "pr", "ps", "pw", "re", "rs", "sj", "sm", "so", "ss", "sx","tc", "tf", "tk", "tl", "to", "tv", "um", "va", "vg", "wf", "xk", "yt"]
+
+us_states = ["al", "ak", "az", "ar", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "ne", "nv", "nh", "nj", "nm", "ny", "nc", "nd", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy"]
+
+ca_provinces = ["bc", "ab", "sk", "mb", "on", "qc", "nb", "ns", "nl", "pe", "yt", "nu", "nt"]
 
 # for those countries that don't show up on aeris, you could have a method that accesses data from wunderground, cuz
-# they seem to have a lot more locations, using the pws's. just because these places are ones that a user has likely never heard of or doesn't know much about! those are the ones you want to make sure you're including
+# they seem to have a lot more locations, using the pws's. just because these places are ones that a user has likely never heard of or doesn't know much about! those are the ones you want to make sure you're including. don't worry about this too much right now
