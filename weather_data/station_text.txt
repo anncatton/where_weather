@@ -1,0 +1,48 @@
+country3: AUS 
+country2: AU
+country: Australia * location! want full name cuz lots of people don't know abbreviations
+region: SA * - 'distinguishes cities with same names
+subregion: Salisbury
+city: Adelaide|Salisbury|Penfield * - recognizable 'pretty' name
+station_name: Edinburgh AFB
+station_name_special:
+stn_key: AUaaYPED
+icao_xref: YPED *? - unique identifier
+national_id_xref:
+wmo_xref: 95676
+wban_xref:
+iata_xref:
+status: x
+icao: AAED
+icao_quality: B
+icao_source: PAA82
+national_id:
+national_quality:
+national_id_source:
+wmo:
+wmo_quality:
+wmo_source:
+maslib:
+maslib_source:
+wban:
+wban_source:
+special:
+lat_prp: -34.7 * - for comparing places on same latitude
+lon_prp: 138.6167 * for comparing places on same longitude
+ll_quality: C
+ll_src:
+elev_prp: 16
+elev_prp_quality:
+elev_aerodrome_source:
+elev_baro: 16
+elev_baro_quality: 
+elev_baro_source:
+tz: Australia/Adelaide * for comparing within correct time limit
+postal_code: AU-5121
+start:
+start_source:
+end:
+end_source:
+remarks:
+latgrp: -34
+longrp: 138
