@@ -1,10 +1,10 @@
  $(document).ready(function() {
 
-		$("input").focus(function(event) {
-			 if (this.value=="Start typing your location") this.value="";
-		});
+	$("input").focus(function(event) {
+		 if (this.value=="Start typing your location") this.value="";
+	});
 
-		var city_locations = [
+	var city_locations = [
 		{ value: "Toronto", data: "Ontario, Canada" },
 		{ value: "Paris", data: "France" },
 		{ value: "Calgary", data: "Alberta, Canada" },
@@ -33,20 +33,23 @@
 		{ value: "London", data: "England, United Kingdom" },
 		{ value: "Shanghai", data: "China" },
 		{ value: "Atalaya", data: "Peru"}
-		];
+	];
 
  		// 	// position: { my : "left top", at: "left bottom" },
 
 		// "my" the corner of the drop down menu; "at" is which corner of the input field the menu is aligned at
 
-$( "#locations" ).autocomplete({
-      source: city_locations,
-      minLength: 2,
-      select: function( event, ui ) {
-        alert( ui.item ?
-          "Selected: " + ui.item.value + ", " + ui.item.data :
-          "Nothing selected, input was " + this.value );
-      }
-    });
+	$( "#locations" ).autocomplete({
+    source: city_locations,
+    minLength: 2,
+    select: function( event, ui ) {
+      alert( ui.item ?
+        "Selected: " + ui.item.value + ", " + ui.item.data :
+        "Nothing selected, input was " + this.value );
+    },
+    messages: {
+     	noResults: '',
+    }
+  });
 
 });
