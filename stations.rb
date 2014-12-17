@@ -275,12 +275,6 @@ valid_stations.each do |ea|
 	ea.print_matches_in(valid_stations)
 end
 
-# take input from user
-# match that to nearest available weather station
-# get current conditions for that station 
-# match those conditions to others worldwide
-# return those matches to the user
-
 # play with tolerance between matches (result array)
 # should i get my request method just to grab all available weather data every 3-4 hours (for now, with the free api)?
 # create a method for taking a location from the user and finding its matches (so i'm not always running tests for all locations)

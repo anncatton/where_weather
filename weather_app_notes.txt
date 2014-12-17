@@ -13,38 +13,12 @@ random thoughts:
 
  make a basic mockup with CSS, with fake data, to see how you'd like to set it up
 
- current: *temp
-  				*sunny/cloudy/overcast/rainy etc
- 					*"feels like"?
- 					*pop
-  				*highs/lows
-
-
- 					humidity
- 					dewpoint
- 					wind speed (sustained & gusts)
- 					wind direction
- 					pressure
- 					uv
- 					windchill (winter)
- 					visibility
- 					snow depth
- 					rainfall
- 					cloud ceiling
-
+ right now you have current conditions: tempC, humidity, dewpoint, conditions
+ would like to add: wind, wind direction, wind gusts, pressure, pop?, cloud ceiling/visibility, windchill/heat index/feelslike - how often
+ are those the same?
 
 so, for your app, you wouldn't need to include much of this extra info, just the basics, cuz it's just
 supposed to be fun and slightly informative
-
--temp
--humidity, dewpoint
--sky conditions
--"realfeel" - because you're basing your comparisons on how it "feels" outside, right?
--wind
--precip
-
-so for your comparison tool, you would only need current conditions
-
 
 ok, andy's suggestions were:
 
@@ -81,8 +55,7 @@ more for a general weather app:
 	that check to see how many stations come back as not valid (and why) and decide based on that what the best measurement strategy is
 	you don't want to be rejecting a ton of interesting places just because you're missing a piece of data that could be replaced by 
 	another one that could serve the same purpose. although i would imagine if things like humidity and dewpoint aren't measured, feelslike temp
-	is probably also null. * i just found a case where this isn't true - no dewpoint or humidity, but a feelslike measure. what are they using to measure
-	feelslike temp?
+	is probably also null. * i just found a case where this isn't true - no dewpoint or humidity, but a feelslike measure. what are they using to measure feelslike temp?
 	at some point you're going to have to find out what the most accurate system is - the actual separate measurements, or relying on things like
 	feelslike etc. also thinking that different sites will have different systems for feelslike. that's why i like the separate measurements better.
 
@@ -95,7 +68,7 @@ basic info comes up right away for user location, but can be customized to show 
 screen, but i also dislike not enough info (a la weathercube)
 make a basic mockup with CSS and fake data and see how you'd like to set it up
 
-suggested grouping cities when you get data from the API (i'll likely be grouping regions). 2 step process - 1) get data and store it 2) compare
+2 step process - 1) get data and store it 2) compare
 stored data to user location
 start with the 4 basic measurements of temp, dewpoint, humidity and conditions and get a working copy going. then you can add more details as you
 get functioning app happening, to increase accuracy
@@ -114,34 +87,22 @@ having data stored in separate files could help with this, if you grouped by reg
 just saw a headline about Springfield, CO that described a temp drop from 78F to 47F in an hour. an extreme example, but it brings up the idea
 of showing users what their weather will be like in near future ("your weather is like x now, but in 3 hours it will be like y")
 
-# Issues:
+Issues:
 
-# display of station names - you don't want the station name displayed cuz no one's really going to know what those are. you could use
-# them behind the scenes to point to place names that ARE displayed to the user, database style.
-# what does it say if there are no matches? could give options for 'rather similar' but not the same?
+display of station names - you don't want the station name displayed cuz no one's really going to know what those are. you could use
+them behind the scenes to point to place names that ARE displayed to the user, database style.
+what does it say if there are no matches? could give options for 'rather similar' but not the same? will you ever run into this? i suppose
+it's possible
 
-# file request for specific region:
-# http://api.aerisapi.com/observations/search?query=state:nu&limit=100&client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx
-
-decide which stations you want to be using for comparison. will this affect which stations can
-be used by users for comparison?
+file request for specific region:
+http://api.aerisapi.com/observations/search?query=state:nu&limit=100&client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx
 
 also, what will you do about day vs night? anything? i think all i'd really worry about is the conditions comparison - i don't know if a nighttime "clear skies" would be different than a daytime "sunny". how does aeris handle that? do they just say "clear skies" day or night or what? because
 i'm not concerned about the day vs night tbh, it's still cool to think that our 25 degrees and humid here during the day could be the same as a hot night somewhere in the tropics!
+i think you could try having "clear" and "sunny" just match, but maybe specify in the matches that that city is in night/day. your time matches will all be based on utc. maybe you won't have to twiddle with time zones at all, except in the display part.
 
-making a request should be separate from matching within the files
-
-Notes on Stations:
-
-new zealand only has 3 stations - at some point maybe you'll want to worry about places with too little data, and places with too much
-remember that when a person is using the app, they won't be doing ALL the matches, so it will be much faster
-
-do you want observation times to be exactly the same for matches, or within a range as well? if a location is observed only a few times a day, does that affect its likelihood of getting a match?
+do you want observation times to be exactly the same for matches, or within a range as well? if a location is observed only a few times a day, does that affect its likelihood of getting a match? time within +/- 1 hour
 all countries except canada and us. 182 with data available on aeris, + us and canada
 66 countries without data on aeris api
 
 AGDM – Agricultural Drought Monitoring station
-
-i do want specific (smaller) places, not just large centers that everyone's heard of - like if the station is near London but still outside, i want it to specify that place. you can always mention that it's near london too, for reference
-
-what should i do about the time matching? because some stations don't run all night (i.e. meadow lake) so the readings won't always be current. but you don't want to disregard them, that's probably a lot of stations...although technically they wouldn't be matches for a current station in the readings are more than an hour old
