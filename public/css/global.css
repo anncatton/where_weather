@@ -1,0 +1,28 @@
+body {
+	font-family: Arial, sans-serif;
+}
+
+.location_menu {
+	color: gray;
+}
+
+#locations {
+
+}
+
+.ui-autocomplete {
+	width: 200px;
+	color: green;
+	border: solid 2px gray;
+	list-style-type: none;
+}
+
+.ui-autocomplete-input {
+	border: dotted 2px gray;
+	width: 200px;
+}
+
+#results {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}

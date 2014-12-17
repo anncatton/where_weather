@@ -1,19 +1,65 @@
 <!doctype html>
-
-<html>
-
+<html lang="en">
 	<head>
-		<title>Where In The World Is Your Weather?</title>
+		<meta charset="utf-8">
 	</head>
 
 	<body>
+		<h2>Weather for <%= Time.now %></h2>
+		<div class="location_menu" class="ui-front">
+			<label for="locations"></label>
+			<input type="text" id="locations" value="Start typing your location">
+		</div>
+		<div id="results">
+			<div class="current_conditions">Current Conditions for Your Location</div>
+			<div class="matches">Matches Around the World</div>
+		</div>
 
-		what do you need to include on a basic page?
-		- a field to put in your location (at some point it should just detect location automatically)
-		- shows the data for that location
-		- then below it will show the places that match, with their conditions
-		- eventually will show on a globe where these matches are, and links to find out more about them!
 	</body>
 
 </html>
 
+<!-- you want the user to enter the location name
+find the station id closest to that name
+find the current conditions for that station
+find matches for those conditions
+list the matches, their conditions, and where they are in the world
+
+are you going to need a database of cities? like, it will autocomplete when you're typing 'springfield' but you have to choose
+which 'springfield' you're referring to.
+
+once you enter a name, the app has to take that name and compare it to a list of locations we already have
+drop down menu of 20 fixed locations and then match to those stations in your stations file
+
+		<ul class="cities">
+			<li>Toronto, ON, Canada</li>
+			<li>Paris, France</li>
+			<li>Calgary, AB, Canada</li>
+			<li>Loon Lake, SK, Canada</li>
+			<li>Vancouver, BC, Canada</li>
+			<li>Kuala Lumpur, Malaysia</li>
+			<li>Moscow, Russia</li>
+			<li>Abu Dhabi, United Arab Emirates</li>
+			<li>Tokyo, Japan</li>
+			<li>Monrovia, Liberia</li>
+			<li>Munich, Germany</li>
+			<li>New York, NY, United States</li>
+			<li>San Francisco, CA, United States</li>
+			<li>Dallas, TX, United States</li>
+			<li>Brisbane, QLD, Australia</li>
+			<li>Halifax, NS, Canada</li>
+			<li>Kukudu, Solomon Islands</li>
+			<li>McMurdo Station, Antarctica</li>
+			<li>Tabarka, Tunisia</li>
+			<li>Brasov, Romania</li>
+			<li>Edinburgh, United Kingdom</li>
+			<li>London, United Kingdom</li>
+			<li>Addis Ababa, Ethiopia</li>
+			<li>Shanghai, China</li>
+			<li>Mumbai, India</li>
+			<li>Atalaya, Peru</li>
+			<li>Punta Catalina, Chile</li>
+			<li>Rome, Italy</li>
+			<li>Istanbul, Turkey</li>
+			<li>Copenhagen, Denmark</li>
+		</ul>
