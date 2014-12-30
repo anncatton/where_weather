@@ -131,12 +131,12 @@ class Station
 end
 
 # countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
-#countries = ["ae", "ag", "sk"]
+# countries = ["ae", "ag", "sk"]
 
 countries_without_data = ["ad", "ai", "as", "ax", "bi", "bl", "bn", "bq", "bv", "cc", "cd", "ck", "cw", "cx", "eh", "er","fo", "gf", "gg", "gs", "gu", "hm", "ht", "im", "io", "je", "ki", "kp", "li", "ls", "mc", "me", "mf", "mg", "mh", "mn", "mp", "nc", "nf", "nr", "nu", "pf", "pm", "pn", "pr", "ps", "pw", "re", "rs", "sj", "sm", "so", "ss", "sx","tc", "tf", "tk", "tl", "to", "tv", "um", "va", "vg", "wf", "xk", "yt"]
 
-#us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb"]
-# "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"
+# us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
+
 stations = []
 
 def build_station_name_map
@@ -176,21 +176,37 @@ STATION_NAME_MAP = build_station_name_map
 
 def read_and_write_uri(uri, filename)
 		open(uri) do |io|
-		json_string = io.read
-		data_hash = JSON.parse(json_string)
+			json_string = io.read
+			data_hash = JSON.parse(json_string)
 
-		data_hash["response"].map do |ea|
-			# this matches the station id found in key "id" from api data, with the same station id in your csv file
-			pretty_name = STATION_NAME_MAP[ea["id"]]
-			# place_hash is the key place inside each separate hash per station. place is on same level as id
-			place_hash = ea["place"]
-			# pretty_name key points to the names for city, region and country i've added from the csv file
-			place_hash["pretty_name"] = pretty_name
+			data_hash["response"].map do |ea|
+				# this matches the station id found in key "id" from api data, with the same station id in your csv file
+				pretty_name = STATION_NAME_MAP[ea["id"]]
+				# place_hash is the key place inside each separate hash per station. place is on same level as id
+				place_hash = ea["place"]
+				# pretty_name key points to the names for city, region and country i've added from the csv file
+				place_hash["pretty_name"] = pretty_name
+			end
+
+			json_output = data_hash.to_json
+			File.open(filename, 'w') { |file| file.write(json_output) }
+		end
+end
+
+def read_uri(id)
+
+	uri = uri_for_station(id)
+
+	open(uri) do |io|
+		json_string = io.read
+		uri_data = JSON.parse(json_string)
+
+		puts uri_data["response"][0].each do |ea|
+			puts ea
 		end
 
-		json_output = data_hash.to_json
-		File.open(filename, 'w') { |file| file.write(json_output) }
 	end
+
 end
 
 def uri_for_country(country)
@@ -229,6 +245,25 @@ def uri_for_state(state)
 	)
 end
 
+def uri_for_station(id)
+
+	query = "id:" + id
+
+	my_uri = URI::HTTP.build(
+		{
+			:host => "api.aerisapi.com", 
+			:path => "/observations/search", 
+			:query => {
+				:client_id => "yotRMCnX8QTlcpwPx71pg", 
+				:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx",
+				:query => query
+			}.to_query
+		}
+	)
+end
+
+read_uri("CYVR")
+
 # countries.each do |ea|
 
 # 	FileUtils.mkdir_p "./weather_data/world/"
@@ -251,29 +286,29 @@ end
 # 	read_and_write_uri(uri, target_filename)
 # end
 
-weather_files = Dir.glob('./weather_data/world/*.json')
-# puts weather_files.size
-weather_files.each do |file|
+# weather_files = Dir.glob('./weather_data/world/*.json')
+# # puts weather_files.size
+# weather_files.each do |file|
 
-	open(file) do |f|
+# 	open(file) do |f|
 
-		json_file = f.read
-		parsed_file = JSON.parse(json_file)
-		# response is an array of hashes from the parsed json file
-		response = parsed_file['response']
+# 		json_file = f.read
+# 		parsed_file = JSON.parse(json_file)
+# 		# response is an array of hashes from the parsed json file
+# 		response = parsed_file['response']
 	
-		stations += response.map { |ea| Station.from_hash(ea) }
+# 		stations += response.map { |ea| Station.from_hash(ea) }
 
-	end
+# 	end
 
-end
+# end
 
-# puts stations.flatten.size
-valid_stations = stations.reject { |ea| ea.not_valid? }
+# # puts stations.flatten.size
+# valid_stations = stations.reject { |ea| ea.not_valid? }
 
-valid_stations.each do |ea|
-	ea.print_matches_in(valid_stations)
-end
+# valid_stations.each do |ea|
+# 	ea.print_matches_in(valid_stations)
+# end
 
 # play with tolerance between matches (result array)
 # should i get my request method just to grab all available weather data every 3-4 hours (for now, with the free api)?

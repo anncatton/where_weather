@@ -1,11 +1,13 @@
 $(document).ready(function() {
 
-	function on_enter(target) {
-	  $(target).on("keyup", function(e) {
-	  if(e.which == 13)
-	    $(this).trigger("enter");
-		});
-	}
+	// var EnterKey = 13;
+
+	// function on_enter() {
+	//   $(target).on("keyup", function(e) {
+	//   if(e.which == EnterKey)
+	//     $(this).trigger("enter");
+	// 	});
+	// }
 
 	function dropMenu(target) {
 		var $target = $(target);
@@ -19,8 +21,13 @@ $(document).ready(function() {
 
 	function fetchRegionAndCountry(query) {
 		$.get('/location_search', {query: query}, function(data) {
-			console.log("You entered " + data.city + " " + data.region);
+			if (data.length == 0) {
+				console.log("That city is not in the database");
+			} else {
+				var firstMatch = data[0]; // this is because the matching method returns an array with one element, so that would be array[0]
+				console.log("You entered " + firstMatch.city + ", " + firstMatch.region + ". Station ID is " + firstMatch.station );
 			// do something with this data;
+			}
 		});
 	}
 
@@ -48,18 +55,6 @@ $(document).ready(function() {
  		fetchRegionAndCountry(query);
  		// send the value of input to the server to return data for that value
  	});
-
-// 10.2 (284.55)
-// 15.5 (831.97) 46 .125
-// 13.5 (925.57) 51 .14
-
-
- // function updateCreditTotalsFromServer(cardType, values) {
- // 	$.post('/update', {updatedCard: cardType, values: values}, function(data) {
- // 		var $total = $('#' + cardType + '_total');
-	//  	$total.html(data.total);
- // 	});
- // }
 
 //  	$.ajax({
 //   url: '/location_search',
