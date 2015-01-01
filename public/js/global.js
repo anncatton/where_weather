@@ -26,6 +26,7 @@ $(document).ready(function() {
 			} else {
 				var firstMatch = data[0]; // this is because the matching method returns an array with one element, so that would be array[0]
 				console.log("You entered " + firstMatch.city + ", " + firstMatch.region + ". Station ID is " + firstMatch.station );
+				// console.log(data.city);
 			// do something with this data;
 			}
 		});
@@ -43,28 +44,27 @@ $(document).ready(function() {
  	$("input").keyup(function(event) {
  		var $target = $(event.target);
  		var query = $target.val();
- 		if (query.length >= 3) 
+ 		if (query.length >= 3) {
  			dropMenu("input");
- 		else
+ 		}
+ 		else {
  			raiseMenu("input");
+ 		}
  	});
 
- 	$("input").blur(function(event) {
-  	var $target = $(event.target);
-  	var query = $target.val();
- 		fetchRegionAndCountry(query);
- 		// send the value of input to the server to return data for that value
+ 	// $("input").blur(function(event) {
+  // 	var $target = $(event.target);
+  // 	var query = $target.val();
+ 	// 	fetchRegionAndCountry(query);
+ 	// });
+
+ 	$("input").keyup(function(event) {
+ 		var $target = $(event.target);
+ 		var query = $target.val();
+ 		if (query.length >= 3) {
+ 			fetchRegionAndCountry(query);
+ 		}
  	});
-
-//  	$.ajax({
-//   url: '/location_search',
-//   data: ,
-//   success: success,
-//   dataType: dataType
-// });
-
-// .load( url [, data ] [, complete ] )
-// the value of the input will be what's used to search the 'database' for a matching station
 
 	// $("#current_conditions").mouseenter(function(event) {
 	// 	var $city = $("input").val();
