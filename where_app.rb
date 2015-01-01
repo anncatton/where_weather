@@ -2,6 +2,7 @@ require "sinatra"
 require "json"
 # require "./models/search.rb"
 require "./models/stations.rb"
+require "byebug"
 
 get '/where_weather' do
 
@@ -53,16 +54,16 @@ get '/location_search' do
 
   content_type :json
   query = params[:query]
+  # match = LOCATIONS.select do |ea|
+  # 	ea[:city] == query
+  # end
   match = LOCATIONS.select do |ea|
-  	ea[:city] == query
+  	ea[:city].start_with?(query)
   end
-  match.to_json # this is what is returned as 'data' in the jquery code
+  match.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
 end
 
-# what do you want to happen next? you want the user to put their city into the input (and it will be from a set list). then the
-# app sends that input value to the server, which returns some sort of data associated with that value
-# so first you want - i think - something on this page to be able to know what the value of the input it. or, is it your jquery
-# that is going to see that? cuz you don't want to leave the page
+
 # get '/weather/:city' do
 	
 # 	city = params[:city]
