@@ -1,7 +1,7 @@
 require "sinatra"
 require "json"
 # require "./models/search.rb"
-require "./models/stations.rb"
+# require "./models/stations.rb" - requiring this slows localhost down by almost 10s
 require "byebug"
 
 get '/where_weather' do
@@ -38,7 +38,8 @@ end
 		{:city => "Edinburgh", :region => "Scotland, United Kingdom", :station => "EGPH"},
 		{:city => "London", :region => "England, United Kingdom", :station => "EGLL"},
 		{:city => "Shanghai", :region => "China", :station => "ZSSS"},
-		{:city => "Atalaya", :region => "Peru", :station => "SPAY"}
+		{:city => "Atalaya", :region => "Peru", :station => "SPAY"},
+		{:city => "San Fernando", :region => "California, United States", :station => "KWHP"}
 	]
 
 # now i would like it to return observations from the api
@@ -54,40 +55,9 @@ get '/location_search' do
 
   content_type :json
   query = params[:query]
-  # match = LOCATIONS.select do |ea|
-  # 	ea[:city] == query
-  # end
+
   match = LOCATIONS.select do |ea|
   	ea[:city].start_with?(query)
   end
   match.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
 end
-
-
-# get '/weather/:city' do
-	
-# 	city = params[:city]
-#   "You're looking for the weather in #{city}. Is this correct?"
-
-# end
-
-# get '/hello/you/?:greeting?/?:name?' do
-#   "#{params[:greeting] ? params[:greeting] : "Hello"}, #{params[:name] ? params[:name] : 'world'}!"
-# end
-
-# get '/posts' do
-#   # matches "GET /posts?title=foo&author=bar"
-#   title = params[:title]
-#   author = params[:author]
-# # end
-
-# get '/sample' do
-# 	code = "<%= Time.now %>"
-# 	erb code
-# end
-
-
-# params = {
-# 	:name => "Ann",
-# 	:greeting => "Hi"
-# }
