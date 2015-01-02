@@ -24,10 +24,9 @@ $(document).ready(function() {
 			if (data.length == 0) {
 				console.log("That city is not in the database");
 			} else {
-				var firstMatch = data[0]; // this is because the matching method returns an array with one element, so that would be array[0]
-				console.log("You entered " + firstMatch.city + ", " + firstMatch.region + ". Station ID is " + firstMatch.station );
-				// console.log(data.city);
-			// do something with this data;
+				data.forEach(function(element) {
+					console.log("You entered " + element.city + ", " + element.region + ". Station ID is " + element.station);
+				});
 			}
 		});
 	}
