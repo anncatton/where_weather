@@ -21,7 +21,7 @@ $(document).ready(function() {
 
 	function fetchRegionAndCountry(query) {
 		$.get('/location_search', {query: query}, function(data) {
-			if (data.length == 0) {
+			if (data.length === 0) {
 				console.log("That city is not in the database");
 			} else {
 				data.forEach(function(element) {
@@ -51,16 +51,10 @@ $(document).ready(function() {
  		}
  	});
 
- 	// $("input").blur(function(event) {
-  // 	var $target = $(event.target);
-  // 	var query = $target.val();
- 	// 	fetchRegionAndCountry(query);
- 	// });
-
  	$("input").keyup(function(event) {
  		var $target = $(event.target);
  		var query = $target.val();
- 		if (query.length >= 3) {
+ 		if (query.length >= 4) {
  			fetchRegionAndCountry(query);
  		}
  	});
@@ -95,17 +89,5 @@ $(document).ready(function() {
 
 });
 
-// starting an autocomplete menu from scratch. what do you need?
-// drop down menu
-// regexp? the other guy had a grep command, which is similar, right?
-// You can build your own that does not depend on JQuery UI, its a very simple idea of trigger field onchange(), issue an AJAX call to get result that matches what you typed so far, and populate some field with a div or drop down below or near it. And on select of the div or drop down, you populate your trigger field with selected value.
-// create a drop down that is populated from where?
-// if i'm doing an ajax request to find matches for the dropdown, where is that request being sent?
-
-// what is it you're actually trying to do on this page? i keep losing track of that. you want to be able to input a place - and i think to
-// start it should be a place from a preset list, just to simplify - find the weather for that place, then find the matches for that location.
-// So, maybe start with either a list with 'links' for each location, that then return (inside the same page) the results for that location.
-// Or, you can start with that autocomplete again, which i still think is a good idea because it's a good thing to know and is probably more use
-// than links. the input users enter isn't going to be a link, it's going to be an input! the value from that input is going to inform the request
-// sent to the server, which fires back the result.
-
+// so now what you want is access to an array of all the locations available to be looked up. one thing you will have to consider is all those
+// towns that don't have an observing station and so will be based on nearby stations (i.e. loon lake). these are places you probably could look up on weather underground (for example) but you'd be seeing results from a nearby station
