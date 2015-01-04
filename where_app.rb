@@ -1,8 +1,8 @@
 require "sinatra"
 require "json"
-# require "./models/search.rb"
-# require "./models/stations.rb" - requiring this slows localhost down by almost 10s
+# require "./models/stations.rb" # - requiring this slows localhost down by almost 10s. it's the build_station_name_map method
 require "byebug"
+require "./models/station_name_map.rb"
 
 get '/where_weather' do
 
@@ -10,38 +10,9 @@ get '/where_weather' do
 
 end
 
-	LOCATIONS = [
-		{:city => "Toronto", :region => "Ontario, Canada", :station => "CYYZ"},
-		{:city => "Paris", :region => "France", :station => "LFPO" },
-		{:city => "Calgary", :region => "Alberta, Canada", :station => "CYYC"},
-		{:city => "Loon Lake", :region => "Saskatchewan, Canada", :station => "CYLJ"},
-		{:city => "Dallas", :region => "Texas, United States", :station => "KDAL" },
-		{:city => "Rome", :region => "Italy", :station => "LIRA"},
-		{:city => "Istanbul", :region => "Turkey", :station => "LTBA"},
-		{:city => "Copenhagen", :region => "Denmark", :station => "EKCH"},
-		{:city => "Mexico City", :region => "Mexico", :station => "MMTO"},
-		{:city => "Mumbai", :region => "India", :station => "VABB"},
-		{:city => "Vancouver", :region => "British Columbia, Canada", :station => "CYVR"},
-		{:city => "Kuala Lumpur", :region => "Malaysia", :station => "WMKK"},
-		{:city => "Moscow", :region => "Russia", :station => "UUEE"},
-		{:city => "Abu Dhabi", :region => "United Arab Emirates", :station => "OMAA"},
-		{:city => "Tokyo", :region => "Japan", :station => "RJTT"},
-		{:city => "Monrovia", :region => "Liberia", :station => "GLRB"},
-		{:city => "Munich", :region => "Germany", :station => "EDDM"},
-		{:city => "New York", :region => "New York, United States", :station => "KNYC"},
-		{:city => "San Francisco", :region => "California, United States", :station => "KSFO"},
-		{:city => "Brisbane", :region => "Queensland, Australia", :station => "YBAF"},
-		{:city => "Halifax", :region => "Nova Scotia, Canada", :station => "CYHZ"},
-		{:city => "McMurdo Station", :region => "Antarctica", :station => "AAXX"},
-		{:city => "Tabarka", :region => "Tunisia", :station => "DTKA"},
-		{:city => "Brasov", :region => "Romania", :station => "LRBG"},
-		{:city => "Edinburgh", :region => "Scotland, United Kingdom", :station => "EGPH"},
-		{:city => "London", :region => "England, United Kingdom", :station => "EGLL"},
-		{:city => "Shanghai", :region => "China", :station => "ZSSS"},
-		{:city => "Atalaya", :region => "Peru", :station => "SPAY"},
-		{:city => "San Fernando", :region => "California, United States", :station => "KWHP"}
-	]
-
+# create a ruby script that will generate a json file from the csv data. but you want it to come out in the below
+# format so you can use your location_search code. and this is all the data you want for now.
+	
 # now i would like it to return observations from the api
 # so what you'd need to have happen is the user puts in the name of a city. that name is sent to the server, and you'll now want it
 # to match to a station id. then that id should be used to make a request to the api for the conditions for that city.
@@ -57,7 +28,9 @@ get '/location_search' do
   query = params[:query]
 
   match = LOCATIONS.select do |ea|
-  	ea[:city].start_with?(query)
+		next if ea[:city].nil?
+		ea[:city].start_with?(query)
   end
+
   match.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
 end
