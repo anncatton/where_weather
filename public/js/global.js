@@ -19,17 +19,27 @@ $(document).ready(function() {
 		$target.siblings(".cities").slideUp(300);
 	}
 
-	function fetchRegionAndCountry(query) {
-		$.get('/location_search', {query: query}, function(data) {
-			if (data.length === 0) {
-				console.log("That city is not in the database");
-			} else {
-				data.forEach(function(element) {
-					console.log("You entered " + element.city + ", " + element.region + ". Station ID is " + element.station);
-				});
-			}
+// right now your where_app select method is returning an array of matches, which you then turn into json, and that becomes
+// 'data' in these .get functions you're using here
+	function populateDropDown(query) {
+		// call .html on these 3 parameters to write their values to <li>
+		$.post('/location_search', {query: query}, function(data) {
+			// var $target = $("li");
+				if (data.length === 0) {
+					var element = document.createElement("li");
+					var $target = $(element);
+					$("ul").append($target);
+					$target.html("That city is not in the database.");				
+				} else {
+					data.forEach(function(ea) {
+					var element = document.createElement("li");
+					var $target = $(element);
+					$("ul").append($target);
+						$target.html(ea.city + ", " + ea.region + ", " + ea.country);
+					});
+				}
 		});
-	}
+	}		
 
 	$("#locations").on("select focus", function(event) {
 		 if (this.value=="Start typing your location") this.value="";
@@ -51,11 +61,14 @@ $(document).ready(function() {
  		}
  	});
 
+// so now i'm thinking that what you want to happen now, is instead of writing the data to the console, you would use
+// that to populate your dropdown menu
+// maybe make the function thats doing that into a separate function to call once a set of conditions has been met
  	$("input").keyup(function(event) {
  		var $target = $(event.target);
  		var query = $target.val();
  		if (query.length >= 4) {
- 			fetchRegionAndCountry(query);
+ 			populateDropDown(query);
  		}
  	});
 
