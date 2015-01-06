@@ -3,25 +3,15 @@ require "json"
 require "open-uri"
 require "uri"
 require "byebug"
+require "haversine"
+require "fileutils"
+require "csv"
 
-# so now i need a way to input files not from the command line? or just find a way to input more than one file from the command line
-# the question is, do you want your app to gather a bunch of data from different locations, then compare to the origin station, or take
-# the data from the origin, and search out locations that match the given criteria? i think either way you're going to end up having to
-# access a lot of data
 class Station
 
-	attr_reader :id, :time, :temp, :dewpoint, :humidity, :conditions, :name, :state
+	attr_reader :id, :time, :temp, :dewpoint, :humidity, :conditions, :name, :state, :latitude, :longitude, :country, :pretty_name
 
-	# keep in mind that you'll probably need to change these parameters for a couple reasons - it's simpler to skip dewpoint and humidity
-	# and just use 'feelslike' + weatherShort, and also maybe measurements like dewpoint aren't available at enough locations. you could run some tests
-	# that check to see how many stations come back as not valid (and why) and decide based on that what the best measurement strategy is
-	# you don't want to be rejecting a ton of interesting places just because you're missing a piece of data that could be replaced by 
-	# another one that could serve the same purpose. although i would imagine if things like humidity and dewpoint aren't measured, feelslike temp
-	# is probably also null. * i just found a case where this isn't true - no dewpoint or humidity, but a feelslike measure. what are they using to measure
-	# feelslike temp?
-	# at some point you're going to have to find out what the most accurate system is - the actual separate measurements, or relying on things like
-	# feelslike etc. also thinking that different sites will have different systems for feelslike. that's why i like the separate measurements better.
-	def initialize(id, time, temp, dewpoint, humidity, conditions, name, state)
+	def initialize(id, time, temp, dewpoint, humidity, conditions, name, state, latitude, longitude, country, pretty_name)
 		@id = id
 		@time = time
 		@temp = temp
@@ -30,6 +20,10 @@ class Station
 		@conditions = conditions
 		@name = name
 		@state = state
+		@latitude = latitude
+		@longitude = longitude
+		@country = country
+		@pretty_name = pretty_name
 	end
 
 	def to_s
@@ -37,13 +31,23 @@ class Station
 	end
 
 	def print
-		puts "Location: #{@id}"
-		puts "Time observed: #{@time}"
-		puts "Temperature: #{@temp} C"
-		puts "Dewpoint: #{@dewpoint} C"
-		puts "Relative humidity: #{@humidity} %"
-		puts "Current conditions: #{@conditions}"
-		puts
+		if @pretty_name['region'].nil? || @pretty_name['region'] == "-"
+			puts "Location: #{@pretty_name['city']}, #{pretty_name['country']}"
+			puts "Time observed: #{@time}"
+			puts "Temperature: #{@temp} C"
+			puts "Dewpoint: #{@dewpoint} C"
+			puts "Relative humidity: #{@humidity} %"
+			puts "Current conditions: #{@conditions}"
+			puts
+		else
+			puts "Location: #{@pretty_name['city']}, #{@pretty_name['region']}, #{pretty_name['country']}"
+			puts "Time observed: #{@time}"
+			puts "Temperature: #{@temp} C"
+			puts "Dewpoint: #{@dewpoint} C"
+			puts "Relative humidity: #{@humidity} %"
+			puts "Current conditions: #{@conditions}"
+			puts
+		end
 	end
 
 	def self.from_hash(hash)
@@ -56,14 +60,14 @@ class Station
 			observations['humidity'], 
 			observations['weatherShort'], 
 			hash['place']['name'],
-			hash['place']['state']
+			hash['place']['state'],
+			hash['loc']['lat'],
+			hash['loc']['long'],
+			hash['place']['country'],
+			hash['place']['pretty_name']
 			)
 	end	
 
-# set up a validity check that rejects the bad ones, as opposed to selecting the good ones, so the bad ones are just tossed?
-# have a method that gets all the data, then sorts it. then, start the comparisons. ??
-# andy suggestec just starting out by gathering the data and storing it in files, then assessing it. i wonder if there's a way
-# to just get the measurements i need, not all of them?
 	def not_valid?
 		temp.nil? || dewpoint.nil? || humidity.nil? || conditions.nil?
 	end
@@ -73,6 +77,10 @@ class Station
 		#!(temp.nil? || dewpoint.nil? || humidity.nil? || conditions.nil?) - this could be a less desirable approach because you have to 
 		# read right to the end of the expression to find out what it's saying, as opposed to the one above which is in discrete sections
 		# and is easier to read. this is important in logical statements cuz they can get confusing pretty fast
+	end
+
+	def matches_time?(other_station)
+		other_station.time <= (self.time + 1) && other_station.time >= (self.time - 1)
 	end
 
 	def matches_temp?(other_station)
@@ -89,100 +97,253 @@ class Station
 			matches_dewpoint?(other_station)
 	end
 
-end
+	def too_close?(station)
+		distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
+		distance.to_km < 4000
+	end
 
-# because you're planning on making this more convoluted, it's probably wise to change this to STDIN.gets instead of ARGV (since
-# you wan to get into query type, query parameters, locations, etc from user).
-# maybe you shouldn't worry about this at all and start making it input a user will put into a website!
-# http://api.aerisapi.com/observations/search?query=country:ca&limit=200&client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx
-user_request = ARGV
-query_type = ARGV[0]
-locations = ARGV[1..-1]
+	def print_matches_in(stations)
+		matching = stations.find_all do |ea|
+		 	ea != self && !self.too_close?(ea) && self.matches?(ea)
+		end
 
-request = locations.map do |ea|
-	"/" + query_type + "/" + ea
-end
+		result = []
+		matching.each do |ea|
+			unless result.any? { |station| station.too_close?(ea) }
+				result << ea
+			end
+		end
 
-def make_uri(path)
-
-	my_uri = URI::HTTP.build(
-	{
-		:host => "api.aerisapi.com", 
-		:path => path,
-		:query => {
-			:client_id => "yotRMCnX8QTlcpwPx71pg", 
-			:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx"
-		}.to_query
-	}
-)
-
-end
-
-requests = request.map do |ea|
-	make_uri(ea)
-end
-
-def make_request(uri)
-
-	open(uri) do |f|
-		json_file = f.read
-		parsed_json = JSON.parse(json_file)
-		puts parsed_json
+		unless result.empty?
+		  place_names = result.map do |ea|
+			  if !(ea.pretty_name.nil?) && !(ea.pretty_name['city'].nil?) && !(ea.pretty_name['country'].nil?)
+			  	ea.pretty_name['city'] + ", " + ea.pretty_name['country']			  
+			  else
+			  	ea.name + " pretty name missing"
+			  end
+			end
+			str = place_names.join("; ")
+			puts "#{self} matches #{str}."
+			puts
+		end
 	end
 
 end
 
-requests.each do |ea|
-	make_request(ea)
+# countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
+# countries = ["ae", "ag", "sk"]
+
+countries_without_data = ["ad", "ai", "as", "ax", "bi", "bl", "bn", "bq", "bv", "cc", "cd", "ck", "cw", "cx", "eh", "er","fo", "gf", "gg", "gs", "gu", "hm", "ht", "im", "io", "je", "ki", "kp", "li", "ls", "mc", "me", "mf", "mg", "mh", "mn", "mp", "nc", "nf", "nr", "nu", "pf", "pm", "pn", "pr", "ps", "pw", "re", "rs", "sj", "sm", "so", "ss", "sx","tc", "tf", "tk", "tl", "to", "tv", "um", "va", "vg", "wf", "xk", "yt"]
+
+# us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
+
+stations = []
+
+def build_station_name_map
+
+	station_names = CSV.read('../stations.csv', :encoding => 'windows-1251:utf-8', :headers => true)
+	station_id_array = []
+
+	station_names.map do |ea|
+		ea.to_hash
+		names_hash = {}
+
+		if !(ea['icao_xref'].nil?)
+			names_hash[:city] = ea['city']
+			names_hash[:region] = ea['region']
+			names_hash[:country] = ea['country']
+			names_hash[:station] = ea['icao_xref']
+			station_id_array << names_hash
+			#station_id_hash[ea['city']] = names_hash
+		elsif !(ea['icao'].nil?)
+			names_hash[:city] = ea['city']
+			names_hash[:region] = ea['region']
+			names_hash[:country] = ea['country']
+			names_hash[:station] = ea['icao']
+			station_id_array << names_hash
+			#station_id_hash[ea['city']] = names_hash
+		end
+	end
+	# byebug
+	station_id_array.uniq { |ea| ea[:station]}
+
 end
 
-# user input for file names (for now), then write those files to a new file that will be opened by the open(weather_input) method
-# i just realized i was trying to combine too many things - you're not going to be putting file names into your uri.build, cuz that
-# doesn't make any sense! you want to just put in locations from the command line, then create a request to be sent to the api
+# def build_station_name_map
+# 	station_names = CSV.read('./stations.csv', :encoding => 'windows-1251:utf-8', :headers => true)
+# 	station_id_hash = {}
 
-# uri = URI::HTTP.build(
-# 	{
-# 		:host => "api.aerisapi.com", 
-# 		:path => "/observations/toronto,on,ca", 
-# 		:query => {
-# 			:client_id => "yotRMCnX8QTlcpwPx71pg", 
-# 			:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx"
-# 		}.to_query
-# 	}
-# )
+# 	station_names.map do |ea|
+# 		ea.to_hash
+# 		names_hash = {}
 
-# open(uri) do |f|
-
-# 	json_file = f.read
-# 	parsed_file = JSON.parse(json_file)
-# 	response = parsed_file['response']
-
-# 	# map returns an array
-# 	# so to access more than one file, do i need to redefine stations
-# 	# ok, you get your data from the api. then, you check each station to see if it's provided valid data. then, the valid data is sent to 
-# 	# the app to use for comparison. i think that's better than checking each station for validity with each comparison request
-# 	stations = response.map { |ea| Station.from_hash(ea) }
-# 	#valid_stations = stations.select { |ea| ea.valid? }
-
-# 	valid_stations = stations.reject { |ea| ea.not_valid? }
-
-# 	a_station = valid_stations.first
-# 	matching = valid_stations[1..-1].find_all do |ea|
-# 		a_station.matches?(ea)
+# 		if !(ea['icao_xref'].nil?)
+# 			names_hash['city'] = ea['city']
+# 			names_hash['region'] = ea['region']
+# 			names_hash['country'] = ea['country']
+# 			station_id_hash[ea['icao_xref']] = names_hash
+# 		elsif !(ea['icao'].nil?)
+# 			names_hash['city'] = ea['city']
+# 			names_hash['region'] = ea['region']
+# 			names_hash['country'] = ea['country']
+# 			station_id_hash[ea['icao']] = names_hash
+# 		end
 # 	end
-
-#   place_names = matching.map { |ea| ea.name + " " + ea.state }
-#   str = place_names.join(", ") 
-# 	puts "#{a_station} matches #{str}."
-
-# # what does it say if there are no matches? could give options for 'rather similar' but not the same?
+# 	station_id_hash
 
 # end
 
-# now want to get data from a wider source. put everything in one file or still separate files in one folder?
-# Issues:
+# STATION_NAME_MAP = build_station_name_map
+# to print STATION_NAME_MAP to a separate file:
+# File.open('station_name_map.rb', 'w') { |file| file.write(STATION_NAME_MAP) }
 
-# display of station names - you don't want the station name displayed cuz no one's really going to know what those are. you could use
-# them behind the scenes to point to place names that ARE displayed to the user, database style. or you could write a method that converts
-# the weird-sounding place names (like 'leader arpt (aut') to something more recognizable (like "Leader, SK"). although i have no idea how
-# i would do that
+def read_and_write_uri(uri, filename)
+		open(uri) do |io|
+			json_string = io.read
+			data_hash = JSON.parse(json_string)
+
+			data_hash["response"].map do |ea|
+				# this matches the station id found in key "id" from api data, with the same station id in your csv file
+				pretty_name = STATION_NAME_MAP[ea["id"]]
+				# place_hash is the key place inside each separate hash per station. place is on same level as id
+				place_hash = ea["place"]
+				# pretty_name key points to the names for city, region and country i've added from the csv file
+				place_hash["pretty_name"] = pretty_name
+			end
+
+			json_output = data_hash.to_json
+			File.open(filename, 'w') { |file| file.write(json_output) }
+		end
+end
+
+def read_uri(id)
+
+	uri = uri_for_station(id)
+
+	open(uri) do |io|
+		json_string = io.read
+		uri_data = JSON.parse(json_string)
+
+		puts uri_data["response"][0].each do |ea|
+			puts ea
+		end
+
+	end
+
+end
+
+def uri_for_country(country)
+
+	query = "country:" + country
+
+	my_uri = URI::HTTP.build(
+		{
+			:host => "api.aerisapi.com", 
+			:path => "/observations/search", 
+			:query => {
+				:client_id => "yotRMCnX8QTlcpwPx71pg", 
+				:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx",
+				:limit => 250,
+				:query => query
+			}.to_query
+		}
+	)
+end
+
+def uri_for_state(state)
+
+	query = "state:" + state
+
+	my_uri = URI::HTTP.build(
+		{
+			:host => "api.aerisapi.com", 
+			:path => "/observations/search", 
+			:query => {
+				:client_id => "yotRMCnX8QTlcpwPx71pg", 
+				:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx",
+				:limit => 250,
+				:query => query
+			}.to_query
+		}
+	)
+end
+
+def uri_for_station(id)
+
+	query = "id:" + id
+
+	my_uri = URI::HTTP.build(
+		{
+			:host => "api.aerisapi.com", 
+			:path => "/observations/search", 
+			:query => {
+				:client_id => "yotRMCnX8QTlcpwPx71pg", 
+				:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx",
+				:query => query
+			}.to_query
+		}
+	)
+end
+
+# countries.each do |ea|
+
+# 	FileUtils.mkdir_p "./weather_data/world/"
+# 	uri = uri_for_country(ea)
+# 	target_filename = "./weather_data/world/" + ea + "_data.json"
+
+# # right this is just writing straight json, what's coming from the api, to each country file, no parsing
+# # here uri is the data on the page generated by the api request. so, its the content on the page that would show
+# # up if you plugged the uri ("http://aeris.api/blablabla") into the browser
+
+# 	read_and_write_uri(uri, target_filename)
+# end
+
+# us_and_canada.each do |ea|
+
+# 	FileUtils.mkdir_p "./weather_data/world/"
+# 	uri = uri_for_state(ea)
+# 	target_filename = "./weather_data/world/" + ea + "_st_data.json"
+
+# 	read_and_write_uri(uri, target_filename)
+# end
+
+# weather_files = Dir.glob('./weather_data/world/*.json')
+# # puts weather_files.size
+# weather_files.each do |file|
+
+# 	open(file) do |f|
+
+# 		json_file = f.read
+# 		parsed_file = JSON.parse(json_file)
+# 		# response is an array of hashes from the parsed json file
+# 		response = parsed_file['response']
+	
+# 		stations += response.map { |ea| Station.from_hash(ea) }
+
+# 	end
+
+# end
+
+# # puts stations.flatten.size
+# valid_stations = stations.reject { |ea| ea.not_valid? }
+
+# valid_stations.each do |ea|
+# 	ea.print_matches_in(valid_stations)
+# end
+
+# play with tolerance between matches (result array)
+# should i get my request method just to grab all available weather data every 3-4 hours (for now, with the free api)?
+# create a method for taking a location from the user and finding its matches (so i'm not always running tests for all locations)
+# if there are several matches within a certain radius (like, 500 km), return only 1 of them (most exact match), then chosen randomly after that, and also return matches that haven't been shown recently to increase variety
+# list of stations that are sensible sounding
+# show total number of matches so you have an idea how many you're getting (and how many is unwieldy)
+# showing state/province doesn't work for a lot of places because that data is not provided in the response. so this is where your csv file
+# comes in, you can match a unique station id to the stored location data.
+# i think you're eventually going to have to go through the whole csv file and make sure the data is accurate.
+# show actual conditions of "current location", and conditions of places being matched.
+# going to have to test it from perspective of the user (obviously!) in terms of what weather stations are referenced from wherever they're from. like, you're in loon lake, sk - will have to find nearest station, then compare from there.
+# convert time into current time zone?? (well so far current time only shows up on station being matched) - that's just a matter of changing
+# utc into current timezone
+
+# for those countries that don't show up on aeris, you could have a method that accesses data from wunderground, cuz
+# they seem to have a lot more locations, using the pws's. just because these places are ones that a user has likely never heard of or doesn't know much about! those are the ones you want to make sure you're including. don't worry about this too much right now
