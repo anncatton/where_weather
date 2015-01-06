@@ -106,3 +106,14 @@ all countries except canada and us. 182 with data available on aeris, + us and c
 66 countries without data on aeris api
 
 AGDM – Agricultural Drought Monitoring station
+
+also show comparison of geographical features - maybe shows why these locations are matching
+
+ideas for the future:
+
+ 	- compare to upcoming weather - 'tomorrow, your weather is more likely to be like Paris than London.'
+ 	- compare to favourites or locations within a certain area
+ 	- show differences between locations that are geographically quite close
+ 	- compare with locations on same latitude
+  - gotta show you where this place is on the globe
+

@@ -4,8 +4,7 @@ body {
 }
 
 ul {
-/*	display: none;
-*/
+	display: none;
 	margin: 0px;
 	-webkit-padding-start: 0px;
 }
