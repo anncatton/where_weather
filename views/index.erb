@@ -2,17 +2,36 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
+		<title>Where in the World is Your Weather?</title>
 	</head>
 
 	<body>
-		<h2>Weather for <%= Time.now %></h2>
-		<div class="location_menu" class="ui-front">
-			<label for="locations"></label>
+		<h2 id="timestamp">Weather for <%= Time.now %></h2>
+		<div id="location_menu">
 			<input type="text" id="locations" value="Start typing your location">
+			<ul id="search_results">
+
+			</ul>
 		</div>
+
 		<div id="results">
-			<div class="current_conditions">Current Conditions for Your Location</div>
-			<div class="matches">Matches Around the World</div>
+			<div id="current_conditions">
+				<h3>Current Conditions for Your Location</h3>
+				<h4>Conditions:</h4>
+				<h4>Temperature:</h4>
+				<h4>Humidity:</h4>
+				<h4>Dewpoint:</h4>
+			</div>
+
+			<div id="matches">
+				<h3>Matches Around the World</h3>
+				<h4>City 1</h4>
+				<h4>City 2</h4>
+				<h4>City 3</h4>
+				<h4>City 4</h4>
+			</div>
+		</div>
+		<div id="globe_graphic">
 		</div>
 
 	</body>
@@ -30,36 +49,3 @@ which 'springfield' you're referring to.
 
 once you enter a name, the app has to take that name and compare it to a list of locations we already have
 drop down menu of 20 fixed locations and then match to those stations in your stations file
-
-		<ul class="cities">
-			<li>Toronto, ON, Canada</li>
-			<li>Paris, France</li>
-			<li>Calgary, AB, Canada</li>
-			<li>Loon Lake, SK, Canada</li>
-			<li>Vancouver, BC, Canada</li>
-			<li>Kuala Lumpur, Malaysia</li>
-			<li>Moscow, Russia</li>
-			<li>Abu Dhabi, United Arab Emirates</li>
-			<li>Tokyo, Japan</li>
-			<li>Monrovia, Liberia</li>
-			<li>Munich, Germany</li>
-			<li>New York, NY, United States</li>
-			<li>San Francisco, CA, United States</li>
-			<li>Dallas, TX, United States</li>
-			<li>Brisbane, QLD, Australia</li>
-			<li>Halifax, NS, Canada</li>
-			<li>Kukudu, Solomon Islands</li>
-			<li>McMurdo Station, Antarctica</li>
-			<li>Tabarka, Tunisia</li>
-			<li>Brasov, Romania</li>
-			<li>Edinburgh, United Kingdom</li>
-			<li>London, United Kingdom</li>
-			<li>Addis Ababa, Ethiopia</li>
-			<li>Shanghai, China</li>
-			<li>Mumbai, India</li>
-			<li>Atalaya, Peru</li>
-			<li>Punta Catalina, Chile</li>
-			<li>Rome, Italy</li>
-			<li>Istanbul, Turkey</li>
-			<li>Copenhagen, Denmark</li>
-		</ul>

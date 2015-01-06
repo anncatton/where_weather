@@ -19,27 +19,50 @@ $(document).ready(function() {
 		$target.siblings(".cities").slideUp(300);
 	}
 
-// right now your where_app select method is returning an array of matches, which you then turn into json, and that becomes
+// // right now your where_app select method is returning an array of matches, which you then turn into json, and that becomes
+// // 'data' in these .get functions you're using here
+// 	function populateDropDown(query) {
+// 		// call .html on these 3 parameters to write their values to <li>
+// 		$.post('/location_search', {query: query}, function(data) {
+// 			// var $target = $("li");
+// 			$("ul").empty();
+// 				if (data.length === 0) {
+// 					var element = document.createElement("li");
+// 					var $target = $(element);
+// 					$("ul").prepend($target);
+// 						$target.html("That city is not in the database.");				
+// 				} else {
+// 					data.forEach(function(ea) {
+// 						var element = document.createElement("li");
+// 						var $target = $(element);
+// 						$("ul").prepend($target);
+// 						$target.html(ea.city + ", " + ea.region + ", " + ea.country);
+// 					});
+// 				}
+// 		});
+// 	}		
+
+	// right now your where_app select method is returning an array of matches, which you then turn into json, and that becomes
 // 'data' in these .get functions you're using here
 	function populateDropDown(query) {
-		// call .html on these 3 parameters to write their values to <li>
 		$.post('/location_search', {query: query}, function(data) {
-			// var $target = $("li");
 				if (data.length === 0) {
 					var element = document.createElement("li");
 					var $target = $(element);
-					$("ul").append($target);
-					$target.html("That city is not in the database.");				
+					$("#search_results").html($target);
+						$target.html("That city is not in the database.");				
 				} else {
+					$("#search_results").empty();
 					data.forEach(function(ea) {
-					var element = document.createElement("li");
-					var $target = $(element);
-					$("ul").append($target);
+						var element = document.createElement("li");
+						var $target = $(element);
 						$target.html(ea.city + ", " + ea.region + ", " + ea.country);
+						$("#search_results").append($target);					
 					});
 				}
 		});
-	}		
+	}
+
 
 	$("#locations").on("select focus", function(event) {
 		 if (this.value=="Start typing your location") this.value="";
@@ -60,6 +83,7 @@ $(document).ready(function() {
  			raiseMenu("input");
  		}
  	});
+// wait - you're trying to create <li> elements for each match, AND trying to do a dropMenu, raiseMenu? that doesn't make sense...
 
 // so now i'm thinking that what you want to happen now, is instead of writing the data to the console, you would use
 // that to populate your dropdown menu
@@ -71,6 +95,12 @@ $(document).ready(function() {
  			populateDropDown(query);
  		}
  	});
+
+});
+
+// so now what you want is access to an array of all the locations available to be looked up. one thing you will have to consider is all those
+// towns that don't have an observing station and so will be based on nearby stations (i.e. loon lake). these are places you probably could look up on weather underground (for example) but you'd be seeing results from a nearby station
+
 
 	// $("#current_conditions").mouseenter(function(event) {
 	// 	var $city = $("input").val();
@@ -99,8 +129,3 @@ $(document).ready(function() {
 	// 		alert("You clicked on results!");
 	// 	}
 	// });
-
-});
-
-// so now what you want is access to an array of all the locations available to be looked up. one thing you will have to consider is all those
-// towns that don't have an observing station and so will be based on nearby stations (i.e. loon lake). these are places you probably could look up on weather underground (for example) but you'd be seeing results from a nearby station

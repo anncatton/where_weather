@@ -1,4 +1,5 @@
-<div class="clearfix">
-	<div class="fieldname"><%= label %></div>
-	<div><input class="field-input" type="text" name='<%= input_name %>' /></div>
-</div>
+<% matches.each do |ea| %>
+	<li class="result">
+		<%= ea[:city] %>, <%= ea[:region] %>, <%= ea[:country] %>
+	</li>
+<% end %>

@@ -22,15 +22,22 @@ end
 # returned as data to the method that creates the request for the api ("data") -> that request is sent to the api for the current
 # conditions -> then you use the <%= %> thing to put that data into the html.
 
-get '/location_search' do
+# get '/location_search' do
+post '/location_search' do
 
   content_type :json
   query = params[:query]
 
-  match = LOCATIONS.select do |ea|
+  matches = LOCATIONS.select do |ea|
 		next if ea[:city].nil?
 		ea[:city].start_with?(query)
   end
 
-  match.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
+  content = if matches.empty?
+  	erb :_no_result
+	else
+  	erb :_data_field, :layout => false, :locals => { :matches => matches }
+	end
+
+  { :html => content }.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
 end
