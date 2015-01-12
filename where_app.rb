@@ -1,42 +1,47 @@
 require "sinatra"
 require "json"
-# require "./models/stations.rb" # - requiring this slows localhost down by almost 10s. it's the build_station_name_map method
+# require ".models/stations.rb"
+require "./models/stations_practice.rb"
 require "byebug"
-require "./models/station_name_map.rb"
+# require "./models/station_name_map.rb"
 
 get '/where_weather' do
 
-	erb :index, :layout => :layout
+	station_id = params[:id] # http://endpoint?id=bla. when you use params[:id] you have to use id= in your query
+	station = Station.find(station_id)
+
+	erb :index, :layout => :layout, :locals => { :station => station } # if erb was a method, locals would be the parameters
 
 end
-
-	# get the page to access state and country data that youve previously stored
-	# to display results for the user query somewhere on the page
 
 # get '/location_search' do
 # '/location_search' is an endpoint, not a url. what's the difference?
-post '/location_search' do
+# post '/location_search' do
 
-  content_type :json
-  query = params[:query]
+#   content_type :json
+#   query = params[:query]
 
-  matches = LOCATIONS.select do |ea|
-		next if ea[:city].nil?
-		ea[:city].start_with?(query)
-  end
+#   matches = LOCATIONS.select do |ea|
+# 		next if ea[:city].nil?
+# 		ea[:city].start_with?(query)
+#   end
 
-  content = if matches.empty?
-  	erb :_no_result
-	else
-  	erb :_data_field, :layout => false, :locals => { :matches => matches }
-	end
+#   content = if matches.empty?
+#   	erb :_no_result
+# 	else
+#   	erb :_data_field, :layout => false, :locals => { :matches => matches }
+# 	end
 
-# if field is empty this still returns the first city in LOCATIONS, which is Adelaide. using matches.empty? doesn't help
-	first_city = erb :_display_span, :layout => false, :locals => {:first_match => matches.first }
+# # if field is empty this still returns the first city in LOCATIONS, which is Adelaide. using matches.empty? doesn't help
+# 	first_city = erb :_display_span, :layout => false, :locals => {:first_match => matches.first }
 
-  { :html => content, :first_match => first_city }.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
+#   { :html => content, :first_match => first_city }.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
 
-end
+# end
+
+# get the page to access state and country data that youve previously stored
+# to display results for the user query somewhere on the page
+# you get the city name, then match it to the station. is the station available in that same data you're using to get the pretty name?
 
 # now need to get your site to access stored data to find observations for the user query. you can use old data for now.
 # the data acquisition will happen independently of the web page
