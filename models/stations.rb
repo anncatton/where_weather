@@ -6,6 +6,7 @@ require "byebug"
 require "haversine"
 require "fileutils"
 require "csv"
+# require "./models/station_name_map.rb"
 
 class Station
 
@@ -131,7 +132,8 @@ class Station
 end
 
 # countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
-# countries = ["ae", "ag", "sk"]
+# countries = ["af", "cf", "ug"]
+countries = ["za", "ag", "fr"]
 
 countries_without_data = ["ad", "ai", "as", "ax", "bi", "bl", "bn", "bq", "bv", "cc", "cd", "ck", "cw", "cx", "eh", "er","fo", "gf", "gg", "gs", "gu", "hm", "ht", "im", "io", "je", "ki", "kp", "li", "ls", "mc", "me", "mf", "mg", "mh", "mn", "mp", "nc", "nf", "nr", "nu", "pf", "pm", "pn", "pr", "ps", "pw", "re", "rs", "sj", "sm", "so", "ss", "sx","tc", "tf", "tk", "tl", "to", "tv", "um", "va", "vg", "wf", "xk", "yt"]
 
@@ -197,42 +199,56 @@ end
 # to print STATION_NAME_MAP to a separate file:
 # File.open('station_name_map.rb', 'w') { |file| file.write(STATION_NAME_MAP) }
 
-def read_and_write_uri(uri, filename)
-		open(uri) do |io|
-			json_string = io.read
-			data_hash = JSON.parse(json_string)
+# def read_and_write_uri(uri, filename)
+# 		open(uri) do |io|
+# 			json_string = io.read
+# 			data_hash = JSON.parse(json_string)
 
-			data_hash["response"].map do |ea|
-				# this matches the station id found in key "id" from api data, with the same station id in your csv file
-				pretty_name = STATION_NAME_MAP[ea["id"]]
-				# place_hash is the key place inside each separate hash per station. place is on same level as id
-				place_hash = ea["place"]
-				# pretty_name key points to the names for city, region and country i've added from the csv file
-				place_hash["pretty_name"] = pretty_name
-			end
+# 			json_output = data_hash.to_json
+# 			File.open(filename, 'w') { |file| file.write(json_output) }
+# 		end
+# end
 
-			json_output = data_hash.to_json
-			File.open(filename, 'w') { |file| file.write(json_output) }
-		end
-end
-
-def read_uri(id)
-
-	uri = uri_for_station(id)
+def write_to_json_file(uri)
 
 	open(uri) do |io|
-		json_string = io.read
-		uri_data = JSON.parse(json_string)
+		json_string = io.read # straight json, from the server
+		# json_output = data_hash.to_json # doing these last 2 lines just takes you right back to where you were with json_string
+		data_hash = JSON.parse(json_string) # this makes it a ruby hash. THIS MAKES IT RUBY, not json
+		# you'll have to rename these variables, but what you want is for response_data to contain an edited version of the
+		# original json data from the api. start with the 5 pieces of data you really need, then once you figure out how to select
+		# those, you can add more pieces as you need them
+	# def initialize(id, time, temp, dewpoint, humidity, conditions, name, state, latitude, longitude, country, pretty_name)
 
-		puts uri_data["response"][0].each do |ea|
-			puts ea
+		response = data_hash["response"]
+
+		all_stations = {}
+
+		response.map do |ea| # i think the reason it does this separately is that it's using response.each, which is 3 separate
+			# arrays, so i end up with 3 distinct hashes, and then each one writes over the last
+			new_station = Station.from_hash(ea)
+
+			single_station = {}
+			single_station[:name] = new_station.name
+			single_station[:temp] = new_station.temp
+			single_station[:dewpoint] = new_station.dewpoint
+			single_station[:humidity] = new_station.humidity
+			single_station[:conditions] = new_station.conditions
+
+			all_stations[new_station.id] = single_station
 		end
-
+# when it finishes one country, the each loop ends and it goes to the .to_json and File.write lines
+# maybe try putting the erase command at the beginning of write_to_json, or use "a" instead of "w" - yes
+		data = all_stations.to_json
+		# you could parse it, access what you need, then turn that back into json before you write it to file - yes, exactly.
+ 		# maybe erase the all_stations file prior to every run of the data collection?
+		# and, do you need a+ ? does it need to be open for reading as well as writing?
+		File.open("../weather_data/all_stations.json", "a") { |file| file.write(data) }
 	end
 
 end
 
-def my_uri(query)
+def build_query(query)
 	URI::HTTP.build(
 		{
 			:host => "api.aerisapi.com", 
@@ -240,6 +256,7 @@ def my_uri(query)
 			:query => {
 				:client_id => "yotRMCnX8QTlcpwPx71pg", 
 				:client_secret => "H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx",
+				:limit => 250,
 				:query => query
 			}.to_query
 		}
@@ -249,24 +266,51 @@ end
 def uri_for_country(country)
 
 	query = "country:" + country
-	my_uri(query)
+	build_query(query)
 
 end
 
 def uri_for_state(state)
 
 	query = "state:" + state
-	my_uri(query)
+	build_query(query)
 
 end
 
-def uri_for_station(id)
+# def uri_for_station(id)
 
-	query = "id:" + id
-	my_uri(query)
+# 	query = "id:" + id
+# 	build_query(query)
+
+# end
+
+# write every station to one giant file
+# but write in only the data you'll be using: id, temp, dewpoint, humidity, conditions
+# as the uri's are created for each region, they're added to the stations array - so when you run get_all_data every region has been added
+# and this method doesn't have to run more than once [per hour], so nothing gets erased
+def get_country_data(regions)
+
+	regions.each do |ea|
+
+		FileUtils.mkdir_p "../weather_data/"
+		uri = uri_for_country(ea)
+
+		write_to_json_file(uri)
+
+	end
+end
+
+def get_all_data(regions)
+	# first, erase the file so you start from scratch
+	File.open("../weather_data/all_stations.json", "w") do |f|
+		f.truncate(f.size)
+	end
+
+	get_country_data(regions)
 
 end
 
+get_all_data(countries)
 # countries.each do |ea|
 
 # 	FileUtils.mkdir_p "../weather_data/world/"
@@ -314,16 +358,12 @@ end
 # end
 
 # play with tolerance between matches (result array)
-# should i get my request method just to grab all available weather data every 3-4 hours (for now, with the free api)?
 # create a method for taking a location from the user and finding its matches (so i'm not always running tests for all locations)
 # if there are several matches within a certain radius (like, 500 km), return only 1 of them (most exact match), then chosen randomly after that, and also return matches that haven't been shown recently to increase variety
 # list of stations that are sensible sounding
 # show total number of matches so you have an idea how many you're getting (and how many is unwieldy)
-# showing state/province doesn't work for a lot of places because that data is not provided in the response. so this is where your csv file
-# comes in, you can match a unique station id to the stored location data.
 # i think you're eventually going to have to go through the whole csv file and make sure the data is accurate.
 # show actual conditions of "current location", and conditions of places being matched.
-# going to have to test it from perspective of the user (obviously!) in terms of what weather stations are referenced from wherever they're from. like, you're in loon lake, sk - will have to find nearest station, then compare from there.
 # convert time into current time zone?? (well so far current time only shows up on station being matched) - that's just a matter of changing
 # utc into current timezone
 
