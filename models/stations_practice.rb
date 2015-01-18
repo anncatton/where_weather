@@ -29,19 +29,13 @@ class Station
 		)
 
 	end
-# so you want station_id to match to the same id in LOCATIONS
-	# def self.find(station_id)
-	# 	Station.from_hash(LOCATIONS.first)
-	# end
 
 	def self.find(station_id)
-		# byebug
 		match = LOCATIONS.find do |ea|
-			station_id == ea[:station]
+			station_id.upcase == ea[:station]
 		end
 
 		self.from_hash(match)
-		#if station_id == Station[:station]
 	end
 
 end
