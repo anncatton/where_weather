@@ -199,40 +199,6 @@ end
 # 		end
 # end
 
-# {
-# 	response: [
-# 		{
-# 			id => "id",
-# 			ob => {
-# 				tempC => "temp",
-# 				humidity => "humidity",
-# 				weatherShort => "conditions",
-# 				dewpointC => "dewpoint",
-# 			}
-# 		}
-
-# 	]
-# }
-# response[0]["id"]
-
-# 	def self.from_hash(hash)
-# 		observations = hash['ob']
-# 		self.new(
-# 			hash['id'], 
-# 			observations['dateTimeISO'], 
-# 			observations['tempC'], 
-# 			observations['dewpointC'], 
-# 			observations['humidity'], 
-# 			observations['weatherShort'], 
-# 			hash['place']['name'],
-# 			hash['place']['state'],
-# 			hash['loc']['lat'],
-# 			hash['loc']['long'],
-# 			hash['place']['country'],
-# 			hash['place']['pretty_name']
-# 			)
-# 	end
-
 def build_query(query)
 	URI::HTTP.build(
 		{
@@ -291,17 +257,7 @@ def get_all_data(regions)
 
 end
 
-# so you need to run the requests first i think, then gather them all up, then put them in all_responses, THEN run the
-# map with the Station.from_hash method to get out the data you want.
-# or, do the other way around - do the 'gathering up' at the end? take the results of new_station and add them one by one
-# into...a hash? that then gets turned back into json and written to your data file?
-
 stations = []
-
-# as the uri's are created for each region, they're added to the stations array - so when you run get_all_data every region has been added
-# and this method doesn't have to run more than once [per hour], so nothing gets erased
-# somehow, can you extract the data from response, and add it to another large hash as you go? i think i'm just trying to figure out
-# the best place in the code to do this.
 
 def get_data_for_country(country_name)
 	uri = uri_for_country(country_name)
