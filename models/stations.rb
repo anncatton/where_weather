@@ -131,16 +131,6 @@ class Station
 
 end
 
-# countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
-# countries = ["af", "cf", "ug"]
-countries = ["za", "ag", "fr"]
-
-countries_without_data = ["ad", "ai", "as", "ax", "bi", "bl", "bn", "bq", "bv", "cc", "cd", "ck", "cw", "cx", "eh", "er","fo", "gf", "gg", "gs", "gu", "hm", "ht", "im", "io", "je", "ki", "kp", "li", "ls", "mc", "me", "mf", "mg", "mh", "mn", "mp", "nc", "nf", "nr", "nu", "pf", "pm", "pn", "pr", "ps", "pw", "re", "rs", "sj", "sm", "so", "ss", "sx","tc", "tf", "tk", "tl", "to", "tv", "um", "va", "vg", "wf", "xk", "yt"]
-
-# us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
-
-stations = []
-
 def build_station_name_map
 
 	station_names = CSV.read('../stations.csv', :encoding => 'windows-1251:utf-8', :headers => true)
@@ -209,44 +199,39 @@ end
 # 		end
 # end
 
-def write_to_json_file(uri)
+# {
+# 	response: [
+# 		{
+# 			id => "id",
+# 			ob => {
+# 				tempC => "temp",
+# 				humidity => "humidity",
+# 				weatherShort => "conditions",
+# 				dewpointC => "dewpoint",
+# 			}
+# 		}
 
-	open(uri) do |io|
-		json_string = io.read # straight json, from the server
-		# json_output = data_hash.to_json # doing these last 2 lines just takes you right back to where you were with json_string
-		data_hash = JSON.parse(json_string) # this makes it a ruby hash. THIS MAKES IT RUBY, not json
-		# you'll have to rename these variables, but what you want is for response_data to contain an edited version of the
-		# original json data from the api. start with the 5 pieces of data you really need, then once you figure out how to select
-		# those, you can add more pieces as you need them
-	# def initialize(id, time, temp, dewpoint, humidity, conditions, name, state, latitude, longitude, country, pretty_name)
+# 	]
+# }
+# response[0]["id"]
 
-		response = data_hash["response"]
-
-		all_stations = {}
-
-		response.map do |ea| # i think the reason it does this separately is that it's using response.each, which is 3 separate
-			# arrays, so i end up with 3 distinct hashes, and then each one writes over the last
-			new_station = Station.from_hash(ea)
-
-			single_station = {}
-			single_station[:name] = new_station.name
-			single_station[:temp] = new_station.temp
-			single_station[:dewpoint] = new_station.dewpoint
-			single_station[:humidity] = new_station.humidity
-			single_station[:conditions] = new_station.conditions
-
-			all_stations[new_station.id] = single_station
-		end
-# when it finishes one country, the each loop ends and it goes to the .to_json and File.write lines
-# maybe try putting the erase command at the beginning of write_to_json, or use "a" instead of "w" - yes
-		data = all_stations.to_json
-		# you could parse it, access what you need, then turn that back into json before you write it to file - yes, exactly.
- 		# maybe erase the all_stations file prior to every run of the data collection?
-		# and, do you need a+ ? does it need to be open for reading as well as writing?
-		File.open("../weather_data/all_stations.json", "a") { |file| file.write(data) }
-	end
-
-end
+# 	def self.from_hash(hash)
+# 		observations = hash['ob']
+# 		self.new(
+# 			hash['id'], 
+# 			observations['dateTimeISO'], 
+# 			observations['tempC'], 
+# 			observations['dewpointC'], 
+# 			observations['humidity'], 
+# 			observations['weatherShort'], 
+# 			hash['place']['name'],
+# 			hash['place']['state'],
+# 			hash['loc']['lat'],
+# 			hash['loc']['long'],
+# 			hash['place']['country'],
+# 			hash['place']['pretty_name']
+# 			)
+# 	end
 
 def build_query(query)
 	URI::HTTP.build(
@@ -284,24 +269,20 @@ end
 
 # end
 
-# write every station to one giant file
-# but write in only the data you'll be using: id, temp, dewpoint, humidity, conditions
-# as the uri's are created for each region, they're added to the stations array - so when you run get_all_data every region has been added
-# and this method doesn't have to run more than once [per hour], so nothing gets erased
 def get_country_data(regions)
 
+	FileUtils.mkdir_p "../weather_data/"
+
+	processed_data = {}
 	regions.each do |ea|
-
-		FileUtils.mkdir_p "../weather_data/"
-		uri = uri_for_country(ea)
-
-		write_to_json_file(uri)
-
+		processed_data.merge!(processed_data_for_country(ea))
 	end
+
+	write_to_json_file(processed_data.to_json)
 end
 
 def get_all_data(regions)
-	# first, erase the file so you start from scratch
+
 	File.open("../weather_data/all_stations.json", "w") do |f|
 		f.truncate(f.size)
 	end
@@ -309,6 +290,74 @@ def get_all_data(regions)
 	get_country_data(regions)
 
 end
+
+# so you need to run the requests first i think, then gather them all up, then put them in all_responses, THEN run the
+# map with the Station.from_hash method to get out the data you want.
+# or, do the other way around - do the 'gathering up' at the end? take the results of new_station and add them one by one
+# into...a hash? that then gets turned back into json and written to your data file?
+
+stations = []
+
+# as the uri's are created for each region, they're added to the stations array - so when you run get_all_data every region has been added
+# and this method doesn't have to run more than once [per hour], so nothing gets erased
+# somehow, can you extract the data from response, and add it to another large hash as you go? i think i'm just trying to figure out
+# the best place in the code to do this.
+
+def get_data_for_country(country_name)
+	uri = uri_for_country(country_name)
+	open(uri) do |io|
+		json_string = io.read
+		data_hash = JSON.parse(json_string)
+		data_hash["response"]
+	end
+end
+
+def extract_station_data(raw_data)
+	all_stations = {}
+
+	raw_data.map do |ea| # i think the reason it does this separately is that it's using response.each, which is 3 separate
+		# arrays, so i end up with 3 distinct hashes. you're actually saying, "for each response, do this" - so the responses remain
+		# separate - because map returns an array
+		new_station = Station.from_hash(ea)
+
+		station = {} # a hash for each individual station
+		station[:name] = new_station.name
+		station[:region] = new_station.state
+		station[:country] = new_station.country
+		station[:temp] = new_station.temp
+		station[:dewpoint] = new_station.dewpoint
+		station[:humidity] = new_station.humidity
+		station[:conditions] = new_station.conditions
+
+		all_stations[new_station.id] = station
+	end
+
+	all_stations
+
+end
+
+def write_to_json_file(data)
+	File.open("../weather_data/all_stations.json", "a") { |file| file.write(data) }
+end
+
+
+def processed_data_for_country(country_name)
+
+	raw_data = get_data_for_country(country_name)
+
+	extract_station_data(raw_data)
+
+end
+
+
+
+# countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
+# countries = ["af", "cf", "ug"]
+countries = ["za", "ag", "uz"]
+
+countries_without_data = ["ad", "ai", "as", "ax", "bi", "bl", "bn", "bq", "bv", "cc", "cd", "ck", "cw", "cx", "eh", "er","fo", "gf", "gg", "gs", "gu", "hm", "ht", "im", "io", "je", "ki", "kp", "li", "ls", "mc", "me", "mf", "mg", "mh", "mn", "mp", "nc", "nf", "nr", "nu", "pf", "pm", "pn", "pr", "ps", "pw", "re", "rs", "sj", "sm", "so", "ss", "sx","tc", "tf", "tk", "tl", "to", "tv", "um", "va", "vg", "wf", "xk", "yt"]
+
+# us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
 
 get_all_data(countries)
 # countries.each do |ea|
