@@ -4,6 +4,7 @@ require "json"
 require "./models/stations_practice.rb"
 require "byebug"
 # require "./models/station_name_map.rb"
+# require "./weather_data/all_stations.json"
 
 get '/where_weather' do
 
@@ -14,30 +15,33 @@ get '/where_weather' do
 
 end
 
-# get '/location_search' do
+get '/location_search' do # both get and post work. which should i use?
 # '/location_search' is an endpoint, not a url. what's the difference?
 # post '/location_search' do
 
-#   content_type :json
-#   query = params[:query]
+  content_type :json
+  query = params[:query]
 
-#   matches = LOCATIONS.select do |ea|
-# 		next if ea[:city].nil?
-# 		ea[:city].start_with?(query)
-#   end
+  matches = LOCATIONS.select do |ea|
+		next if ea[:city].nil?
+		ea[:city].start_with?(query)
+  end
 
-#   content = if matches.empty?
-#   	erb :_no_result
-# 	else
-#   	erb :_data_field, :layout => false, :locals => { :matches => matches }
-# 	end
+  content = if matches.empty?
+  	erb :_no_result
+	else
+  	erb :_data_field, :layout => false, :locals => { :matches => matches }
+	end
 
-# # if field is empty this still returns the first city in LOCATIONS, which is Adelaide. using matches.empty? doesn't help
-# 	first_city = erb :_display_span, :layout => false, :locals => {:first_match => matches.first }
+	first_city = erb :_display_span, :layout => false, :locals => {:first_match => matches.first }
 
-#   { :html => content, :first_match => first_city }.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
+  { :html => content, :first_match => first_city }.to_json # this is what is returned as 'data' in the jquery code. using .select, this will be an array
 
-# end
+end
+
+# where_app needs to access all_stations.json
+# needs to look for a matching station id, then return the observation values
+# this is a get, right? cuz you're not changing any values, you're just looking them up
 
 # get the page to access state and country data that youve previously stored
 # to display results for the user query somewhere on the page
@@ -45,7 +49,6 @@ end
 
 # now need to get your site to access stored data to find observations for the user query. you can use old data for now.
 # the data acquisition will happen independently of the web page
-#	http://api.aerisapi.com/observations/halifax,ns,ca?client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx
 # now use the user input to look up a station id in the api
 # create a ruby script that will generate a json file from the csv data. but you want it to come out in the below
 # format so you can use your location_search code. and this is all the data you want for now.

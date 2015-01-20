@@ -20,14 +20,14 @@ $(document).ready(function() {
 // don't like that now the menu flicks on and off when you're typing
 	function populateDropDown(query) {
 		raiseMenu();
-		$.post('/location_search', {query: query}, function(data) {
+		$.get('/location_search', {query: query}, function(data) {
 				$("#search_results").html($(data.html));
 				dropMenu();					
 		});
 	}
 
 	function printLocation(query) {
-		$.post('/location_search', {query: query}, function(data) {
+		$.get('/location_search', {query: query}, function(data) {
 			$("#query_location").html(data.first_match);
 		});
 	}
@@ -40,12 +40,15 @@ $(document).ready(function() {
 		raiseMenu();
 	});
 
-// right now this doesn't work because the query data is based on your partials, which returns more data than you want. you'll
-// want it to use just the final selection of the user.
 	$("#locations").blur(function(event) {
 		$target = $(event.target);
 		query = $target.val();
-		printLocation(query);
+		if (query.length > 0) {
+			printLocation(query);
+		}
+		else {
+			$("#query_location").html("");
+		}
 	});
 
  	$("input").keyup(function(event) {
