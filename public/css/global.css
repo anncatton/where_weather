@@ -76,3 +76,25 @@ input:focus {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.condition {
+
+}
+
+.condition-label,
+.condition-value {
+	float: left;
+	position: relative;
+}
+
+.condition-label {
+	width: 100px;
+	text-align: right;
+	margin-right: 20px;
+}
