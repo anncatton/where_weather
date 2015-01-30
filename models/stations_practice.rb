@@ -3,10 +3,10 @@ require "json"
 require "open-uri"
 require "uri"
 require "byebug"
-require "haversine"
+# require "haversine"
 require "fileutils"
-require "csv"
-require "./models/station_name_map.rb"
+# require "csv"
+# require "./models/station_name_map.rb"
 
 class Station
 
@@ -30,12 +30,31 @@ class Station
 
 	end
 
+# this writes the pretty name from LOCATIONS to 'Current Conditions for'
+# maybe add an if_nil? option so you don't get the 'no method for nilClass'
 	def self.find(station_id)
 		match = LOCATIONS.find do |ea|
-			station_id.upcase == ea[:station]
+			station_id.downcase == ea[:station].downcase
 		end
 
 		self.from_hash(match)
+	end
+
+end
+
+# this finds the station id in the json conditions file, 
+# find matching key(id), return the conditions
+def find_station(station_id)
+
+	File.open("./weather_data/all_stations.json", "r") do |f| # this needs a relative path name to work, but where_app gets upset
+		# when i run it with the relative path - when i call find_station in where_app, i need to use './' not '../'
+		json_file = f.read
+		parsed_file = JSON.parse(json_file)
+
+		parsed_file.select do |key, value| # calling .select on a hash returns a hash
+			station_id.downcase == key.downcase
+		end
+
 	end
 
 end
