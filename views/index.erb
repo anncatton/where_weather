@@ -6,41 +6,44 @@
 	</head>
 
 	<body>
-		<h2 id="timestamp">Weather for <%= Time.now %></h2>
+		<h2 id="header">Weather for <%= Time.now %></h2>
 		<div id="location_menu">
-			<input type="text" id="locations" value="Start typing your location">
+			<input type="text" id="location_input" value="Start typing your location">
 			<ul id="search_results">
-
 			</ul>
 		</div>
 
 		<div id="results">
 			<div id="current_conditions">
-				<h3>Current Conditions for: <span id="query_location"><%= station.city %>, <%= station.state %>, <%= station.country %></span></h3>
-				<h4>Conditions: </h4>
-				<h4>Temperature:</h4>
-				<h4>Humidity:</h4>
-				<h4>Dewpoint:</h4>
+				<h3 class="section_header">Current Conditions for <span id="query_location"><%= station.city %>, <%= station.state %>, <%= station.country %></span></h3>
+				<%= erb :_results_view, :locals => {:heading => "Conditions",
+																						:matching_station => matching_station,
+																						:type => "conditions" } %>
+
+				<%= erb :_results_view, :locals => {:heading => "Temperature",
+																						:matching_station => matching_station,
+																						:type => "temp" } %>
+
+				<%= erb :_results_view, :locals => {:heading => "Humidity",
+																						:matching_station => matching_station,
+																						:type => "humidity" } %>
+
+				<%= erb :_results_view, :locals => {:heading => "Dewpoint",
+																						:matching_station => matching_station,
+																						:type => "dewpoint" } %>
 			</div>
 
 			<div id="matches">
-				<h3>Matches Around the World</h3>
+				<h3 class="section_header">Matches Around the World</h3>
 				<h4>City 1</h4>
 				<h4>City 2</h4>
 				<h4>City 3</h4>
 				<h4>City 4</h4>
 			</div>
 		</div>
-		<div id="globe_graphic">
+<!-- 		<div id="globe_graphic">
 		</div>
-
+ -->
 	</body>
 
 </html>
-
-<!-- you want the user to enter the location name
-
-find the station id closest to that name
-find the current conditions for that station
-find matches for those conditions
-list the matches, their conditions, and where they are in the world
