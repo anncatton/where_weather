@@ -1,9 +1,6 @@
-<h4><%= heading %>:
-	<span>
-		<% matching_station.each do |k,v| %>
-			<span>
-				<%= v[type] %>
-			</span>
-		<% end %>
-	</span>
-</h4>
+<div class="condition clearfix">
+	<div class="condition-label"><%= heading %>:</div>
+	<div class="condition-value">
+		<%= matching_station[type] %>
+	</div>
+</div>		
