@@ -50,11 +50,10 @@ def find_station(station_id)
 		# when i run it with the relative path - when i call find_station in where_app, i need to use './' not '../'
 		json_file = f.read
 		parsed_file = JSON.parse(json_file)
+		with_downcased_keys = {}
+		parsed_file.each { |k,v| with_downcased_keys[k.downcase] = v}
 
-		parsed_file.select do |key, value| # calling .select on a hash returns a hash
-			station_id.downcase == key.downcase
-		end
-
+		with_downcased_keys[station_id.downcase]
 	end
 
 end
