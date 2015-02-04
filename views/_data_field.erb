@@ -1,5 +1,5 @@
 <% matches.each do |ea| %>
 	<li class="result">
-		<%= ea[:city] %>, <%= ea[:region] %>, <%= ea[:country] %>
+		<a href="http://localhost:9393/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:region] %>, <%= ea[:country] %></a>
 	</li>
 <% end %>

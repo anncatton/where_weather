@@ -38,20 +38,25 @@ class Station
 		end
 
 		self.from_hash(match)
+		# if match.nil?
+		# 	do something - what would be a good rescue here?
+		# else
+		# 	self.from_hash(match)
+		# end
 	end
 
 end
 
-# this finds the station id in the json conditions file, 
-# find matching key(id), return the conditions
+# this finds a station id in the json conditions file, 
 def find_station(station_id)
 
-	File.open("./weather_data/all_stations.json", "r") do |f| # this needs a relative path name to work, but where_app gets upset
-		# when i run it with the relative path - when i call find_station in where_app, i need to use './' not '../'
+	File.open("./weather_data/all_stations.json", "r") do |f|
 		json_file = f.read
 		parsed_file = JSON.parse(json_file)
 		with_downcased_keys = {}
-		parsed_file.each { |k,v| with_downcased_keys[k.downcase] = v}
+		parsed_file.each do |k,v| 
+			with_downcased_keys[k.downcase] = v
+		end
 
 		with_downcased_keys[station_id.downcase]
 	end
