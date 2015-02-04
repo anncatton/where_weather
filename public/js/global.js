@@ -27,36 +27,49 @@ $(document).ready(function() {
 		});
 	}
 
-// this is to display the chosen location in the current locations div
-	function printLocation(query) {
-		$.get('/location_search', {query: query}, function(data) {
-			$("#query_location").html(data.first_match);
-		});
-	}
+// // this is to display the chosen location in the current locations div
+// function printLocation(query) {
+// 	$.get('/location_search', {query: query}, function(data) {
+// 		$("#query_location").html(data.first_match);
+// 	});
+// }
 
 	$("#location_input").on("select focus", function(event) {
 		 if (this.value=="Start typing your location") this.value="";
 	});
 
-	$("#location_input").blur(function(event) {
-		$target = $(event.target);
-		query = $target.val();
-		if (query.length > 0) {
-			printLocation(query);
-		}
-		else {
-			$("#query_location").html("");
-		}
-		raiseMenu();
-	});
-
- 	$("#location_input").keyup(function(event) {
+ 	$("#location_input").keyup(function(event) { // this might be slowing webpage down cuz it sends a search request for every keyup
  		var $target = $(event.target);
  		var query = $target.val();
  		if (query.length >= 3) {
  			populateDropDown(query);
  		}
  	});
+
+	// $("#location_input").blur(function(event) {
+	// 	$target = $(event.target);
+	// 	query = $target.val();
+	// 	if (query.length > 0) {
+	// 		printLocation(query);
+	// 	}
+	// 	else {
+	// 		$("#query_location").html("");
+	// 	}
+	// 	raiseMenu();
+ // 		// printConditions(query);
+	// });
+
+// to take city name from user input and display conditions for that city
+
+// function printConditions(query) {
+// 	$.get('/conditions', {query: query}, function(data) {
+// 		$("#print_conditions").html(data.conditions);
+// 	});
+// }
+
+	// $("#location_input").blur(function(event) {
+	// 	printConditions(query);
+	// });
 
 });
 
