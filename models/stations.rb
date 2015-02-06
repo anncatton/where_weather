@@ -69,6 +69,14 @@ class Station
 			)
 	end	
 
+	def self.find(station_id)
+		match = LOCATIONS.find do |ea|
+			station_id.upcase == ea[:station]
+		end
+
+		self.from_hash(match)
+	end
+
 	def not_valid?
 		temp.nil? || dewpoint.nil? || humidity.nil? || conditions.nil?
 	end
@@ -199,6 +207,18 @@ end
 # 		end
 # end
 
+# so now i have:
+	# csv conversion method
+	# can add station id to address bar to query that location --> for now just searches through station name map to return the
+	# city name and display on web page
+	# have methods that iterate through list of countries, build queries for each one, access api and return observations in json
+	# format. then parse, extract only the necessary data, return to json and write to one large file. need one that also accesses states
+	# and provinces
+	# now, you need to get your web app to access observations out of the big file, and display them on the page. only worry about
+	# query current conditions for now, not comparisons
+
+stations = []
+
 def build_query(query)
 	URI::HTTP.build(
 		{
@@ -228,39 +248,65 @@ def uri_for_state(state)
 
 end
 
-# def uri_for_station(id)
-
-# 	query = "id:" + id
-# 	build_query(query)
-
-# end
-
-def get_country_data(regions)
-
-	FileUtils.mkdir_p "../weather_data/"
-
-	processed_data = {}
-	regions.each do |ea|
-		processed_data.merge!(processed_data_for_country(ea))
-	end
-
-	write_to_json_file(processed_data.to_json)
-end
-
-def get_all_data(regions)
+def get_all_data(country_array, state_array)
 
 	File.open("../weather_data/all_stations.json", "w") do |f|
 		f.truncate(f.size)
 	end
 
-	get_country_data(regions)
+	get_region_data(country_array, state_array)
 
 end
 
-stations = []
+# this is the method where the data gets written. so regions is an array of countries/states
+# def get_region_data(regions)
 
-def get_data_for_country(country_name)
-	uri = uri_for_country(country_name)
+# 	FileUtils.mkdir_p "../weather_data/"
+
+# 	processed_data = {} # if you can get countries AND states all in here
+# 	regions.each do |ea|
+# 		processed_data.merge!(processed_data_for_region(ea))
+# 	end
+
+# 	write_to_json_file(processed_data.to_json)
+# end
+
+def get_region_data(countries, states)
+
+	FileUtils.mkdir_p "../weather_data/"
+
+	processed_data = {}
+
+	countries.each do |ea|
+		processed_data.merge!(processed_data_for_country(ea))
+	end
+
+	states.each do |ea|
+		processed_data.merge!(processed_data_for_state(ea))
+	end
+
+	write_to_json_file(processed_data.to_json)
+
+end
+
+# def processed_data_for_region(region_name)
+
+# 	raw_data = get_data_for_region(region_name)
+# 	extract_station_data(raw_data)
+
+# end
+
+def processed_data_for_country(country_name)
+	raw_data = get_data_for_country(country_name)
+	extract_station_data(raw_data)
+end
+
+def processed_data_for_state(state_name)
+	raw_data = get_data_for_state(state_name)
+	extract_station_data(raw_data)
+end
+
+def open_region_uri(uri)
 	open(uri) do |io|
 		json_string = io.read
 		data_hash = JSON.parse(json_string)
@@ -268,12 +314,20 @@ def get_data_for_country(country_name)
 	end
 end
 
+def get_data_for_country(country_name)
+	country_uri = uri_for_country(country_name)
+	open_region_uri(country_uri)
+end
+
+def get_data_for_state(state_name)
+	state_uri = uri_for_state(state_name)
+	open_region_uri(state_uri)
+end
+
 def extract_station_data(raw_data)
 	all_stations = {}
 
-	raw_data.map do |ea| # i think the reason it does this separately is that it's using response.each, which is 3 separate
-		# arrays, so i end up with 3 distinct hashes. you're actually saying, "for each response, do this" - so the responses remain
-		# separate - because map returns an array
+	raw_data.map do |ea|
 		new_station = Station.from_hash(ea)
 
 		station = {} # a hash for each individual station
@@ -296,64 +350,13 @@ def write_to_json_file(data)
 	File.open("../weather_data/all_stations.json", "a") { |file| file.write(data) }
 end
 
+countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
 
-def processed_data_for_country(country_name)
+us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
 
-	raw_data = get_data_for_country(country_name)
+get_all_data(countries, us_and_canada)
 
-	extract_station_data(raw_data)
-
-end
-
-
-
-# countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
-# countries = ["af", "cf", "ug"]
-countries = ["za", "ag", "uz"]
-
-countries_without_data = ["ad", "ai", "as", "ax", "bi", "bl", "bn", "bq", "bv", "cc", "cd", "ck", "cw", "cx", "eh", "er","fo", "gf", "gg", "gs", "gu", "hm", "ht", "im", "io", "je", "ki", "kp", "li", "ls", "mc", "me", "mf", "mg", "mh", "mn", "mp", "nc", "nf", "nr", "nu", "pf", "pm", "pn", "pr", "ps", "pw", "re", "rs", "sj", "sm", "so", "ss", "sx","tc", "tf", "tk", "tl", "to", "tv", "um", "va", "vg", "wf", "xk", "yt"]
-
-# us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
-
-get_all_data(countries)
-# countries.each do |ea|
-
-# 	FileUtils.mkdir_p "../weather_data/world/"
-# 	uri = uri_for_country(ea)
-# 	target_filename = "../weather_data/world/" + ea + "_data.json"
-
-# # right this is just writing straight json, what's coming from the api, to each country file, no parsing
-# # here uri is the data on the page generated by the api request. so, its the content on the page that would show
-# # up if you plugged the uri ("http://aeris.api/blablabla") into the browser
-
-# 	read_and_write_uri(uri, target_filename)
-# end
-
-# us_and_canada.each do |ea|
-
-# 	FileUtils.mkdir_p "./weather_data/world/"
-# 	uri = uri_for_state(ea)
-# 	target_filename = "./weather_data/world/" + ea + "_st_data.json"
-
-# 	read_and_write_uri(uri, target_filename)
-# end
-
-# weather_files = Dir.glob('./weather_data/world/*.json')
-# # puts weather_files.size
-# weather_files.each do |file|
-
-# 	open(file) do |f|
-
-# 		json_file = f.read
-# 		parsed_file = JSON.parse(json_file)
-# 		# response is an array of hashes from the parsed json file
-# 		response = parsed_file['response']
-	
-# 		stations += response.map { |ea| Station.from_hash(ea) }
-
-# 	end
-
-# end
+# countries_without_data = ["ad", "ai", "as", "ax", "bi", "bl", "bn", "bq", "bv", "cc", "cd", "ck", "cw", "cx", "eh", "er","fo", "gf", "gg", "gs", "gu", "hm", "ht", "im", "io", "je", "ki", "kp", "li", "ls", "mc", "me", "mf", "mg", "mh", "mn", "mp", "nc", "nf", "nr", "nu", "pf", "pm", "pn", "pr", "ps", "pw", "re", "rs", "sj", "sm", "so", "ss", "sx","tc", "tf", "tk", "tl", "to", "tv", "um", "va", "vg", "wf", "xk", "yt"]
 
 # # puts stations.flatten.size
 # valid_stations = stations.reject { |ea| ea.not_valid? }
