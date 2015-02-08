@@ -9,67 +9,51 @@ $(document).ready(function() {
 	// 	});
 	// }
 
-	function dropMenu() {
-		$("#search_results").show();
-	}
-
-	function raiseMenu() {
-		$("#search_results").hide();
-	}
-
-// this for the drop down menu
-// don't like that now the menu flicks on and off when you're typing
-	function populateDropDown(query) {
-		raiseMenu();
-		$.get('/location_search', {query: query}, function(data) {
-				$("#search_results").html($(data.html));
-				dropMenu();					
-		});
-	}
-
-// // this is to display the chosen location in the current locations div
-// function printLocation(query) {
-// 	$.get('/location_search', {query: query}, function(data) {
-// 		$("#query_location").html(data.first_match);
-// 	});
-// }
-
 	$("#location_input").on("select focus", function(event) {
 		 if (this.value=="Start typing your location") this.value="";
 	});
 
- 	$("#location_input").keyup(function(event) { // this might be slowing webpage down cuz it sends a search request for every keyup
- 		var $target = $(event.target);
- 		var query = $target.val();
- 		if (query.length >= 3) {
- 			populateDropDown(query);
- 		}
+	function dropMenu() {
+		$("#search_results").show();
+	};
+
+	function raiseMenu() {
+		$("#search_results").hide();
+	};
+
+// this for the drop down menu
+// don't like that now the menu flicks on and off when you're typing - i think this is just because it's running slow, for every
+// keyup there's a get request
+// would you be able to do version that just did one request, got an array of possible matches, then shifted off the ones that
+// no longer match after each subsequent keyup?
+	function populateDropDown(query) {
+		raiseMenu();
+		console.log('location_search request');
+		$.get('/location_search', {query: query}, function(data) {
+				console.log('location_search has responded');
+				$("#search_results").html($(data.html));
+				dropMenu();	
+		});
+	};
+
+	var timeout;
+	console.log("setting up keypress handler");
+ 	$("#location_input").keypress(function(event) { // this might be slowing webpage down cuz it sends a search request for every keyup
+
+ 		var handleKeyup = function() {
+ 			console.log("handling keyup");
+    	var $target = $(event.target);
+ 			var query = $target.val();
+ 			if (query.length >= 3) {
+ 				populateDropDown(query);
+ 			}
+ 		};
+ 		console.log("clear timeout");
+ 		clearTimeout(timeout);
+ 		console.log("setting timeout");
+ 		timeout = setTimeout(handleKeyup, 1000);
+    
  	});
-
-	// $("#location_input").blur(function(event) {
-	// 	$target = $(event.target);
-	// 	query = $target.val();
-	// 	if (query.length > 0) {
-	// 		printLocation(query);
-	// 	}
-	// 	else {
-	// 		$("#query_location").html("");
-	// 	}
-	// 	raiseMenu();
- // 		// printConditions(query);
-	// });
-
-// to take city name from user input and display conditions for that city
-
-// function printConditions(query) {
-// 	$.get('/conditions', {query: query}, function(data) {
-// 		$("#print_conditions").html(data.conditions);
-// 	});
-// }
-
-	// $("#location_input").blur(function(event) {
-	// 	printConditions(query);
-	// });
 
 });
 
@@ -77,7 +61,3 @@ $(document).ready(function() {
 // or <span>)?
 // i guess also you have to look at the particular conditions in which you're applying styles - does it make more sense to apply a style to a
 // certain class or id, or would it work better if applied all of a certain element?
-
-// so now what you want is access to an array of all the locations available to be looked up. one thing you will have to consider is all those
-// towns that don't have an observing station and so will be based on nearby stations (i.e. loon lake). these are places you probably could look up on weather underground (for example) but you'd be seeing results from a nearby station
-// you're going to want to use something like the haversine formula to find the closest valid station
