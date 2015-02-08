@@ -41,7 +41,7 @@ $(document).ready(function() {
  			}
  		};
  		clearTimeout(timeout);
- 		timeout = setTimeout(handleKeyup, 1000);
+ 		timeout = setTimeout(handleKeyup, 200);
     
  	});
 
