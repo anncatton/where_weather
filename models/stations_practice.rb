@@ -6,7 +6,8 @@ require "byebug"
 require "haversine"
 require "fileutils"
 require "csv"
-require "./station_name_map.rb"
+require "./models/location_id_map.rb" # does the path for these local files seem strange because the path is not actually
+# relative from the file you're in, but relative to where ruby normally looks for required files and libraries?
 
 class Station
 
@@ -251,8 +252,7 @@ def write_to_json_file(data)
 end
 
 countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
-# countries = ["ae", "af", "ag"]
-# us_and_canada = ["ab", "al", "ak"]
+
 us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
 
 # get_all_data(countries, us_and_canada)
@@ -277,32 +277,31 @@ end
 # this matches a station id with a station id in the json conditions file
 def find_station(station_id)
 	station_hash = parse_json_file("./weather_data/all_stations.json")
-	station_hash[station_id].downcase
+	station_hash[station_id.downcase]
 end
 
-parsed_all_stations = parse_json_file("../weather_data/all_stations.json")
-# this returns an array of all the station ids, as strings
-all_stations_ids = parsed_all_stations.map do |k, v|
-	v["id"]
-end 
 
-# now that you have a trimmer LOCATIONS array, you can use that populate your dropwdown
-# need to figure out which file (all_stations and valid_station_map) should contain which data. for example, does all_stations need
-# to have all the city, region, country etc?
-valid_stations = LOCATIONS.select do |ea|
-	if all_stations_ids.include?(ea[:station])
-		ea
-	end
-end
+# # need to figure out which file (all_stations and valid_station_map) should contain which data. for example, does all_stations need
+# # to have all the city, region, country etc?
+
+# parsed_all_stations = parse_json_file("./weather_data/all_stations.json")
+
+# all_stations_ids = parsed_all_stations.map do |k, v|
+# 	v["id"]
+# end
+
+# valid_stations = LOCATIONS.select do |ea|
+# 	if all_stations_ids.include?(ea[:station])
+# 		ea
+# 	end
+# end
+
+# File.open("./valid_stations.rb", "w") { |file| file.write(valid_stations) }
 
 # how to discover which stations are missing?
 # csv = 4588
 # json = 4624 (+36)
 
-# now write this to a new file
-File.open("./valid_stations.rb", "w") { |file| file.write(valid_stations) }
-
-# my_station_id = "CYYZ"
 
 # matching_station = find_station(my_station_id)
 # new_station = Station.from_json(matching_station)
