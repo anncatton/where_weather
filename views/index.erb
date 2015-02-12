@@ -15,22 +15,26 @@
 
 		<div id="results">
 			<div id="current_conditions">
-				<h3 class="section_header">Current Conditions for <span id="query_location"><%= station.city %>, <%= station.state %>, <%= station.country %></span></h3>
+			<h3><%= locations_match[:city] %>, <%= locations_match[:region] %>, <%= locations_match[:country] %></h3>
 				<%= erb :_results_view, :locals => {:heading => "Conditions",
 																						:matching_station => matching_station,
-																						:type => "conditions" } %>
+						 																:type => "conditions",
+						 																:unit => nil } %>
 
 				<%= erb :_results_view, :locals => {:heading => "Temperature",
 																						:matching_station => matching_station,
-																						:type => "temp" } %>
+																						:type => "temp",
+																						:unit => "C" } %>
 
 				<%= erb :_results_view, :locals => {:heading => "Humidity",
 																						:matching_station => matching_station,
-																						:type => "humidity" } %>
+																						:type => "humidity",
+																						:unit => "%" } %>
 
 				<%= erb :_results_view, :locals => {:heading => "Dewpoint",
 																						:matching_station => matching_station,
-																						:type => "dewpoint" } %>
+																						:type => "dewpoint",
+																						:unit => "C" } %>
 			</div>
 
 			<div id="matches">
