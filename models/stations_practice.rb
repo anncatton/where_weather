@@ -5,15 +5,11 @@ require "uri"
 require "byebug"
 require "haversine"
 require "fileutils"
-# require "csv"
+require "csv"
 require "./station_name_map.rb"
 
 class Station
 
-# id, name, region, country, latitude, longitude can come from csv
-# time, temp, dewpoint, humidity, conditions needs to come from observations
-# can it all come from observations, and then you can just match city, country, id data from the csv? i feel like most of the useful
-# and reliable info is coming from the current observations, not the csv
 	attr_reader :id, :city, :region, :country, :latitude, :longitude, :time, :temp, :dewpoint, :humidity, :conditions
 
 	def initialize(id, city, region, country, latitude, longitude, time, temp, dewpoint, humidity, conditions)
@@ -47,6 +43,22 @@ class Station
 			)
 	end
 
+	def self.from_json(hash)
+		self.new(
+			hash["id"],
+			hash["city"],
+			hash["region"],
+			hash["country"],
+			hash["latitude"],
+			hash["longitude"],
+			hash["time"],
+			hash["temp"],
+			hash["dewpoint"],
+			hash["humidity"],
+			hash["conditions"]
+			)
+	end
+
 	def self.find(station_id)
 	# finds the [:station] inside LOCATIONS that matches station_id (which is coming from params[:id])
 		match = LOCATIONS.find do |ea|
@@ -57,9 +69,6 @@ class Station
 
 	end
 
-# the reason all these methods work together is that all the selfs and the other_stations are instances of Stations, correct?
-# so either you're going to have to change the structure of these methods, or you're going to have to change how you create your
-# instances of Station ???
 	def not_valid?
 		temp.nil? || dewpoint.nil? || humidity.nil? || conditions.nil?
 	end
@@ -93,7 +102,7 @@ class Station
 		distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
 		distance.to_km < 4000
 	end
-
+# does self here have to an instance of Station, or can it just be the object the method is called on?
 	def print_matches_in(stations)
 		matching = stations.find_all do |ea|
 		 	ea != self && !self.too_close?(ea) && self.matches?(ea)
@@ -121,20 +130,6 @@ class Station
 	end
 
 end
-	
-	# new_station = Station.new(
-	# 											my_station_id,
-	# 											matching_station["city"],
-	# 											matching_station["region"],
-	# 											matching_station["country"],
-	# 											matching_station["latitude"],
-	# 											matching_station["longitude"],
-	# 											matching_station["time"],
-	# 											matching_station["temp"],
-	# 											matching_station["dewpoint"],
-	# 											matching_station["humidity"],
-	# 											matching_station["conditions"]
-	# )
 
 # this section is for building requests to the api
 def build_query(query)
@@ -178,7 +173,6 @@ def get_all_data(country_array, state_array)
 end
 
 # this is the method where the data gets written. so regions is an array of countries/states
-
 def get_region_data(countries, states)
 
 	FileUtils.mkdir_p "../weather_data/"
@@ -226,9 +220,6 @@ def get_data_for_state(state_name)
 	open_region_uri(state_uri)
 end
 
-# if you're going to have a hash of station hashes, then you should use the station id as the key for each station hash
-# how would it look if you just had an array of station hashes, with the station id inside the station hash on the same level
-# as the other data?
 def extract_station_data(raw_data)
 	all_stations = {}
 
@@ -236,7 +227,7 @@ def extract_station_data(raw_data)
 		new_station = Station.from_hash(ea)
 
 		station = {}
-		# station[:id] = new_station.id
+		station[:id] = new_station.id
 		station[:city] = new_station.city
 		station[:region] = new_station.region
 		station[:country] = new_station.country
@@ -283,30 +274,38 @@ def parse_json_file(filename)
 
 end
 
-# this finds a station id in the json conditions file
+# this matches a station id with a station id in the json conditions file
 def find_station(station_id)
-	
-	station_hash = parse_json_file("../weather_data/all_stations.json")
-	# with_downcased_keys = {}
-	
-	# File.open("../weather_data/all_stations.json", "r") do |f|
-	# 	json_file = f.read
-	# 	parsed_file = JSON.parse(json_file)
-
-	# 	parsed_file.each do |k,v| 
-	# 		with_downcased_keys[k.downcase] = v
-	# 	end
-	# end
-
-	station_hash[station_id.downcase]
-
+	station_hash = parse_json_file("./weather_data/all_stations.json")
+	station_hash[station_id].downcase
 end
 
-my_station_id = "CYYZ"
-matching_station = find_station(my_station_id)
-puts matching_station
-# station_hash = parse_json_file("../weather_data/all_stations.json")
-# puts station_hash
+parsed_all_stations = parse_json_file("../weather_data/all_stations.json")
+# this returns an array of all the station ids, as strings
+all_stations_ids = parsed_all_stations.map do |k, v|
+	v["id"]
+end 
+
+# now that you have a trimmer LOCATIONS array, you can use that populate your dropwdown
+# need to figure out which file (all_stations and valid_station_map) should contain which data. for example, does all_stations need
+# to have all the city, region, country etc?
+valid_stations = LOCATIONS.select do |ea|
+	if all_stations_ids.include?(ea[:station])
+		ea
+	end
+end
+
+# how to discover which stations are missing?
+# csv = 4588
+# json = 4624 (+36)
+
+# now write this to a new file
+File.open("./valid_stations.rb", "w") { |file| file.write(valid_stations) }
+
+# my_station_id = "CYYZ"
+
+# matching_station = find_station(my_station_id)
+# new_station = Station.from_json(matching_station)
 # def matches_temp?(other_station)
 # 	unless other_station["temp"].nil?
 # 		other_station["temp"] >= (self["temp"] - 1) && other_station["temp"] <= (self["temp"] + 1)
@@ -322,5 +321,3 @@ puts matching_station
 # 		v["dewpoint"] <= (matching_station["dewpoint"] + 1) && v["dewpoint"] >= (matching_station["dewpoint"] -1) &&
 # 		v["conditions"] == matching_station["conditions"]
 # end
-
-# puts matching
