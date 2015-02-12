@@ -5,29 +5,22 @@ require "./models/stations_practice.rb"
 require "byebug"
 require "./models/location_id_map.rb"
 
-# this takes an id as an address bar query and prints the conditions on the page, from all_stations.json
-# currently only works with a valid id (also can't use just localhost:9393/where_weather)
 get '/where_weather' do
 
-	if params.empty?
-		erb :index, :layout => :layout, :locals => {
-			#:station => nil,
-																								:matching_station => nil }
-	else
-		station_id = params[:id] # this variable contains the string entered into the web page for the 4-letter station id
-		# station = Station.find(station_id) # this is creating a new instance of station
-		matching_station = find_station(station_id) # this will find the corresponding station inside all_stations.json, so
-		# matching_station will hold a hash containing city name and current conditions key value pairs
+		station_id = params[:id]
+		matching_station = find_station(station_id)
+		locations_match = LOCATIONS.find do |ea|
+			ea[:station] == station_id			
+		end
 
-		erb :index, :layout => :layout, :locals => {
-			#:station => station,
-																							:matching_station => matching_station }
-	end
+		erb :index, :layout => :layout, :locals => { :matching_station => matching_station,
+																								:locations_match => locations_match }
 
 end
 
-# this displays the full location name using input from the user and matching with data from LOCATIONS in station_name_map file
-get '/location_search' do # both get and post work. which should i use?
+# canon pixma pro-100
+# this displays the full location name using input from the user and matching with data from LOCATIONS
+get '/location_search' do
 # '/location_search' is an endpoint, not a url. what's the difference?
 
   content_type :json
