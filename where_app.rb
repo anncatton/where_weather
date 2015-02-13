@@ -31,7 +31,7 @@ get '/where_weather' do
 	end
 
 	if params.empty? # this doesn't currently help when you load page without a query attached in the address bar. guess you'll have to
-		# load it with an autoip query maybe?
+		# load it with an autoip query maybe? also _results_view has an if/else to handle matching_station being nil
 		erb :index, :layout => :layout, :locals => { :matching_station => nil,
 																								:locations_match => nil }
 	else
@@ -51,7 +51,7 @@ get '/location_search' do
 
   matches = LOCATIONS.select do |ea|
 		next if ea[:city].nil?
-		ea[:city].start_with?(query)
+		ea[:city].downcase.start_with?(query.downcase)
   end
 
   content = if matches.empty?
@@ -71,6 +71,7 @@ get '/location_search' do
 end
 
 # current issues:
+	# find nearby stations for locations that don't have a station id
 	# still have some of the locations displaying funky characters
 	# can't use enter to blur user input field
 	# change search from start_with? to include? - do i want this, actually? i think that gives too many unnecessary results
