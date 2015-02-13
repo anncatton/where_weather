@@ -7,21 +7,44 @@ require "./models/location_id_map.rb"
 
 get '/where_weather' do
 
-		station_id = params[:id]
-		matching_station = find_station(station_id)
-		locations_match = LOCATIONS.find do |ea|
-			ea[:station] == station_id			
-		end
+	# hash of station hashes, main station keys (k) lowercase
+	station_hash = parse_json_file("./weather_data/all_stations.json") 
 
+	# makes an array of Station instances
+	stations_to_compare = station_hash.map do |k, v|
+		Station.from_json(v)
+	end
+
+	valid_stations = stations_to_compare.reject do |ea|
+		ea.not_valid?
+	end
+
+	station_id = params[:id]
+	matching_station = find_station(station_id)
+	locations_match = LOCATIONS.find do |ea|
+		ea[:station] == station_id			
+	end
+	
+	station = Station.from_json(matching_station)
+	matches = valid_stations.select do |ea|
+		ea != station && !station.too_close?(ea) && station.matches?(ea)
+	end
+
+	if params.empty? # this doesn't currently help when you load page without a query attached in the address bar. guess you'll have to
+		# load it with an autoip query maybe?
+		erb :index, :layout => :layout, :locals => { :matching_station => nil,
+																								:locations_match => nil }
+	else
 		erb :index, :layout => :layout, :locals => { :matching_station => matching_station,
-																								:locations_match => locations_match }
+																								:locations_match => locations_match,
+																								:matches => matches }
+	end
 
 end
 
 # canon pixma pro-100
-# this displays the full location name using input from the user and matching with data from LOCATIONS
+# this populates the drop down with full location name using input from the user and matching with data from LOCATIONS
 get '/location_search' do
-# '/location_search' is an endpoint, not a url. what's the difference?
 
   content_type :json
   query = params[:query]
@@ -48,14 +71,8 @@ get '/location_search' do
 end
 
 # current issues:
-	# i think now you've broken it enough that conditions from the input station aren't displaying anymore
-	# and you don't have the name of the selected city in the current conditions div
-	# and because the drop down is not being populated by LOCATIONS, you can't select a link to put a station in params to query
+	# still have some of the locations displaying funky characters
 	# can't use enter to blur user input field
-	# you've got a lot of dud matches being created from that csv file. also you're not going to need 15 different
-	# matches for big centers, just pick a main station id for those big cities (like toronto, or paris, or whatever). Eventually
-	# you can worry about having more coverage within cities. right now you have about 4700 stations in the conditions file, and just
-	# under 28000 in the LOCATIONS array
 	# change search from start_with? to include? - do i want this, actually? i think that gives too many unnecessary results
 	# make case-insensitive
 	# be able to load main page without a query attached

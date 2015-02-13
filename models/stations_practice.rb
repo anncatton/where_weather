@@ -8,6 +8,10 @@ require "fileutils"
 require "csv"
 require "./models/location_id_map.rb" # does the path for these local files seem strange because the path is not actually
 # relative from the file you're in, but relative to where ruby normally looks for required files and libraries?
+# seems to depend which part of the program is using the require:
+# for code run inside this file, it's "./location_id_map.rb"
+# for where_app.rb, it's "./models/location_id_map.rb"
+# require "./location_id_map.rb"
 
 class Station
 
@@ -101,7 +105,7 @@ class Station
 
 	def too_close?(station)
 		distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
-		distance.to_km < 4000
+		distance.to_km < 2000
 	end
 # does self here have to an instance of Station, or can it just be the object the method is called on?
 	def print_matches_in(stations)
@@ -274,17 +278,19 @@ def parse_json_file(filename)
 
 end
 
-# this matches a station id with a station id in the json conditions file
+# this matches a station id with a station id in the json conditions file. specific to all_stations
 def find_station(station_id)
 	station_hash = parse_json_file("./weather_data/all_stations.json")
 	station_hash[station_id.downcase]
 end
 
 
-# # need to figure out which file (all_stations and valid_station_map) should contain which data. for example, does all_stations need
-# # to have all the city, region, country etc?
+# need to figure out which file (all_stations and valid_station_map) should contain which data. for example, does all_stations need
+# to have all the city, region, country etc?
+# both need station ids because that's the unique identifier
 
-# parsed_all_stations = parse_json_file("./weather_data/all_stations.json")
+# this removed non-relevant stations from location_id_map
+# parsed_all_stations = parse_json_file("../weather_data/all_stations.json")
 
 # all_stations_ids = parsed_all_stations.map do |k, v|
 # 	v["id"]
@@ -299,24 +305,38 @@ end
 # File.open("./valid_stations.rb", "w") { |file| file.write(valid_stations) }
 
 # how to discover which stations are missing?
+# compare station ids and reject the ones that match. couldn't find any non-matches
 # csv = 4588
 # json = 4624 (+36)
 
+# my_station_id = "OMAA"
 
 # matching_station = find_station(my_station_id)
 # new_station = Station.from_json(matching_station)
-# def matches_temp?(other_station)
-# 	unless other_station["temp"].nil?
-# 		other_station["temp"] >= (self["temp"] - 1) && other_station["temp"] <= (self["temp"] + 1)
-# 	end
+station_hash = parse_json_file("./weather_data/all_stations.json") # hash of station hashes, main station keys (k) lowercase
+
+# # makes an array of Station instances
+stations_to_compare = station_hash.map do |k, v|
+	Station.from_json(v)
+end
+
+valid_stations = stations_to_compare.reject do |ea|
+	ea.not_valid?
+end
+
+# matches = valid_stations.select do |ea|
+# 	new_station.matches?(ea)
 # end
 
-# valid_stations = station_hash.reject do |k, v|
-# 	v["temp"].nil? || v["humidity"].nil? || v["dewpoint"].nil? || v["conditions"].nil?
+# matching = stations.find_all do |ea|
+#  	ea != self && !self.too_close?(ea) && self.matches?(ea)
 # end
 
-# matching = valid_stations.select do |k, v|
-# 		v["temp"] <= (matching_station["temp"] + 1) && v["temp"] >= (matching_station["temp"] - 1) &&
-# 		v["dewpoint"] <= (matching_station["dewpoint"] + 1) && v["dewpoint"] >= (matching_station["dewpoint"] -1) &&
-# 		v["conditions"] == matching_station["conditions"]
+# matches = valid_stations.select do |ea|
+# 	ea != new_station && !new_station.too_close?(ea) && new_station.matches?(ea)
 # end
+
+# matches.each do |ea|
+# 	puts ea.city
+# end
+
