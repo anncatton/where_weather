@@ -1,6 +1,5 @@
 require "sinatra"
 require "json"
-# require "./models/stations.rb"
 require "./models/stations_practice.rb"
 require "byebug"
 require "./models/location_id_map.rb"
@@ -30,6 +29,13 @@ get '/where_weather' do
 		ea != station && !station.too_close?(ea) && station.matches?(ea)
 	end
 
+	def find_pretty_match_station(station_to_match)
+		LOCATIONS.find do |ea|
+			match = ea[:station] == station_to_match.id
+			match
+		end
+	end
+
 	if params.empty? # this doesn't currently help when you load page without a query attached in the address bar. guess you'll have to
 		# load it with an autoip query maybe? also _results_view has an if/else to handle matching_station being nil
 		erb :index, :layout => :layout, :locals => { :matching_station => nil,
@@ -42,7 +48,6 @@ get '/where_weather' do
 
 end
 
-# canon pixma pro-100
 # this populates the drop down with full location name using input from the user and matching with data from LOCATIONS
 get '/location_search' do
 
@@ -51,7 +56,7 @@ get '/location_search' do
 
   matches = LOCATIONS.select do |ea|
 		next if ea[:city].nil?
-		ea[:city].downcase.start_with?(query.downcase)
+		ea[:city].downcase.include?(query.downcase)
   end
 
   content = if matches.empty?
@@ -71,13 +76,22 @@ get '/location_search' do
 end
 
 # current issues:
+	# figure out what to do with data coming from LOCATIONS - like when [:region] is nil, or "-", and so on
+	# which methods that you have running in where_app could be put in stations_practice.rb, to tidy this file up?
+	# limit matches within a certain area (i.e., you don't want 5 from one state in the US)
+	# are you going to have to check every station id - location against wunderground's? use lat/long coords?
+	# be able to access drop down results with arrow keys and enter
 	# find nearby stations for locations that don't have a station id
 	# still have some of the locations displaying funky characters
+	# still have location names that are exactly the same, but with different ids, coming from LOCATIONS
 	# can't use enter to blur user input field
-	# change search from start_with? to include? - do i want this, actually? i think that gives too many unnecessary results
-	# make case-insensitive
-	# be able to load main page without a query attached
-	# 
+	# change search from start_with? to include? - possibly gives too many results. not so
+		# bad now that you've cleaned up LOCATIONS
+	# be able to load main page without a query attached???
+	# use lat/long to map locations on a globe graphic
+	# how to discover which stations are missing?
+	# compare station ids and reject the ones that match. couldn't find any non-matches
+	# csv = 4588
+	# json = 4624 (+36)
 # the data acquisition will happen independently of the web page
-# find matches for those conditions
 # list the matches, their conditions, and where they are in the world
