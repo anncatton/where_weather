@@ -39,10 +39,13 @@
 
 			<div id="matches">
 				<h3 class="section_header">Matches Around the World</h3>
-				<p><% matches.each do |ea| %>
-					<%= ea.city %>
-					<% end %>
-				</p>
+
+				<% matches.each do |ea| %>
+					<% pretty_match = find_pretty_match_station(ea) %>
+					<% next if pretty_match.nil? %>
+					<%= erb :_match_view, :locals => { :pretty_match => pretty_match } %>
+				<% end %>
+
 			</div>
 		</div>
 
