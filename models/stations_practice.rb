@@ -13,14 +13,6 @@ require "csv"
 # for where_app.rb, it's "./models/location_id_map.rb"
 # require "./location_id_map.rb"
 require "./models/edited_cities_map.rb"
-# require "cgi"
-
-# class Hash
-
-#    def to_query
-#        map{|k,v| [CGI.escape(k.to_s), "=", CGI.escape(v.to_s)]}.map(&:join).join("&")
-#    end
-# end
 
 class Station
 
