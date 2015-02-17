@@ -1,6 +1,14 @@
-<div class="condition clearfix">
-	<div class="condition-label"><%= heading %>:</div>
-	<div class="condition-value">
-		<%= matching_station[type] %>
+<% if matching_station.nil? %>
+	<div class="condition clearfix">
+		<div class="condition-label"><%= heading %>:</div>
+		<div class="condition-value"> N/A</div>
 	</div>
-</div>		
+<% else %>
+	<div class="condition clearfix">
+		<div class="condition-label"><%= heading %>:</div>
+		<div class="condition-value">
+			<%= matching_station[type] %>
+			<%= unit %>
+		</div>
+	</div>
+<% end %>
