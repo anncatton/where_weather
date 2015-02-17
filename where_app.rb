@@ -2,7 +2,8 @@ require "sinatra"
 require "json"
 require "./models/stations_practice.rb"
 require "byebug"
-require "./models/location_id_map.rb"
+# require "./models/location_id_map.rb"
+require "./models/edited_cities_map.rb"
 
 get '/where_weather' do
 
@@ -30,10 +31,12 @@ get '/where_weather' do
 	end
 
 	def find_pretty_match_station(station_to_match)
-		LOCATIONS.find do |ea|
+		match = LOCATIONS.find do |ea|
 			match = ea[:station] == station_to_match.id
 			match
 		end
+
+		match
 	end
 
 	if params.empty? # this doesn't currently help when you load page without a query attached in the address bar. guess you'll have to
@@ -75,23 +78,51 @@ get '/location_search' do
 
 end
 
+# heroku ps:scale web=1
+
 # current issues:
+	# will need to add other parameters for comparison - wind speed, gusts, maybe humidity, pressure, visibility
+	# i would like to have places with the same conditions but are either night or day show up as matches (which should be
+		# happening already because all observations should be in utc), but i would put a note on the match saying its at night or
+		# vice versa. i think it's interesting to have the same conditions but different times of day
+	# can't really edit data coming from api because you'll be over writing it daily. you can only control what data you're storing
+	# some sort of limit on matches from the same province/state. maybe even country if necessary.
+	# maybe get rid of region display because i'm not sure how useful it is and most of the data is a bit...ugly looking. or prob
+	# won't make sense to most users. although - at least with a lot of us/canada locations, there are lots of places with the same
+	# name in the same country, you'd need the state info to differentiate them. you may have to go through the data yourself and check
+	# for abbreviations that make sense. a lot of these countries i don't even understand how the provinces are organized
 	# figure out what to do with data coming from LOCATIONS - like when [:region] is nil, or "-", and so on
 	# which methods that you have running in where_app could be put in stations_practice.rb, to tidy this file up?
 	# limit matches within a certain area (i.e., you don't want 5 from one state in the US)
 	# are you going to have to check every station id - location against wunderground's? use lat/long coords?
+	# still have some of the locations displaying funky characters. i think the "|" removal helped with a lot of that.
+	# still have location names that are exactly the same, but with different ids, coming from LOCATIONS. you're going to have to 
+	# make some decisions about stations that are basically in the same city (like Dallas has 3 stations in the same general area).
+	# if you want to have minimal stations to start with, how do you decide which stations to use?
+	# the csv file has a lot of names in the native language. i'd like to start out with the english names, but i also think i'll have to have
+	# the native name for cities too if non-english speakers use this app
+	# can't use enter to blur user input field
 	# be able to access drop down results with arrow keys and enter
 	# find nearby stations for locations that don't have a station id
-	# still have some of the locations displaying funky characters
-	# still have location names that are exactly the same, but with different ids, coming from LOCATIONS
-	# can't use enter to blur user input field
 	# change search from start_with? to include? - possibly gives too many results. not so
 		# bad now that you've cleaned up LOCATIONS
 	# be able to load main page without a query attached???
 	# use lat/long to map locations on a globe graphic
 	# how to discover which stations are missing?
-	# compare station ids and reject the ones that match. couldn't find any non-matches
 	# csv = 4588
 	# json = 4624 (+36)
+	# matches are links to info about those places. will it be just wikipedia stuff, or a google search? a google search is kinda lame...cuz
+	# the user could type that in themselves if they wanted
 # the data acquisition will happen independently of the web page
-# list the matches, their conditions, and where they are in the world
+
+# play with tolerance between matches (result array)
+# if there are several matches within a certain radius (like, 500 km), return only 1 of them (most exact match), then chosen randomly after that, and also return matches that haven't been shown recently to increase variety
+# list of stations that are sensible sounding
+# show total number of matches so you have an idea how many you're getting (and how many is unwieldy)
+# i think you're eventually going to have to go through the whole csv file and make sure the data is accurate.
+# show actual conditions of "current location", and conditions of places being matched.
+# convert time into current time zone?? (well so far current time only shows up on station being matched) - that's just a matter of changing
+# utc into current timezone
+
+# for those countries that don't show up on aeris, you could have a method that accesses data from wunderground, cuz
+# they seem to have a lot more locations, using the pws's. just because these places are ones that a user has likely never heard of or doesn't know much about! those are the ones you want to make sure you're including. don't worry about this too much right now
