@@ -1,17 +1,26 @@
-require "active_support/core_ext/object/to_query.rb"
 require "json"
 require "open-uri"
 require "uri"
 require "byebug"
 require "haversine"
 require "fileutils"
+require "active_support/core_ext/object/to_query.rb"
 require "csv"
-require "./models/location_id_map.rb" # does the path for these local files seem strange because the path is not actually
+# require "./models/location_id_map.rb" # does the path for these local files seem strange because the path is not actually
 # relative from the file you're in, but relative to where ruby normally looks for required files and libraries?
 # seems to depend which part of the program is using the require:
 # for code run inside this file, it's "./location_id_map.rb"
 # for where_app.rb, it's "./models/location_id_map.rb"
 # require "./location_id_map.rb"
+require "./models/edited_cities_map.rb"
+# require "cgi"
+
+# class Hash
+
+#    def to_query
+#        map{|k,v| [CGI.escape(k.to_s), "=", CGI.escape(v.to_s)]}.map(&:join).join("&")
+#    end
+# end
 
 class Station
 
@@ -80,9 +89,6 @@ class Station
 
 	def valid?
 		!temp.nil? && !dewpoint.nil? && !humidity.nil? && !conditions.nil?
-		#!(temp.nil? || dewpoint.nil? || humidity.nil? || conditions.nil?) - this could be a less desirable approach because you have to 
-		# read right to the end of the expression to find out what it's saying, as opposed to the one above which is in discrete sections
-		# and is easier to read. this is important in logical statements cuz they can get confusing pretty fast
 	end
 
 	def matches_time?(other_station)
@@ -105,9 +111,9 @@ class Station
 
 	def too_close?(station)
 		distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
-		distance.to_km < 2000
+		distance.to_km < 2500
 	end
-# does self here have to an instance of Station, or can it just be the object the method is called on?
+
 	def print_matches_in(stations)
 		matching = stations.find_all do |ea|
 		 	ea != self && !self.too_close?(ea) && self.matches?(ea)
@@ -120,18 +126,6 @@ class Station
 			end
 		end
 
-		# unless result.empty?
-		#   place_names = result.map do |ea|
-		# 	  if !(ea.pretty_name.nil?) && !(ea.pretty_name['city'].nil?) && !(ea.pretty_name['country'].nil?)
-		# 	  	ea.pretty_name['city'] + ", " + ea.pretty_name['country']			  
-		# 	  else
-		# 	  	ea.name + " pretty name missing"
-		# 	  end
-		# 	end
-		# 	str = place_names.join("; ")
-		# 	puts "#{self} matches #{str}."
-		# 	puts
-		# end
 	end
 
 end
@@ -304,39 +298,34 @@ end
 
 # File.open("./valid_stations.rb", "w") { |file| file.write(valid_stations) }
 
-# how to discover which stations are missing?
-# compare station ids and reject the ones that match. couldn't find any non-matches
-# csv = 4588
-# json = 4624 (+36)
-
-# my_station_id = "OMAA"
-
 # matching_station = find_station(my_station_id)
 # new_station = Station.from_json(matching_station)
-station_hash = parse_json_file("./weather_data/all_stations.json") # hash of station hashes, main station keys (k) lowercase
+# station_hash = parse_json_file("./weather_data/all_stations.json") # hash of station hashes, main station keys (k) lowercase
 
 # # makes an array of Station instances
-stations_to_compare = station_hash.map do |k, v|
-	Station.from_json(v)
-end
-
-valid_stations = stations_to_compare.reject do |ea|
-	ea.not_valid?
-end
-
-# matches = valid_stations.select do |ea|
-# 	new_station.matches?(ea)
+# stations_to_compare = station_hash.map do |k, v|
+# 	Station.from_json(v)
 # end
 
-# matching = stations.find_all do |ea|
-#  	ea != self && !self.too_close?(ea) && self.matches?(ea)
+# valid_stations = stations_to_compare.reject do |ea|
+# 	ea.not_valid?
 # end
 
-# matches = valid_stations.select do |ea|
-# 	ea != new_station && !new_station.too_close?(ea) && new_station.matches?(ea)
+# right now this returns an array of the cities with the corrected names. also, it puts nil in for the cities that don't contain a "|"
+# edited_locations = LOCATIONS.each do |ea|
+# 	if ea[:city].include? "|"
+# 		new_city = ea[:city].gsub!(/\|.*/, "")
+# 		ea[:city] = new_city
+# 	else
+# 		ea[:city]
+# 	end
+
 # end
 
-# matches.each do |ea|
-# 	puts ea.city
-# end
+# CXRB - Resolute, NU
+# CYWE - Wekweeti, NT
+# ESGR - Skovde Flygplats, SE
+# ESIB - Satenas, SE
+# UBBQ - Evlakh, AZ
 
+# File.open("./edited_cities_map.rb", "w") { |file| file.write(edited_locations) }
