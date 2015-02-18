@@ -6,13 +6,14 @@ require "haversine"
 require "fileutils"
 require "active_support/core_ext/object/to_query.rb"
 require "csv"
+# require "edited_cities_map.rb"
 # require "./models/location_id_map.rb" # does the path for these local files seem strange because the path is not actually
 # relative from the file you're in, but relative to where ruby normally looks for required files and libraries?
 # seems to depend which part of the program is using the require:
 # for code run inside this file, it's "./location_id_map.rb"
 # for where_app.rb, it's "./models/location_id_map.rb"
 # require "./location_id_map.rb"
-require "./edited_cities_map.rb"
+# require "./models/edited_cities_map.rb" # for running locally
 
 class Station
 

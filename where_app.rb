@@ -3,7 +3,7 @@ require "json"
 require "./models/stations_practice.rb"
 require "byebug"
 # require "./models/location_id_map.rb"
-require "edited_cities_map.rb"
+# require "./models/edited_cities_map.rb"
 
 get '/where_weather' do
 
@@ -77,8 +77,6 @@ get '/location_search' do
   { :html => content, :first_match => first_city }.to_json
 
 end
-
-# heroku ps:scale web=1
 
 # current issues:
 	# will need to add other parameters for comparison - wind speed, gusts, maybe humidity, pressure, visibility
