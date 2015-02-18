@@ -13,7 +13,7 @@ require "csv"
 # for code run inside this file, it's "./location_id_map.rb"
 # for where_app.rb, it's "./models/location_id_map.rb"
 # require "./location_id_map.rb"
-# require "./models/edited_cities_map.rb" # for running locally
+require "./models/edited_cities_map.rb" # for running on local server
 
 class Station
 

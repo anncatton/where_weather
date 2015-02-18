@@ -3,7 +3,7 @@ require "json"
 require "./models/stations_practice.rb"
 require "byebug"
 # require "./models/location_id_map.rb"
-# require "./models/edited_cities_map.rb"
+require "./models/edited_cities_map.rb"
 
 get '/where_weather' do
 
