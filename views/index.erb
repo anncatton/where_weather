@@ -15,7 +15,13 @@
 
 		<div id="results">
 			<div id="current_conditions">
-			<h3 class="section_header"><%= locations_match[:city] %>, <%= locations_match[:region] %>, <%= locations_match[:country] %></h3>
+			<h3 class="section_header">
+				<% if locations_match[:country] == "Canada" || locations_match[:country] == "United States" %>
+					<%= locations_match[:city] %>, <%= locations_match[:region] %>, <%= locations_match[:country] %>
+				<% else %>
+					<%= locations_match[:city] %>, <%= locations_match[:country] %>
+				<% end %>
+			</h3>
 				<%= erb :_results_view, :locals => {:heading => "Conditions",
 																						:matching_station => matching_station,
 						 																:type => "conditions",

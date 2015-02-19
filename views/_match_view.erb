@@ -1,3 +1,9 @@
 <div class="clearfix">
-	<div class="match_view"><%= pretty_match[:city] %>, <%= pretty_match[:region] %>, <%= pretty_match[:country] %></div>
+	<div class="match_view">
+		<% if pretty_match[:country] == "Canada" || pretty_match[:country] == "United States" %>
+			<%= pretty_match[:city] %>, <%= pretty_match[:region] %>, <%= pretty_match[:country] %>
+		<% else %>
+			<%= pretty_match[:city] %>, <%= pretty_match[:country] %>
+		<% end %>
+	</div>
 </div>
