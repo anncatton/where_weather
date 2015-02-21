@@ -96,7 +96,7 @@ it's possible
 
 file request for specific region:
 http://api.aerisapi.com/observations/search?query=state:nu&limit=100&client_id=yotRMCnX8QTlcpwPx71pg&client_secret=H2Nx8mcIPgZtCBLCV2KRPnh4T6n8LiIXejDMGgQx
-
+	<%= params[:query] %>
 also, what will you do about day vs night? anything? i think all i'd really worry about is the conditions comparison - i don't know if a nighttime "clear skies" would be different than a daytime "sunny". how does aeris handle that? do they just say "clear skies" day or night or what? because
 i'm not concerned about the day vs night tbh, it's still cool to think that our 25 degrees and humid here during the day could be the same as a hot night somewhere in the tropics!
 i think you could try having "clear" and "sunny" just match, but maybe specify in the matches that that city is in night/day. your time matches will all be based on utc. maybe you won't have to twiddle with time zones at all, except in the display part.
@@ -116,4 +116,11 @@ ideas for the future:
  	- show differences between locations that are geographically quite close
  	- compare with locations on same latitude
   - gotta show you where this place is on the globe
+
+
+so now what you want is access to an array of all the locations available to be looked up. one thing you will have to consider is all those
+towns that don't have an observing station and so will be based on nearby stations (i.e. loon lake). these are places you probably could look up on weather underground (for example) but you'd be seeing results from a nearby station
+you're going to want to use something like the haversine formula to find the closest valid station
+
+				<h3 class="section_header">Current Conditions for <%= station.city %>, <%= station.region %>, <%= station.country %></h3>
 
