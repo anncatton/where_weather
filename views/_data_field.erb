@@ -1,11 +1,11 @@
 <% matches.each do |ea| %>
 	<% if ea[:country] == "Canada" || ea[:country] == "United States" %>
 		<li class="result">
-			<a href="http://localhost:9393/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:region] %>, <%= ea[:country] %></a>
+			<a href="/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:region] %>, <%= ea[:country] %></a>
 		</li>
 	<% else %>
 		<li class="result">
-			<a href="http://localhost:9393/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:country] %></a>
+			<a href="/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:country] %></a>
 		</li>
 	<% end %>
 <% end %>
