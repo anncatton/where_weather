@@ -5,6 +5,10 @@ require "byebug"
 # require "./models/location_id_map.rb"
 require "./models/edited_cities_map.rb"
 
+get '/' do
+	redirect to('/where_weather')
+end
+
 get '/where_weather' do
 
 	# hash of station hashes, main station keys (k) lowercase
@@ -19,31 +23,33 @@ get '/where_weather' do
 		ea.not_valid?
 	end
 
-	station_id = params[:id]
-	matching_station = find_station(station_id)
-	locations_match = LOCATIONS.find do |ea|
-		ea[:station].downcase == station_id.downcase		
-	end
-	
-	station = Station.from_json(matching_station)
-	matches = valid_stations.select do |ea|
-		ea != station && !station.too_close?(ea) && station.matches?(ea)
-	end
-
-	def find_pretty_match_station(station_to_match)
-		match = LOCATIONS.find do |ea|
-			match = ea[:station] == station_to_match.id
-			match
-		end
-
-		match
-	end
 
 	if params.empty? # this doesn't currently help when you load page without a query attached in the address bar. guess you'll have to
 		# load it with an autoip query maybe? also _results_view has an if/else to handle matching_station being nil
 		erb :index, :layout => :layout, :locals => { :matching_station => nil,
 																								:locations_match => nil }
 	else
+
+			station_id = params[:id]
+			matching_station = find_station(station_id)
+			locations_match = LOCATIONS.find do |ea|
+				ea[:station].downcase == station_id.downcase		
+			end
+			
+			station = Station.from_json(matching_station)
+			matches = valid_stations.select do |ea|
+				ea != station && !station.too_close?(ea) && station.matches?(ea)
+			end
+
+			def find_pretty_match_station(station_to_match)
+				match = LOCATIONS.find do |ea|
+					match = ea[:station] == station_to_match.id
+					match
+				end
+
+				match
+			end
+
 		erb :index, :layout => :layout, :locals => { :matching_station => matching_station,
 																								:locations_match => locations_match,
 																								:matches => matches }
