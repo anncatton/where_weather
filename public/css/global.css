@@ -45,6 +45,7 @@ li {
 input {
 	font-family: Arial, sans-serif;
 }
+
 #location_input {
 	width: 500px;
 	font-size: 42px;
@@ -84,7 +85,9 @@ input:focus {
 	padding-bottom: 10px;
 }
 
-.match_view {
+.match_view,
+.condition-label,
+.condition-value {
 	padding-bottom: 10px;
 }
 
@@ -102,7 +105,6 @@ input:focus {
 .condition-value {
 	float: left;
 	position: relative;
-	padding-bottom: 5px;
 }
 
 .condition-label {
