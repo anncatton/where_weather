@@ -18,8 +18,9 @@ require "./models/edited_cities_map.rb" # for running on local server
 
 class Station
 
-	attr_reader :id, :city, :region, :country, :latitude, :longitude, :time, :temp, :dewpoint, :humidity, :conditions, :weatherPrimaryCoded, :cloudsCoded
-	def initialize(id, city, region, country, latitude, longitude, time, temp, dewpoint, humidity, conditions, weatherPrimaryCoded, cloudsCoded)
+	attr_reader :id, :city, :region, :country, :latitude, :longitude, :time, :temp, :dewpoint, :humidity, :conditions, :weather_primary_coded, :clouds_coded, :is_day, :wind_kph, :wind_direction
+
+	def initialize(id, city, region, country, latitude, longitude, time, temp, dewpoint, humidity, conditions, weather_primary_coded, clouds_coded, is_day, wind_kph, wind_direction)
 		@id = id
 		@city = city
 		@region = region
@@ -31,8 +32,11 @@ class Station
 		@dewpoint = dewpoint
 		@humidity = humidity
 		@conditions = conditions
-		@weatherPrimaryCoded = weatherPrimaryCoded
-		@cloudsCoded = cloudsCoded
+		@weather_primary_coded = weather_primary_coded
+		@clouds_coded = clouds_coded
+		@is_day = is_day
+		@wind_kph = wind_kph
+		@wind_direction = wind_direction
 	end
 
 	def self.from_hash(hash)
@@ -50,7 +54,10 @@ class Station
 			observations['humidity'], 
 			observations['weatherShort'],
 			observations['weatherPrimaryCoded'],
-			observations['cloudsCoded']
+			observations['cloudsCoded'],
+			observations['isDay'],
+			observations['windKPH'],
+			observations['windDir']
 			)
 	end
 
@@ -67,8 +74,11 @@ class Station
 			hash["dewpoint"],
 			hash["humidity"],
 			hash["conditions"],
-			hash['weatherPrimaryCoded'],
-			hash['cloudsCoded']
+			hash['weather_primary_coded'],
+			hash['clouds_coded'],
+			hash['is_day'],
+			hash['wind_kph'],
+			hash['wind_direction']
 			)
 	end
 
@@ -86,7 +96,7 @@ class Station
 
 # for comparing conditions with coded weather, so that you get matches from day or night
 	def not_valid?
-		temp.nil? || dewpoint.nil? || humidity.nil? || weatherPrimaryCoded.nil? || conditions.nil?
+		temp.nil? || dewpoint.nil? || humidity.nil? || weather_primary_coded.nil? || conditions.nil?
 	end
 
 # for comparing conditions with conditions string, so only day == day, and night == night
@@ -111,38 +121,48 @@ class Station
 		other_station.humidity <= (self.humidity + 10) && other_station.humidity >= (self.humidity - 10)
 	end
 
-	def matches?(other_station)
-		other_station.weatherPrimaryCoded == self.weatherPrimaryCoded && 
-			matches_temp?(other_station) &&
-			matches_dewpoint?(other_station) &&
-			matches_humidity?(other_station)
+	def matches_windspeed?(other_station)
+		other_station.wind_kph <= (self.wind_kph + 5) && other_station.wind_kph >= (self.wind_kph - 5)
 	end
 
-# doesn't use humidity, and conditions string instead of weatherCode
+# uses weather code to compare sky conditions
+	def matches?(other_station)
+		other_station.weather_primary_coded == self.weather_primary_coded && 
+			matches_temp?(other_station) &&
+			matches_dewpoint?(other_station) &&
+			matches_humidity?(other_station) &&
+			unless other_station.wind_kph.nil? || self.wind_kph.nil?
+				matches_windspeed?(other_station)
+			end
+	end
+
+# conditions string instead of weatherCode, no windspeed
 	# def matches?(other_station)
 	# 	other_station.conditions == self.conditions && 
 	# 		matches_temp?(other_station) &&
-	# 		matches_dewpoint?(other_station)
+	# 		matches_dewpoint?(other_station) &&
+	# 		matches_humidity?(other_station)
 	# end
 
 	def too_close?(station)
 		distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
-		distance.to_km < 2500
+		distance.to_km < 2000
 	end
 
-	def print_matches_in(stations)
-		matching = stations.find_all do |ea|
-		 	ea != self && !self.too_close?(ea) && self.matches?(ea)
-		end
+# was being
+	# def print_matches_in(stations)
+	# 	matching = stations.find_all do |ea|
+	# 	 	ea != self && !self.too_close?(ea) && self.matches?(ea)
+	# 	end
 
-		result = []
-		matching.each do |ea|
-			unless result.any? { |station| station.too_close?(ea) }
-				result << ea
-			end
-		end
+	# 	result = []
+	# 	matching.each do |ea|
+	# 		unless result.any? { |station| station.too_close?(ea) }
+	# 			result << ea
+	# 		end
+	# 	end
 
-	end
+	# end
 
 end
 
@@ -253,8 +273,11 @@ def extract_station_data(raw_data)
 		station[:dewpoint] = new_station.dewpoint
 		station[:humidity] = new_station.humidity
 		station[:conditions] = new_station.conditions
-		station[:weatherPrimaryCoded] = new_station.weatherPrimaryCoded
-		station[:cloudsCoded] = new_station.cloudsCoded
+		station[:weather_primary_coded] = new_station.weather_primary_coded
+		station[:clouds_coded] = new_station.clouds_coded
+		station[:is_day] = new_station.is_day
+		station[:wind_kph] = new_station.wind_kph
+		station[:wind_direction] = new_station.wind_direction
 
 		all_stations[new_station.id] = station
 	end
