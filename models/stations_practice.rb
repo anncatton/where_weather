@@ -6,7 +6,7 @@ require "haversine"
 require "fileutils"
 require "active_support/core_ext/object/to_query.rb"
 require "csv"
-require "time"
+# require "time"
 
 # require "./edited_cities_map.rb"
 # does the path for these local files seem strange because the path is not actually
@@ -18,8 +18,8 @@ require "./models/edited_cities_map.rb" # for running on local server
 
 class Station
 
-	attr_reader :id, :city, :region, :country, :latitude, :longitude, :time, :temp, :dewpoint, :humidity, :conditions
-	def initialize(id, city, region, country, latitude, longitude, time, temp, dewpoint, humidity, conditions)
+	attr_reader :id, :city, :region, :country, :latitude, :longitude, :time, :temp, :dewpoint, :humidity, :conditions, :weatherPrimaryCoded, :cloudsCoded
+	def initialize(id, city, region, country, latitude, longitude, time, temp, dewpoint, humidity, conditions, weatherPrimaryCoded, cloudsCoded)
 		@id = id
 		@city = city
 		@region = region
@@ -31,6 +31,8 @@ class Station
 		@dewpoint = dewpoint
 		@humidity = humidity
 		@conditions = conditions
+		@weatherPrimaryCoded = weatherPrimaryCoded
+		@cloudsCoded = cloudsCoded
 	end
 
 	def self.from_hash(hash)
@@ -46,7 +48,9 @@ class Station
 			observations['tempC'], 
 			observations['dewpointC'], 
 			observations['humidity'], 
-			observations['weatherShort']
+			observations['weatherShort'],
+			observations['weatherPrimaryCoded'],
+			observations['cloudsCoded']
 			)
 	end
 
@@ -62,7 +66,9 @@ class Station
 			hash["temp"],
 			hash["dewpoint"],
 			hash["humidity"],
-			hash["conditions"]
+			hash["conditions"],
+			hash['weatherPrimaryCoded'],
+			hash['cloudsCoded']
 			)
 	end
 
@@ -78,16 +84,17 @@ class Station
 
 	end
 
+# for comparing conditions with coded weather, so that you get matches from day or night
 	def not_valid?
-		temp.nil? || dewpoint.nil? || humidity.nil? || conditions.nil?
+		temp.nil? || dewpoint.nil? || humidity.nil? || weatherPrimaryCoded.nil? || conditions.nil?
 	end
 
-	def valid?
-		!temp.nil? && !dewpoint.nil? && !humidity.nil? && !conditions.nil?
-	end
+# for comparing conditions with conditions string, so only day == day, and night == night
+	# def not_valid?
+	# 	temp.nil? || dewpoint.nil? || humidity.nil? || conditions.nil?
+	# end
 
-# this is not currently being used. and i don't think it will work as is cuz it looks like the times in all_stations are not all
-# in utc. can you use the timestamp instead?
+# this is not currently being used. time from api is local, with difference from GMT shown as +/-
 	def matches_time?(other_station)
 		other_station.time <= (self.time + 1) && other_station.time >= (self.time - 1)
 	end
@@ -100,11 +107,23 @@ class Station
 		other_station.dewpoint <= (self.dewpoint + 1) && other_station.dewpoint >= (self.dewpoint - 1)
 	end
 
-	def matches?(other_station)
-		other_station.conditions == self.conditions && 
-			matches_temp?(other_station) &&
-			matches_dewpoint?(other_station)
+	def matches_humidity?(other_station)
+		other_station.humidity <= (self.humidity + 10) && other_station.humidity >= (self.humidity - 10)
 	end
+
+	def matches?(other_station)
+		other_station.weatherPrimaryCoded == self.weatherPrimaryCoded && 
+			matches_temp?(other_station) &&
+			matches_dewpoint?(other_station) &&
+			matches_humidity?(other_station)
+	end
+
+# doesn't use humidity, and conditions string instead of weatherCode
+	# def matches?(other_station)
+	# 	other_station.conditions == self.conditions && 
+	# 		matches_temp?(other_station) &&
+	# 		matches_dewpoint?(other_station)
+	# end
 
 	def too_close?(station)
 		distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
@@ -234,6 +253,8 @@ def extract_station_data(raw_data)
 		station[:dewpoint] = new_station.dewpoint
 		station[:humidity] = new_station.humidity
 		station[:conditions] = new_station.conditions
+		station[:weatherPrimaryCoded] = new_station.weatherPrimaryCoded
+		station[:cloudsCoded] = new_station.cloudsCoded
 
 		all_stations[new_station.id] = station
 	end
