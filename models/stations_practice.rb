@@ -6,19 +6,19 @@ require "haversine"
 require "fileutils"
 require "active_support/core_ext/object/to_query.rb"
 require "csv"
-# require "edited_cities_map.rb"
-# require "./models/location_id_map.rb" # does the path for these local files seem strange because the path is not actually
+require "time"
+
+# require "./edited_cities_map.rb"
+# does the path for these local files seem strange because the path is not actually
 # relative from the file you're in, but relative to where ruby normally looks for required files and libraries?
 # seems to depend which part of the program is using the require:
-# for code run inside this file, it's "./location_id_map.rb"
-# for where_app.rb, it's "./models/location_id_map.rb"
-# require "./location_id_map.rb"
+# for code run inside this file, it's "./edited_cities_map.rb"
+# for where_app.rb, it's "./models/edited_cities_map.rb"
 require "./models/edited_cities_map.rb" # for running on local server
 
 class Station
 
 	attr_reader :id, :city, :region, :country, :latitude, :longitude, :time, :temp, :dewpoint, :humidity, :conditions
-
 	def initialize(id, city, region, country, latitude, longitude, time, temp, dewpoint, humidity, conditions)
 		@id = id
 		@city = city
@@ -46,7 +46,7 @@ class Station
 			observations['tempC'], 
 			observations['dewpointC'], 
 			observations['humidity'], 
-			observations['weatherShort'] 
+			observations['weatherShort']
 			)
 	end
 
@@ -66,6 +66,8 @@ class Station
 			)
 	end
 
+# doesn't look like this one is being called in where_app anymore? however self.from_hash is still used in the data gathering from
+# the api
 	def self.find(station_id)
 	# finds the [:station] inside LOCATIONS that matches station_id (which is coming from params[:id])
 		match = LOCATIONS.find do |ea|
@@ -84,6 +86,8 @@ class Station
 		!temp.nil? && !dewpoint.nil? && !humidity.nil? && !conditions.nil?
 	end
 
+# this is not currently being used. and i don't think it will work as is cuz it looks like the times in all_stations are not all
+# in utc. can you use the timestamp instead?
 	def matches_time?(other_station)
 		other_station.time <= (self.time + 1) && other_station.time >= (self.time - 1)
 	end
@@ -265,6 +269,9 @@ def parse_json_file(filename)
 
 end
 
+# station_hash = parse_json_file("../weather_data/all_stations.json")
+# File.open("../weather_data/parsed_station_file.rb", "w") { |f| f.write(station_hash) }
+
 # this matches a station id with a station id in the json conditions file. specific to all_stations
 def find_station(station_id)
 	station_hash = parse_json_file("./weather_data/all_stations.json")
@@ -279,8 +286,8 @@ end
 # this removed non-relevant stations from location_id_map
 # parsed_all_stations = parse_json_file("../weather_data/all_stations.json")
 
-# all_stations_ids = parsed_all_stations.map do |k, v|
-# 	v["id"]
+# all_station_times = parsed_all_stations.map do |k, v|
+# 	v["time"]
 # end
 
 # valid_stations = LOCATIONS.select do |ea|
@@ -304,7 +311,6 @@ end
 # 	ea.not_valid?
 # end
 
-# right now this returns an array of the cities with the corrected names. also, it puts nil in for the cities that don't contain a "|"
 # edited_locations = LOCATIONS.each do |ea|
 # 	if ea[:city].include? "|"
 # 		new_city = ea[:city].gsub!(/\|.*/, "")
@@ -315,10 +321,29 @@ end
 
 # end
 
-# CXRB - Resolute, NU
-# CYWE - Wekweeti, NT
-# ESGR - Skovde Flygplats, SE
-# ESIB - Satenas, SE
-# UBBQ - Evlakh, AZ
 
 # File.open("./edited_cities_map.rb", "w") { |file| file.write(edited_locations) }
+
+# ob.dateTimeISO	(string) ISO 8601 date of the observation.
+# irb(main):001:0> Time.parse("2015-02-22T19:00:00-03:00")
+# NoMethodError: undefined method `parse' for Time:Class
+# 	from (irb):1
+# 	from /Users/anncatton/.rbenv/versions/2.1.3/bin/irb:11:in `<main>'
+# irb(main):002:0> require 'time'
+# => true
+# irb(main):003:0> Time.parse("2015-02-22T19:00:00-03:00")
+# => 2015-02-22 17:00:00 -0500
+# irb(main):004:0> Time.parse("2015-02-22T19:00:00-03:00").utc
+# => 2015-02-22 22:00:00 UTC
+# irb(main):005:0> Time.parse("2015-02-22T19:00:00-03:00").class
+# => Time
+# irb(main):006:0> Time.parse("2015-02-22T19:00:00-03:00").utc
+# => 2015-02-22 22:00:00 UTC
+# irb(main):007:0> time = Time.parse("2015-02-22T19:00:00-03:00")
+# => 2015-02-22 17:00:00 -0500
+# irb(main):008:0> time2 = Time.parse("2015-02-22T19:32:00-03:00")
+# => 2015-02-22 17:32:00 -0500
+# irb(main):009:0> time - time2
+# => -1920.0 # this is in seconds
+# irb(main):011:0> (time - time2) / 60 # this converts the seconds figure above to minutes
+# => -32.0
