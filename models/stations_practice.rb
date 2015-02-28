@@ -149,21 +149,6 @@ class Station
 		distance.to_km < 2000
 	end
 
-# was being
-	# def print_matches_in(stations)
-	# 	matching = stations.find_all do |ea|
-	# 	 	ea != self && !self.too_close?(ea) && self.matches?(ea)
-	# 	end
-
-	# 	result = []
-	# 	matching.each do |ea|
-	# 		unless result.any? { |station| station.too_close?(ea) }
-	# 			result << ea
-	# 		end
-	# 	end
-
-	# end
-
 end
 
 # this section is for building requests to the api
