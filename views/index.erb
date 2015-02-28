@@ -42,6 +42,10 @@
 																						:matching_station => matching_station,
 																						:type => "dewpoint",
 																						:unit => "C" } %>
+				<%= erb :_results_view, :locals => {:heading => "Wind",
+																						:matching_station => matching_station,
+																						:type => "wind_kph",
+																						:unit => "km/h from #{matching_station['wind_direction']}" } %>
 				<div class="condition clearfix">
 					<div class="condition-label">Observed at:</div>
 					<div class="condition-value"><%= Time.parse(matching_station["time"]).httpdate %></div>
