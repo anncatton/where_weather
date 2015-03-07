@@ -31,21 +31,26 @@ $(document).ready(function() {
  //    }
 	// }
 
-
 	var timeout;
  	$(".location_input").keyup(function(event) {
 
  		var $target = $(event.target);
 
  		if (event.keyCode == '40') {
-
  			var $targetParent = $target.closest(".location_menu");
  			var currentlySelectedListItem = $targetParent.find(".result.selected");
  			var listItemToSelect = currentlySelectedListItem.next('.result');
 
- 			$(currentlySelectedListItem).removeClass("selected");
- 			$(listItemToSelect).addClass("selected");
- 			
+ 			if ($(listItemToSelect).index() == -1 ) {
+ 				listItemToSelect = $targetParent.find(".result").first();
+ 				$(currentlySelectedListItem).removeClass("selected");
+ 				$(listItemToSelect).addClass("selected");
+ 			}
+ 			else {
+ 				$(currentlySelectedListItem).removeClass("selected");
+ 				$(listItemToSelect).addClass("selected");
+ 			}
+
  		} else {
 
 	 		var handleKeyup = function() {
