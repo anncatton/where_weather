@@ -4,7 +4,7 @@
 			<a href="/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:region] %>, <%= ea[:country] %></a>
 		</li>
 	<% else %>
-		<li class="result">
+		<li class="result <%= i==0 ? 'selected' : '' %>"">
 			<a href="/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:country] %></a>
 		</li>
 	<% end %>
