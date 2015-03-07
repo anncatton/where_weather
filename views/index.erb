@@ -7,9 +7,9 @@
 
 	<body>
 		<h2 id="header">Weather for <%= Time.now %></h2>
-		<div id="location_menu">
-			<input type="text" id="location_input" value="Start typing your location">
-			<ul id="search_results">
+		<div class="location_menu">
+			<input type="text" class="location_input" value="Start typing your location">
+			<ul class="search_results">
 			</ul>
 		</div>
 
@@ -58,7 +58,8 @@
 				<% matches.each do |ea| %>
 					<% pretty_match = find_pretty_match_station(ea) %>
 					<% next if pretty_match.nil? %>
-					<%= erb :_match_view, :locals => { :pretty_match => pretty_match } %>
+					<%= erb :_match_view, :locals => { :pretty_match => pretty_match,
+																						:matches => matches } %>
 				<% end %>
 
 			</div>
