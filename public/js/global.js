@@ -21,38 +21,45 @@ $(document).ready(function() {
 		});
 	};
 
-	// function checkKey(event) {
-
- //    // if (event.keyCode == '38') {
- //    //     // up arrow
- //    // }
- //    if (event.keyCode == '40') {
- 						// down arrow
- //    }
-	// }
-
 	var timeout;
  	$(".location_input").keyup(function(event) {
 
  		var $target = $(event.target);
+ 		var $targetParent = $target.closest(".location_menu");
 
  		if (event.keyCode == '40') {
- 			var $targetParent = $target.closest(".location_menu");
  			var currentlySelectedListItem = $targetParent.find(".result.selected");
  			var listItemToSelect = currentlySelectedListItem.next('.result');
 
- 			if ($(listItemToSelect).index() == -1 ) {
+// checks if selection is on last item in list
+ 			if ($(listItemToSelect).index() == -1) {
  				listItemToSelect = $targetParent.find(".result").first();
  				$(currentlySelectedListItem).removeClass("selected");
  				$(listItemToSelect).addClass("selected");
  			}
+// for every other position on the list
  			else {
  				$(currentlySelectedListItem).removeClass("selected");
  				$(listItemToSelect).addClass("selected");
  			}
 
- 		} else {
+// for up arrow navigation
+ 		} else if (event.keyCode == '38') {
 
+	 			var currentlySelectedListItem = $targetParent.find(".result.selected");
+	 			var listItemToSelect = currentlySelectedListItem.prev('.result');
+
+	 			if ($(currentlySelectedListItem).index() == 0) {
+	 				$(currentlySelectedListItem).removeClass("selected");
+	 				listItemToSelect = $targetParent.find(".result").last();
+	 				$(listItemToSelect).addClass("selected");
+	 			} else {
+	 				$(currentlySelectedListItem).removeClass("selected");
+	 				$(listItemToSelect).addClass("selected");
+	 			}
+	 		} else {
+
+// for all other keys
 	 		var handleKeyup = function() {
 	 			var query = $target.val();
 	 			if (query.length >= 3) {
@@ -64,11 +71,5 @@ $(document).ready(function() {
 	 	}
     
  	});
-
-// need to put in a function for using arrow and enter keys to select from dropdown list
-// check to see if down arrow key has been pressed - which number is down arrow?
-// if no list item is selected, select the first one
-// if the first one is selected, select the next one
-// when an item is selected, you add a "selected" class to that list item
 
 });
