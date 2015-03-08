@@ -2,6 +2,11 @@ $(document).ready(function() {
 
 	$(".location_input").on("select focus", function(event) {
 		 if (this.value=="Start typing your location") this.value="";
+		 dropMenu();
+	});
+
+	$(".location_input").blur(function(event) {
+		raiseMenu();
 	});
 
 	function dropMenu() {
@@ -27,7 +32,7 @@ $(document).ready(function() {
  		var $target = $(event.target);
  		var $targetParent = $target.closest(".location_menu");
 
- 		if (event.keyCode == '40') {
+ 		if (event.keyCode == 40) {
  			var currentlySelectedListItem = $targetParent.find(".result.selected");
  			var listItemToSelect = currentlySelectedListItem.next('.result');
 
@@ -43,8 +48,8 @@ $(document).ready(function() {
  				$(listItemToSelect).addClass("selected");
  			}
 
-// for up arrow navigation
- 		} else if (event.keyCode == '38') {
+// for up arrow navigation. when you use up arrow it also sends the input cursor back to the beginning
+ 		} else if (event.keyCode == 38) {
 
 	 			var currentlySelectedListItem = $targetParent.find(".result.selected");
 	 			var listItemToSelect = currentlySelectedListItem.prev('.result');
