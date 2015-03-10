@@ -5,10 +5,6 @@ $(document).ready(function() {
 		 dropMenu();
 	});
 
-	$(".location_input").blur(function(event) {
-		raiseMenu();
-	});
-
 	function dropMenu() {
 		$(".search_results").show();
 	};
@@ -32,6 +28,7 @@ $(document).ready(function() {
  		var $target = $(event.target);
  		var $targetParent = $target.closest(".location_menu");
 
+// for down arrow
  		if (event.keyCode == 40) {
  			var currentlySelectedListItem = $targetParent.find(".result.selected");
  			var listItemToSelect = currentlySelectedListItem.next('.result');
@@ -51,18 +48,22 @@ $(document).ready(function() {
 // for up arrow navigation. when you use up arrow it also sends the input cursor back to the beginning
  		} else if (event.keyCode == 38) {
 
-	 			var currentlySelectedListItem = $targetParent.find(".result.selected");
-	 			var listItemToSelect = currentlySelectedListItem.prev('.result');
+ 			var currentlySelectedListItem = $targetParent.find(".result.selected");
+ 			var listItemToSelect = currentlySelectedListItem.prev('.result');
 
-	 			if ($(currentlySelectedListItem).index() == 0) {
-	 				$(currentlySelectedListItem).removeClass("selected");
-	 				listItemToSelect = $targetParent.find(".result").last();
-	 				$(listItemToSelect).addClass("selected");
-	 			} else {
-	 				$(currentlySelectedListItem).removeClass("selected");
-	 				$(listItemToSelect).addClass("selected");
-	 			}
-	 		} else {
+ 			if ($(currentlySelectedListItem).index() == 0) {
+ 				$(currentlySelectedListItem).removeClass("selected");
+ 				listItemToSelect = $targetParent.find(".result").last();
+ 				$(listItemToSelect).addClass("selected");
+ 			} else {
+ 				$(currentlySelectedListItem).removeClass("selected");
+ 				$(listItemToSelect).addClass("selected");
+ 			}
+
+ 		} else if (event.keyCode == 13) {
+ 			var currentlySelectedLink = $targetParent.find(".result.selected a");
+ 			$(currentlySelectedLink)[0].click();
+ 		} else {
 
 // for all other keys
 	 		var handleKeyup = function() {
@@ -77,4 +78,12 @@ $(document).ready(function() {
     
  	});
 
+// raises menu before you can click link. will this matter once you have selection without cursor?
+	// $(".location_input").blur(function(event) {
+	// 	raiseMenu();
+	// });
+
 });
+
+// now you want to be able to use the arrow keys to select the link on the list - using enter key
+// also want the links to just look better
