@@ -62,7 +62,7 @@ $(document).ready(function() {
 
  		} else if (event.keyCode == 13) {
  			var currentlySelectedLink = $targetParent.find(".result.selected a");
- 			$(currentlySelectedLink)[0].click();
+ 			window.location = currentlySelectedLink.attr("href");
  		} else {
 
 // for all other keys
