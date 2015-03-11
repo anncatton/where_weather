@@ -1,10 +1,10 @@
 <% matches.each_with_index do |ea, i| %>
 	<% if ea[:country] == "Canada" || ea[:country] == "United States" %>
-		<li class="result <%= i==0 ? 'selected' : '' %>">
+		<li class="drop-down-item <%= i==0 ? 'selected' : '' %>">
 			<a href="/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:region] %>, <%= ea[:country] %></a>
 		</li>
 	<% else %>
-		<li class="result <%= i==0 ? 'selected' : '' %>"">
+		<li class="drop-down-item <%= i==0 ? 'selected' : '' %>"">
 			<a href="/where_weather?id=<%= ea[:station] %>"><%= ea[:city] %>, <%= ea[:country] %></a>
 		</li>
 	<% end %>
