@@ -3,21 +3,6 @@ body {
 	color: gray;
 }
 
-ul {
-	-webkit-padding-start: 0px;
-}
-
-li {
-	list-style-type: none;
-	padding-bottom: 5px;
-	padding-top: 5px;
-	padding-left: 10px;
-	border-bottom: 1px dotted #777;
-	border-left: 1px dotted #777;
-	border-right: 1px dotted #777;
-	
-}
-
 .section_header {
 	color: #4DBFBF;
 }
@@ -25,7 +10,7 @@ li {
 #results {
 	float: right;
 	margin-right: 80px;
-	margin-top: 10px;
+	margin-top: 70px;
 }
 
 #current_conditions, #matches {
@@ -73,10 +58,13 @@ input:focus {
 	outline-color: #80cccc;
 }
 
-#header {
+.header {
 	background-color: #80cccc;
 	font-size: 20px;
 	color: #E7F9F9;
+	position: fixed;
+	width: 100%;
+	z-index: 1;
 	margin-top: -10px;
 	margin-right: -10px;
 	margin-left: -10px;
@@ -120,6 +108,25 @@ input:focus {
 .match-value {
 	display: inline;
 	text-align: right;
+}
+
+ul {
+	-webkit-padding-start: 0px;
+}
+
+li {
+	list-style-type: none;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	padding-left: 10px;
+}
+
+a {
+	text-decoration: none;
+}
+
+.drop-down-item a {
+	color: gray;
 }
 
 .selected {
