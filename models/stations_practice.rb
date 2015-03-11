@@ -125,7 +125,7 @@ class Station
 		other_station.wind_kph <= (self.wind_kph + 5) && other_station.wind_kph >= (self.wind_kph - 5)
 	end
 
-# uses weather code to compare sky conditions
+# uses weather code to compare sky conditions. this allows day <-> night matches
 	def matches?(other_station)
 		other_station.weather_primary_coded == self.weather_primary_coded && 
 			matches_temp?(other_station) &&
