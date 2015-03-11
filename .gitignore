@@ -7,3 +7,5 @@ public/.DS_Store
 stations_to_review.txt
 views/.DS_Store
 weather_data/.DS_Store
+models/edited_cities_map.rb
+weather_data/all_stations.json
