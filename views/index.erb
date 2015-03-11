@@ -6,7 +6,7 @@
 	</head>
 
 	<body>
-		<h2 id="header">Weather for <%= Time.now %></h2>
+		<h2 class="header">Weather for <%= locations_match[:city] %>, <%= locations_match[:country] %> on <%= Date.today %></h2>
 		<div class="location_menu">
 			<input type="text" class="location_input" value="Start typing your location">
 			<ul class="search_results">
