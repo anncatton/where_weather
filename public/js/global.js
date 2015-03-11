@@ -30,12 +30,12 @@ $(document).ready(function() {
 
 // for down arrow
  		if (event.keyCode == 40) {
- 			var currentlySelectedListItem = $targetParent.find(".result.selected");
- 			var listItemToSelect = currentlySelectedListItem.next('.result');
+ 			var currentlySelectedListItem = $targetParent.find(".drop-down-item.selected");
+ 			var listItemToSelect = currentlySelectedListItem.next('.drop-down-item');
 
 // checks if selection is on last item in list
  			if ($(listItemToSelect).index() == -1) {
- 				listItemToSelect = $targetParent.find(".result").first();
+ 				listItemToSelect = $targetParent.find(".drop-down-item").first();
  				$(currentlySelectedListItem).removeClass("selected");
  				$(listItemToSelect).addClass("selected");
  			}
@@ -48,12 +48,12 @@ $(document).ready(function() {
 // for up arrow navigation. when you use up arrow it also sends the input cursor back to the beginning
  		} else if (event.keyCode == 38) {
 
- 			var currentlySelectedListItem = $targetParent.find(".result.selected");
- 			var listItemToSelect = currentlySelectedListItem.prev('.result');
+ 			var currentlySelectedListItem = $targetParent.find(".drop-down-item.selected");
+ 			var listItemToSelect = currentlySelectedListItem.prev('.drop-down-item');
 
  			if ($(currentlySelectedListItem).index() == 0) {
  				$(currentlySelectedListItem).removeClass("selected");
- 				listItemToSelect = $targetParent.find(".result").last();
+ 				listItemToSelect = $targetParent.find(".drop-down-item").last();
  				$(listItemToSelect).addClass("selected");
  			} else {
  				$(currentlySelectedListItem).removeClass("selected");
@@ -61,8 +61,9 @@ $(document).ready(function() {
  			}
 
  		} else if (event.keyCode == 13) {
- 			var currentlySelectedLink = $targetParent.find(".result.selected a");
+ 			var currentlySelectedLink = $targetParent.find(".drop-down-item.selected a");
  			window.location = currentlySelectedLink.attr("href");
+ 			
  		} else {
 
 // for all other keys
@@ -85,5 +86,4 @@ $(document).ready(function() {
 
 });
 
-// now you want to be able to use the arrow keys to select the link on the list - using enter key
 // also want the links to just look better
