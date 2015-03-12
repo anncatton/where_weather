@@ -1,10 +1,18 @@
-CREATE TABLE weather_data (
-	station_id text PRIMARY KEY,
- 	name text, 
- 	region text, 
- 	country text NOT NULL, 
- 	latitude integer NOT NULL, 
+DROP TABLE IF EXISTS weather_data;
+DROP TABLE IF EXISTS stations;
+
+CREATE TABLE stations (
+	name text NOT NULL, 
+	region text, 
+	country text NOT NULL, 
+	latitude integer NOT NULL, 
  	longitude integer NOT NULL, 
+	id text PRIMARY KEY
+	);
+
+CREATE TABLE weather_data (
+	id bigserial PRIMARY KEY,
+	station_id text NOT NULL REFERENCES stations (id),
  	time text NOT NULL, 
  	temp integer, 
  	dewpoint integer, 
@@ -16,10 +24,3 @@ CREATE TABLE weather_data (
  	wind_kph integer, 
  	wind_direction text
  	);
-
-CREATE TABLE stations (
-	name text NOT NULL, 
-	region text, 
-	country text NOT NULL, 
-	station_id text PRIMARY KEY
-	);
