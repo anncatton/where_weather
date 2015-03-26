@@ -10,3 +10,7 @@ gem "byebug"
 gem "haversine"
 
 gem "activesupport"
+
+gem "sequel"
+
+gem "pg"
