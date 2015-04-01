@@ -18,9 +18,9 @@
 			<div id="current_conditions">
 			<h3 class="section_header">
 				<% if locations_match[:country] == "Canada" || locations_match[:country] == "United States" %>
-					<%= locations_match[:city] %>, <%= locations_match[:region] %>, <%= locations_match[:country] %>
+					<%= locations_match[:name] %>, <%= locations_match[:region] %>, <%= locations_match[:country] %>
 				<% else %>
-					<%= locations_match[:city] %>, <%= locations_match[:country] %>
+					<%= locations_match[:name] %>, <%= locations_match[:country] %>
 				<% end %>
 			</h3>
 				<%= erb :_results_view, :locals => {:heading => "Conditions",
@@ -57,6 +57,7 @@
 				<h3 class="section_header">Matches Around the World:</h3>
 				<% matches.each do |ea| %>
 					<% pretty_match = find_pretty_match_station(ea) %>
+
 					<% next if pretty_match.nil? %>
 					<%= erb :_match_view, :locals => { :pretty_match => pretty_match,
 																						:matches => matches } %>

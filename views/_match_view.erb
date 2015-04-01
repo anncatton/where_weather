@@ -1,10 +1,10 @@
 <div class="clearfix">
 	<div class="match-view">
 		<% if pretty_match[:country] == "Canada" || pretty_match[:country] == "United States" %>
-			<%= pretty_match[:city] %>, <%= pretty_match[:region] %>, <%= pretty_match[:country] %>
+			<%= pretty_match[:name] %>, <%= pretty_match[:region] %>, <%= pretty_match[:country] %>
 				<% matches.each do |ea| %>
 					<div class="match-conditions">
-					<% if ea.id == pretty_match[:station] %>
+					<% if ea.id == pretty_match[:id] %>
 							<div>Conditions: <div class="match-value"><%= ea.conditions %></div></div>
 							<div>Temp: <div class="match-value"><%= ea.temp %> C</div></div>
 							<div>Humidity: <div class="match-value"><%= ea.humidity %> %</div></div>
@@ -14,10 +14,10 @@
 					</div>
 				<% end %>
 		<% else %>
-			<%= pretty_match[:city] %>, <%= pretty_match[:country] %>
+			<%= pretty_match[:name] %>, <%= pretty_match[:country] %>
 				<% matches.each do |ea| %>
 					<div class="match-conditions">
-					<% if ea.id == pretty_match[:station] %>
+					<% if ea.id == pretty_match[:id] %>
 							<div>Conditions: <div class="match-value"><%= ea.conditions %></div></div>
 							<div>Temp: <div class="match-value"><%= ea.temp %> C</div></div>
 							<div>Humidity: <div class="match-value"><%= ea.humidity %> %</div></div>

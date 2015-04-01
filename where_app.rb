@@ -3,7 +3,13 @@ require "json"
 require "./models/stations_practice.rb"
 require "byebug"
 require "./models/edited_cities_map.rb"
-require "time"
+# require "time"
+require "pg"
+require "sequel"
+
+DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+
+station_list = DB[:stations]
 
 get '/' do
 	redirect to('/where_weather')
@@ -31,18 +37,19 @@ get '/where_weather' do
 	else
 		station_id = params[:id]
 		matching_station = find_station(station_id)
-		locations_match = LOCATIONS.find do |ea|
-			ea[:station].downcase == station_id.downcase		
+		locations_match = station_list.find do |ea|
+			ea[:id].downcase == station_id.downcase		
 		end
 		
 		station = Station.from_json(matching_station)
-		matches = valid_stations.select do |ea|
-			ea != station && !station.too_close?(ea) && station.matches?(ea)
+		matches = valid_stations.find_all do |ea|
+			ea != station && station.matches?(ea)
 		end
 
 		def find_pretty_match_station(station_to_match)
-			match = LOCATIONS.find do |ea|
-				match = ea[:station] == station_to_match.id
+			station_list = DB[:stations]
+			match = station_list.find do |ea|
+				match = ea[:id] == station_to_match.id
 				match
 			end
 
@@ -54,6 +61,7 @@ get '/where_weather' do
 																								:matches => matches }
 	end
 
+
 end
 
 # this populates the drop down with full location name using input from the user and matching with data from LOCATIONS
@@ -62,9 +70,9 @@ get '/location_search' do
   content_type :json
   query = params[:query]
 
-  matches = LOCATIONS.select do |ea|
-		next if ea[:city].nil?
-		ea[:city].downcase.start_with?(query.downcase)
+  matches = station_list.find_all do |ea|
+  	next if ea[:name].nil? # do i need this anymore, now the database has a name for each location?
+  	ea[:name].downcase.start_with?(query.downcase)
   end
 
   content = if matches.empty?
@@ -73,12 +81,15 @@ get '/location_search' do
   	erb :_data_field, :layout => false, :locals => { :matches => matches }
 	end
 
-	first_city = if matches.empty?
-		erb :_no_result
-	else
-		erb :_display_span, :layout => false, :locals => {:first_match => matches.first }
-	end
+# what is this first_city section for?
+	# first_city = if matches.empty?
+	# 	erb :_no_result
+	# else
+	# 	erb :_display_span, :layout => false, :locals => {:first_match => matches.first }
+	# end
 
-  { :html => content, :first_match => first_city }.to_json
+ #  { :html => content, :first_match => first_city }.to_json
+
+ { :html => content }.to_json
 
 end
