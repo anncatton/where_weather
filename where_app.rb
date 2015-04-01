@@ -37,10 +37,8 @@ get '/where_weather' do
 	else
 		station_id = params[:id]
 		matching_station = find_station(station_id)
-		locations_match = station_list.find do |ea|
-			ea[:id].downcase == station_id.downcase		
-		end
-		
+		locations_match = station_list.where(:id=>station_id.upcase).first
+
 		station = Station.from_json(matching_station)
 		matches = valid_stations.find_all do |ea|
 			ea != station && station.matches?(ea)
@@ -48,10 +46,11 @@ get '/where_weather' do
 
 		def find_pretty_match_station(station_to_match)
 			station_list = DB[:stations]
-			match = station_list.find do |ea|
-				match = ea[:id] == station_to_match.id
-				match
-			end
+			match = station_list.where(:id=>station_to_match.id.upcase).first
+			# match = station_list.find do |ea|
+			# 	match = ea[:id] == station_to_match.id
+			# 	match
+			# end
 
 			match
 		end
@@ -70,10 +69,11 @@ get '/location_search' do
   content_type :json
   query = params[:query]
 
-  matches = station_list.find_all do |ea|
-  	next if ea[:name].nil? # do i need this anymore, now the database has a name for each location?
-  	ea[:name].downcase.start_with?(query.downcase)
-  end
+  matches = station_list.where(Sequel.ilike(:name, query+'%'))
+  # matches = station_list.find_all do |ea|
+  # 	next if ea[:name].nil? # do i need this anymore, now the database has a name for each location?
+  # 	ea[:name].downcase.start_with?(query.downcase)
+  # end
 
   content = if matches.empty?
   	erb :_no_result
