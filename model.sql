@@ -21,12 +21,13 @@ CREATE TABLE weather_data (
  	dewpoint integer, 
  	humidity integer, 
  	conditions text, 
- 	weather_primary_coded text, 
+ 	weather_primary_coded text,
  	clouds_coded text, 
  	is_day boolean, 
  	wind_kph integer, 
  	wind_direction text
  	);
+
 
 -- the station_id in weather_data must be in stations in order to remain valid, but a station id (id) in stations does
 -- not need to be in weather_data in order to be valid. so, weather_data is dependent on stations
@@ -34,4 +35,3 @@ CREATE TABLE weather_data (
 -- more constraints: station ids must be 4 characters long
 -- Many developers consider explicitly listing the columns better style than relying on the order implicitly. also, i'm
 -- assuming you'll be creating methods to populate your tables, not typing each one in!
-
