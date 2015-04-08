@@ -6,6 +6,7 @@ require "haversine"
 require "fileutils"
 require "active_support/core_ext/object/to_query.rb"
 require "csv"
+
 # require "time"
 
 # require "./edited_cities_map.rb"
