@@ -9,3 +9,4 @@ views/.DS_Store
 weather_data/.DS_Store
 example.rb
 extra_stations.json
+weather_data/parsed_station_file.rb
