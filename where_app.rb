@@ -1,15 +1,17 @@
 require "sinatra"
 require "json"
-require "./models/stations_practice.rb"
+require "./models/stations.rb"
+require "./models/api_request.rb"
 require "byebug"
-require "./models/edited_cities_map.rb"
-# require "time"
 require "pg"
 require "sequel"
+# require "time"
+# require "./models/stations_practice.rb"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 
 station_list = DB[:stations]
+observations = DB[:weather_data]
 
 get '/' do
 	redirect to('/where_weather')
@@ -18,7 +20,13 @@ end
 get '/where_weather' do
 
 	# hash of station hashes, main station keys (k) lowercase
-	station_hash = parse_json_file("./weather_data/all_stations.json") 
+	station_hash = parse_json_file("./weather_data/all_stations.json")
+
+	# this matches a station id with a station id in the json conditions file. specific to all_stations
+	def find_station(station_id)
+		station_hash = parse_json_file("./weather_data/all_stations.json")
+		station_hash[station_id.downcase]
+	end
 
 	# makes an array of Station instances
 	stations_to_compare = station_hash.map do |k, v|
