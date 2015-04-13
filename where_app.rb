@@ -6,11 +6,11 @@ require "byebug"
 require "pg"
 require "sequel"
 # require "time"
-# require "./models/stations_practice.rb"
+require "./models/stations_practice.rb"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 
-station_list = DB[:stations]
+stations = DB[:stations]
 observations = DB[:weather_data]
 
 get '/' do
@@ -45,7 +45,7 @@ get '/where_weather' do
 	else
 		station_id = params[:id]
 		matching_station = find_station(station_id)
-		locations_match = station_list.where(:id=>station_id.upcase).first
+		locations_match = stations.where(:id=>station_id.upcase).first
 
 		station = Station.from_json(matching_station)
 		matches = valid_stations.find_all do |ea|
@@ -53,8 +53,8 @@ get '/where_weather' do
 		end
 
 		def find_pretty_match_station(station_to_match)
-			station_list = DB[:stations]
-			match = station_list.where(:id=>station_to_match.id.upcase).first
+			stations = DB[:stations]
+			match = stations.where(:id=>station_to_match.id.upcase).first
 			# match = station_list.find do |ea|
 			# 	match = ea[:id] == station_to_match.id
 			# 	match
@@ -77,7 +77,7 @@ get '/location_search' do
   content_type :json
   query = params[:query]
 
-  matches = station_list.where(Sequel.ilike(:name, query+'%'))
+  matches = stations.where(Sequel.ilike(:name, query+'%'))
   # matches = station_list.find_all do |ea|
   # 	next if ea[:name].nil? # do i need this anymore, now the database has a name for each location?
   # 	ea[:name].downcase.start_with?(query.downcase)
