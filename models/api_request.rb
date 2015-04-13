@@ -5,6 +5,10 @@ require "uri"
 require "fileutils"
 require "active_support/core_ext/object/to_query.rb"
 require "haversine"
+require "pg"
+require "sequel"
+# require "sinatra"
+require "./stations.rb"
 
 class Observation
 
@@ -24,20 +28,37 @@ class Observation
 		@wind_direction = wind_direction
 	end
 
-	def self.from_json(hash)
-		observations = hash["ob"]
+	# def self.from_json(hash)
+	# 	observations = hash["ob"]
+	# 	self.new(
+	# 		hash["id"], # need this for identification, and to join with stations table
+	# 		observations["dateTimeISO"],
+	# 		observations["tempC"],
+	# 		observations["dewpointC"],
+	# 		observations["humidity"],
+	# 		observations["weatherShort"],
+	# 		observations["weatherPrimaryCoded"],
+	# 		observations["cloudsCoded"],
+	# 		observations["isDay"],
+	# 		observations["windKPH"],
+	# 		observations["windDir"]
+	# 		)
+	# end
+
+
+	def self.from_table(hash)
 		self.new(
-			hash["id"], # need this for identification, and to join with stations table
-			observations["dateTimeISO"],
-			observations["tempC"],
-			observations["dewpointC"],
-			observations["humidity"],
-			observations["weatherShort"],
-			observations["weatherPrimaryCoded"],
-			observations["cloudsCoded"],
-			observations["isDay"],
-			observations["windKPH"],
-			observations["windDir"]
+			hash[:station_id], # need this for identification, and to join with stations table
+			hash[:time],
+			hash[:temp],
+			hash[:dewpoint],
+			hash[:humidity],
+			hash[:conditions],
+			hash[:weather_primary_coded],
+			hash[:clouds_coded],
+			hash[:is_day],
+			hash[:wind_kph],
+			hash[:wind_direction]
 			)
 	end
 
@@ -46,16 +67,12 @@ class Observation
 		temp.nil? || dewpoint.nil? || humidity.nil? || weather_primary_coded.nil? || conditions.nil?
 	end
 
-# for comparing conditions with conditions string, so only day == day, and night == night
-	# def not_valid?
-	# 	temp.nil? || dewpoint.nil? || humidity.nil? || conditions.nil?
-	# end
-
 # this is not currently being used. time from api is local, with difference from GMT shown as +/-
 	def matches_time?(other_station)
 		other_station.time <= (self.time + 1) && other_station.time >= (self.time - 1)
 	end
 
+# SELECT * FROM observations WHERE other.temp <= (self.temp + 1) AND other.temp >= (self.temp - 1)
 	def matches_temp?(other_station)
 		other_station.temp <= (self.temp + 1) && other_station.temp >= (self.temp - 1)
 	end
@@ -205,6 +222,7 @@ def extract_station_data(raw_data)
 
 end
 
+# you're going to want this to write directly into the weather_data table, and skip this file-writing step
 def write_to_json_file(data)
 	File.open("../weather_data/all_stations.json", "a") { |file| file.write(data) }
 end
@@ -217,3 +235,75 @@ us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc
 
 # table.insert(:station_id=>station[:station_id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_coded=>station[:weather_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
 
+# this section to make an Observation instance from the observations table in mydb
+
+DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+
+my_id = ARGV.first
+observations = DB[:weather_data]
+
+# def find_station(id)
+# 	station_hash = DB[:weather_data].all
+# 	station_hash.find do |ea|
+# 		ea[:station_id] == id
+# 	end
+# end
+
+	def find_station(id, table)
+		observation_hash = table.all
+
+		match = observation_hash.each do |ea|
+			if ea[:station_id] == id
+				Observation.from_table(ea)
+			end
+			# ea[:station_id] == id
+			# or ea[id] ??
+		end
+
+		match
+	end
+
+def find_station(id)
+	observations = DB[:weather_data]
+	match = observations.where(:station_id=>id.upcase).first # if you call .first you don't get the problem of having just a Dataset object
+	match
+end
+
+station_to_match = find_station(my_id)
+station_to_match_data = Observation.from_table(station_to_match)
+
+
+# stations_to_compare = DB[:weather_data].map do |ea|
+# 	Observation.from_table(ea)
+# end
+
+# valid_stations = stations_to_compare.reject do |ea|
+# 	ea.not_valid?
+# end
+
+def matches?(query_station, observations)
+# posts.where('(stamp < ?) AND (author != ?)'
+	observations.where(:temp => (query_station.temp - 1)..(query_station.temp + 1)).where(
+		:dewpoint => (query_station.dewpoint - 1)..(query_station.dewpoint + 1)).where(
+		:humidity => (query_station.humidity - 5)..(query_station.humidity + 5)).where(
+		:weather_primary_coded => query_station.weather_primary_coded).where(
+		:wind_kph => (query_station.wind_kph - 5)..(query_station.wind_kph + 5)).exclude(
+		:station_id => query_station.id).all
+end
+
+all_matches = matches?(station_to_match_data, observations)
+puts all_matches
+
+# items.where(:price => 100..200).sql # calling .sql just gives you the raw SQL which is great!
+#=> "SELECT * FROM items WHERE (price >= 100 AND price <= 200)"
+
+# puts find_station(my_id, observations)
+# my_station = DB[:weather_data].filter(:station_id=>my_id) # this returns a Dataset object, so the search, not the data itself
+# but calling .all on my_station here makes it an array of hashes
+# my_station = observations.where(:station_id=>my_id) # this returns a Dataset object, so the search, not the data itself
+# user_station = observations[:station_id=>my_id] # this returns an array of hashes, tho in this case it's just one hash
+# new_record = Observation.from_table(user_station)
+# puts new_record.temp
+# puts new_record.dewpoint
+# do queries that find the relevant stations first - i.e. the station the user searches for, and the ones that match - and then turn
+# them into instances of Station/Observation so you can use them in your Ruby code. you don't want to do that work for all stations first!
