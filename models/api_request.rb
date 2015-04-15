@@ -28,24 +28,6 @@ class Observation
 		@wind_direction = wind_direction
 	end
 
-	# def self.from_json(hash)
-	# 	observations = hash["ob"]
-	# 	self.new(
-	# 		hash["id"], # need this for identification, and to join with stations table
-	# 		observations["dateTimeISO"],
-	# 		observations["tempC"],
-	# 		observations["dewpointC"],
-	# 		observations["humidity"],
-	# 		observations["weatherShort"],
-	# 		observations["weatherPrimaryCoded"],
-	# 		observations["cloudsCoded"],
-	# 		observations["isDay"],
-	# 		observations["windKPH"],
-	# 		observations["windDir"]
-	# 		)
-	# end
-
-
 	def self.from_table(hash)
 		self.new(
 			hash[:station_id], # need this for identification, and to join with stations table
@@ -63,47 +45,19 @@ class Observation
 	end
 
 # for comparing conditions with coded weather, so that you get matches from day or night
-	def not_valid?
-		temp.nil? || dewpoint.nil? || humidity.nil? || weather_primary_coded.nil? || conditions.nil?
-	end
+	# def not_valid?
+	# 	temp.nil? || dewpoint.nil? || humidity.nil? || weather_primary_coded.nil? || conditions.nil?
+	# end
 
 # this is not currently being used. time from api is local, with difference from GMT shown as +/-
 	def matches_time?(other_station)
 		other_station.time <= (self.time + 1) && other_station.time >= (self.time - 1)
 	end
 
-# SELECT * FROM observations WHERE other.temp <= (self.temp + 1) AND other.temp >= (self.temp - 1)
-	def matches_temp?(other_station)
-		other_station.temp <= (self.temp + 1) && other_station.temp >= (self.temp - 1)
-	end
-
-	def matches_dewpoint?(other_station)
-		other_station.dewpoint <= (self.dewpoint + 1) && other_station.dewpoint >= (self.dewpoint - 1)
-	end
-
-	def matches_humidity?(other_station)
-		other_station.humidity <= (self.humidity + 10) && other_station.humidity >= (self.humidity - 10)
-	end
-
-	def matches_windspeed?(other_station)
-		other_station.wind_kph <= (self.wind_kph + 5) && other_station.wind_kph >= (self.wind_kph - 5)
-	end
-
-# uses weather code to compare sky conditions. this allows day <-> night matches
-	def matches?(other_station)
-		other_station.weather_primary_coded == self.weather_primary_coded && 
-			matches_temp?(other_station) &&
-			matches_dewpoint?(other_station) &&
-			matches_humidity?(other_station) &&
-			unless other_station.wind_kph.nil? || self.wind_kph.nil?
-				matches_windspeed?(other_station)
-			end
-	end
-
-	def too_close?(station)
-		distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
-		distance.to_km < 2000
-	end
+	# def too_close?(station)
+	# 	distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
+	# 	distance.to_km < 2000
+	# end
 
 end
 
@@ -239,16 +193,26 @@ us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 
+# my_city = ARGV.first
 my_id = ARGV.first
 observations = DB[:weather_data]
+stations = DB[:stations]
 
-# def find_station(id)
-# 	station_hash = DB[:weather_data].all
-# 	station_hash.find do |ea|
-# 		ea[:station_id] == id
-# 	end
-# end
+stations_data_for_user_id = stations.where(:id => my_id).first
 
+def get_station_data(id,table)
+	table.where(:id => id).first
+end
+
+city_data = get_station_data(my_id, stations)
+
+def find_city_id(city, table)
+	id = table.select(:id).where(:name=>city).first
+end
+
+# puts find_city_id(my_city, stations)
+
+# to find the weather data associated with a station id
 def find_station(id)
 	observations = DB[:weather_data]
 	match = observations.where(:station_id=>id.upcase).first
@@ -257,10 +221,6 @@ end
 
 station_to_match = find_station(my_id)
 station_to_match_data = Observation.from_table(station_to_match)
-
-# valid_stations = stations_to_compare.reject do |ea|
-# 	ea.not_valid?
-# end
 
 def matches?(query_station, observations)
 	observations.where(:temp => (query_station.temp - 1)..(query_station.temp + 1)).where(
@@ -271,8 +231,51 @@ def matches?(query_station, observations)
 		:station_id => query_station.id).all
 end
 
+
+
+# def print_matches_in(stations)
+# 		matching = stations.find_all do |ea|
+# 	 	ea != self && !ea.too_close? && self.matches?(ea)
+# 	 	ea != self && !self.too_close?(ea) && self.matches?(ea)
+# 		end
+
+# end
+
+id_to_match = get_station_data(my_id, stations)
+# so with too_close, you get all the stations that match, then, using their ids, check stations to see if they're too close
 all_matches = matches?(station_to_match_data, observations)
-puts all_matches
+match_data_array = all_matches.map do |ea|
+	Observation.from_table(ea)
+end
+
+match_data_ids = all_matches.map do |ea|
+	ea[:station_id]
+end
+
+# gives an array of station hashes from stations table
+results = match_data_ids.map do |ea|
+	result = stations.where(:id=>ea).first
+end
+
+puts results
+# def too_close?(station_to_compare, user_station)
+# 	distance = Haversine.distance(user_station.latitude, user_station.longitude, station_to_compare.latitude, station_to_compare.longitude)
+# 	distance.to_km < 2000
+# end
+
+def too_close?(station_to_compare, user_station)
+	distance = Haversine.distance(user_station[:latitude], user_station[:longitude], station_to_compare[:latitude], station_to_compare[:longitude])
+	distance.to_km < 1000
+end
+
+matches = results.each do |ea|
+	puts too_close?(ea, stations_data_for_user_id)
+end
 
 # items.where(:price => 100..200).sql # calling .sql just gives you the raw SQL which is great!
 #=> "SELECT * FROM items WHERE (price >= 100 AND price <= 200)"
+
+# would like get_all_data to write directly to the database, not ->to file and then ->to database
+# search with city name, find corresponding station id in stations, then use that id to search in weather_data to match other cities
+# scoring scheme for matches!
+# get the too_close? method working
