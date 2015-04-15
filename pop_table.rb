@@ -8,18 +8,22 @@ require './models/edited_cities_map.rb'
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 
-station_list = DB[:stations]
+stations = DB[:stations]
 weather_data = DB[:weather_data]
 
 # this inserts the values from LOCATIONS into the stations table
-def insert_into_stations(station, table)
+# def insert_into_stations(station, table)
 
-	table.insert(:name => station[:city], :region => station[:region], :country => station[:country], :id => station[:station], :location => "(#{station[:longitude]}, #{station[:latitude]})")
+# 	table.insert(:name => station[:city], :region => station[:region], :country => station[:country], :id => station[:station], :location => "(#{station[:longitude]}, #{station[:latitude]})")
+# end
+
+def insert_into_stations(station, table)
+	table.insert(:name => station[:city], :region => station[:region], :country => station[:country], :id => station[:station], :longitude => station[:longitude].round(2), :latitude => station[:latitude].round(2))
 end
 
-# LOCATIONS.each do |ea|
-# 	insert_values(ea, station_list)
-# end
+LOCATIONS.each do |ea|
+	insert_into_stations(ea, stations)
+end
 
 # # this was to take the lat/long numbers from the parsed json file and put them into the LOCATIONS array, because this is permanent data
 # new_locations_array = LOCATIONS.each do |ea|
@@ -30,7 +34,7 @@ end
 # 	ea[:longitude] = match["longitude"]
 
 # end
-
+                                              
 # File.open('./models/edited_cities_map.rb', 'w') { |f| f.write(new_locations_array) }
 
 def parse_json_file(filename)
@@ -57,14 +61,15 @@ end
 
 # do a database query in station_list to check for that station id (that's coming from the json file), and if it's not there, skip it
 
-parsed_data = parse_json_file("./weather_data/all_stations.json")
+# parsed_data = parse_json_file("./weather_data/all_stations.json")
 
-ids = station_list.map(:id)
+# # so is this - ids - like a method that only runs once it's called?
+# ids = station_list.map(:id)
 
-parsed_data.map do |ea|
-	next if !(ids.include? ea[0].upcase)
-	insert_into_weather_data(ea[1], weather_data)
-end
+# parsed_data.map do |ea|
+# 	next if !(ids.include? ea[0].upcase)
+# 	insert_into_weather_data(ea[1], weather_data)
+# end
 
 # * station was offline, nothing under 'change station' -> check again
 # ++ id only on gladstone, not WU
