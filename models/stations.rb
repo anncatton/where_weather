@@ -17,4 +17,15 @@ class Station # should station class reflect only the data that's stored in the 
 		@longitude = longitude
 	end
 
+	def self.from_stations_table(hash)
+		self.new(
+			hash[:id],
+			hash[:name],
+			hash[:region],
+			hash[:country],
+			hash[:latitude],
+			hash[:longitude]
+			)
+	end
+
 end
