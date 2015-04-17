@@ -151,7 +151,6 @@ class Station
 	end
 
 end
-
 # this section is for building requests to the api
 def build_query(query)
 	URI::HTTP.build(
