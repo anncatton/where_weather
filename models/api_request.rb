@@ -8,7 +8,7 @@ require "haversine"
 require "pg"
 require "sequel"
 # require "sinatra"
-require "./stations.rb"
+# require "./stations.rb"
 
 class Observation
 
@@ -191,36 +191,36 @@ us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc
 
 # this section to make an Observation instance from the observations table in mydb
 
-DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+# DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 
-# my_city = ARGV.first
-my_id = ARGV.first
-observations = DB[:weather_data]
-stations = DB[:stations]
+# # my_city = ARGV.first
+# my_id = ARGV.first
+# observations = DB[:weather_data]
+# stations = DB[:stations]
 
-stations_data_for_user_id = stations.where(:id => my_id).first
+# stations_data_for_user_id = stations.where(:id => my_id).first
 
-def get_station_data(id,table)
-	table.where(:id => id).first
-end
+# def get_station_data(id,table)
+# 	table.where(:id => id).first
+# end
 
-city_data = get_station_data(my_id, stations)
+# city_data = get_station_data(my_id, stations)
 
-def find_city_id(city, table)
-	id = table.select(:id).where(:name=>city).first
-end
+# def find_city_id(city, table)
+# 	id = table.select(:id).where(:name=>city).first
+# end
 
 # puts find_city_id(my_city, stations)
 
 # to find the weather data associated with a station id
-def find_station(id)
-	observations = DB[:weather_data]
-	match = observations.where(:station_id=>id.upcase).first
-	match
-end
+# def find_station(id)
+# 	observations = DB[:weather_data]
+# 	match = observations.where(:station_id=>id.upcase).first
+# 	match
+# end
 
-station_to_match = find_station(my_id)
-station_to_match_data = Observation.from_table(station_to_match)
+# station_to_match = find_station(my_id)
+# station_to_match_data = Observation.from_table(station_to_match)
 
 def matches?(query_station, observations)
 	observations.where(:temp => (query_station.temp - 1)..(query_station.temp + 1)).where(
@@ -231,46 +231,33 @@ def matches?(query_station, observations)
 		:station_id => query_station.id).all
 end
 
-
-
-# def print_matches_in(stations)
-# 		matching = stations.find_all do |ea|
-# 	 	ea != self && !ea.too_close? && self.matches?(ea)
-# 	 	ea != self && !self.too_close?(ea) && self.matches?(ea)
-# 		end
-
+# id_to_match = get_station_data(my_id, stations)
+# # so with too_close, you get all the stations that match, then, using their ids, check stations to see if they're too close
+# all_matches = matches?(station_to_match_data, observations)
+# match_data_array = all_matches.map do |ea|
+# 	Observation.from_table(ea)
 # end
 
-id_to_match = get_station_data(my_id, stations)
-# so with too_close, you get all the stations that match, then, using their ids, check stations to see if they're too close
-all_matches = matches?(station_to_match_data, observations)
-match_data_array = all_matches.map do |ea|
-	Observation.from_table(ea)
-end
+# match_data_ids = all_matches.map do |ea|
+# 	ea[:station_id]
+# end
 
-match_data_ids = all_matches.map do |ea|
-	ea[:station_id]
-end
+# # gives an array of station hashes from stations table
+# results = match_data_ids.map do |ea|
+# 	result = stations.where(:id=>ea).first
+# end
 
-# gives an array of station hashes from stations table
-results = match_data_ids.map do |ea|
-	result = stations.where(:id=>ea).first
-end
-
-puts results
 # def too_close?(station_to_compare, user_station)
-# 	distance = Haversine.distance(user_station.latitude, user_station.longitude, station_to_compare.latitude, station_to_compare.longitude)
-# 	distance.to_km < 2000
+# 	distance = Haversine.distance(user_station[:latitude], user_station[:longitude], station_to_compare[:latitude], station_to_compare[:longitude])
+# 	distance.to_km < 1000
 # end
 
-def too_close?(station_to_compare, user_station)
-	distance = Haversine.distance(user_station[:latitude], user_station[:longitude], station_to_compare[:latitude], station_to_compare[:longitude])
-	distance.to_km < 1000
-end
-
-matches = results.each do |ea|
-	puts too_close?(ea, stations_data_for_user_id)
-end
+# matches = results.each do |ea|
+# 	unless too_close?(ea, stations_data_for_user_id)
+# 		# puts "#{stations_data_for_user_id[:name]}, #{stations_data_for_user_id[:country]} matches #{ea[:name]}, #{ea[:country]}"
+# 		puts ea
+# 	end
+# end
 
 # items.where(:price => 100..200).sql # calling .sql just gives you the raw SQL which is great!
 #=> "SELECT * FROM items WHERE (price >= 100 AND price <= 200)"
