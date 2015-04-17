@@ -13,56 +13,49 @@
 			</ul>
 		</div>
 
-		<% unless locations_match.nil? %>
+		<% unless station.nil? %>
 		<div id="results">
 			<div id="current_conditions">
 			<h3 class="section_header">
-				<% if locations_match[:country] == "Canada" || locations_match[:country] == "United States" %>
-					<%= locations_match[:name] %>, <%= locations_match[:region] %>, <%= locations_match[:country] %>
+				<% if station.country == "Canada" || station.country == "United States" %>
+					<%= station.city %>, <%= station.region %>, <%= station.country %>
 				<% else %>
-					<%= locations_match[:name] %>, <%= locations_match[:country] %>
+					<%= station.city %>, <%= station.country %>
 				<% end %>
 			</h3>
-				<%= erb :_results_view, :locals => {:heading => "Conditions",
-																						:matching_station => matching_station,
-						 																:type => "conditions",
-						 																:unit => nil } %>
-
-				<%= erb :_results_view, :locals => {:heading => "Temperature",
-																						:matching_station => matching_station,
-																						:type => "temp",
-																						:unit => "C" } %>
-
-				<%= erb :_results_view, :locals => {:heading => "Humidity",
-																						:matching_station => matching_station,
-																						:type => "humidity",
-																						:unit => "%" } %>
-
-				<%= erb :_results_view, :locals => {:heading => "Dewpoint",
-																						:matching_station => matching_station,
-																						:type => "dewpoint",
-																						:unit => "C" } %>
-				<%= erb :_results_view, :locals => {:heading => "Wind",
-																						:matching_station => matching_station,
-																						:type => "wind_kph",
-																						:unit => "km/h from #{matching_station['wind_direction']}" } %>
-				<div class="condition clearfix">
-					<div class="condition-label">Observed at:</div>
-					<div class="condition-value"><%= Time.parse(matching_station["time"]).httpdate %></div>
-				</div>
+			<div class="condition clearfix">
+				<div class="condition-label">Conditions:</div>
+				<div class="condition-value"><%= station_to_match_data.conditions %></div>
+			</div>
+			<div class="condition clearfix">
+				<div class="condition-label">Temperature:</div>
+				<div class="condition-value"><%= station_to_match_data.temp %> C</div>
+			</div>
+			<div class="condition clearfix">
+				<div class="condition-label">Humidity:</div>
+				<div class="condition-value"><%= station_to_match_data.humidity %> %</div>
+			</div>
+			<div class="condition clearfix">
+				<div class="condition-label">Dewpoint:</div>
+				<div class="condition-value"><%= station_to_match_data.dewpoint %> C</div>
+			</div>
+			<div class="condition clearfix">
+				<div class="condition-label">Wind:</div>
+				<div class="condition-value"><%= station_to_match_data.wind_kph %> km/h</div>
+			</div>
+			<div class="condition clearfix">
+				<div class="condition-label">Observed at:</div>
+				<div class="condition-value"><%= Time.parse(station_to_match_data.time).httpdate %></div>
+			</div>
 
 			</div>
 
 			<div id="matches">
 				<h3 class="section_header">Matches Around the World:</h3>
-				<% matches.each do |ea| %>
-					<% pretty_match = find_pretty_match_station(ea) %>
-
-					<% next if pretty_match.nil? %>
-					<%= erb :_match_view, :locals => { :pretty_match => pretty_match,
-																						:matches => matches } %>
+				<% match_stations_data.each do |ea| %>
+					<% matching_location = ea %>
+					<%= erb :_match_view, :locals => {:matching_location => matching_location } %>
 				<% end %>
-
 			</div>
 		</div>
 		<% end %>
