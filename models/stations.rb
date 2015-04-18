@@ -1,3 +1,4 @@
+require "haversine"
 require "byebug"
 
 # have a script that gets the json data
@@ -17,7 +18,7 @@ class Station # should station class reflect only the data that's stored in the 
 		@longitude = longitude
 	end
 
-	def self.from_stations_table(hash)
+	def self.from_table(hash)
 		self.new(
 			hash[:id],
 			hash[:name],
@@ -28,4 +29,9 @@ class Station # should station class reflect only the data that's stored in the 
 			)
 	end
 
+end
+
+def too_close?(station_to_compare, user_station)
+	distance = Haversine.distance(user_station.latitude, user_station.longitude, station_to_compare.latitude, station_to_compare.longitude)
+	distance.to_km < 2000
 end
