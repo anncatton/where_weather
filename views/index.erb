@@ -52,7 +52,7 @@
 
 			<div id="matches">
 				<h3 class="section_header">Matches Around the World:</h3>
-				<% match_stations_data.each do |ea| %>
+				<% matches_to_display.each do |ea| %>
 					<% matching_location = ea %>
 					<%= erb :_match_view, :locals => {:matching_location => matching_location } %>
 				<% end %>
