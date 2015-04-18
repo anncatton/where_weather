@@ -1,11 +1,13 @@
 require "sinatra"
 require "json"
 require "./models/stations.rb"
-require "./models/api_request.rb"
+require "./models/observation.rb"
+# require "./models/api_request.rb"
+require "haversine"
 require "byebug"
 require "pg"
 require "sequel"
-require 'logger'
+require "logger"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 # DB.sql_log_level = :debug
@@ -42,7 +44,7 @@ get '/where_weather' do
 		match_in_stations_table = stations_table.where(:id=>station_id.upcase).first
 		station_to_match_data = Observation.from_table(station_to_match)
 
-		station = Station.from_stations_table(match_in_stations_table)
+		station = Station.from_table(match_in_stations_table)
 
 		all_matches = matches?(station_to_match_data, observations_table) # an array of hashes from observations table. not yet Observation instances
 		all_matches_in_stations_table = all_matches.map do |ea| # all_matches_in_stations_table is data from stations
@@ -50,16 +52,20 @@ get '/where_weather' do
 		end
 
 		match_stations_data = all_matches_in_stations_table.map do |ea|
-			Station.from_stations_table(ea)
+			Station.from_table(ea)
 		end
-
-		matches = all_matches.map do |ea|
-			Observation.from_table(ea)
+		
+		matches_not_too_close = match_stations_data.reject do |ea|
+			too_close?(ea, station)
 		end
+	
+		# matches = all_matches.map do |ea| # only if you need to display the weather conditions of the matches
+		# 	Observation.from_table(ea)
+		# end
 
 		erb :index, :layout => :layout, :locals => {:station_to_match_data => station_to_match_data,
 																								:station => station,
-																								:match_stations_data => match_stations_data }
+																								:matches_to_display => matches_not_too_close }
 	end
 
 
