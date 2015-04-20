@@ -56,27 +56,28 @@ def get_region_data(countries, states)
 
 	# FileUtils.mkdir_p "../weather_data/"
 
-	processed_data = {}
 
-	countries.each do |ea|
-		processed_data.merge!(processed_data_for_country(ea))
+	country_data = countries.map do |ea|
+		processed_data_for_country(ea)
 	end
 
-	states.each do |ea|
-		processed_data.merge!(processed_data_for_state(ea))
+	state_data = states.map do |ea|
+		processed_data_for_state(ea)
 	end
+
+	processed_data = country_data.flatten + state_data.flatten
 
 # writes json data directly to database
 	processed_data.each do |ea|
 		weather_data = DB[:weather_data]
-		insert_into_weather_data(ea[1], weather_data)
+		insert_into_weather_data(ea, weather_data)
 	end
 	# write_to_json_file(processed_data.to_json)
 
 end
 
 def processed_data_for_country(country_name)
-	raw_data = get_data_for_country(country_name)
+	raw_data = get_data_for_country(country_name) # raw_data is straight json coming from api
 	extract_station_data(raw_data)
 end
 
@@ -105,7 +106,7 @@ def get_data_for_state(state_name)
 end
 
 def extract_station_data(raw_data)
-	all_stations = {}
+	all_stations = [] # so all_stations will be an array of hashes
 
 	raw_data.map do |ea|
 		new_observation = Observation.from_json(ea)
@@ -123,7 +124,7 @@ def extract_station_data(raw_data)
 		station[:wind_kph] = new_observation.wind_kph
 		station[:wind_direction] = new_observation.wind_direction
 
-		all_stations[new_observation.id] = station
+		all_stations << station
 	end
 # byebug
 	all_stations
@@ -144,8 +145,6 @@ countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "
 
 us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
 
-# countries = ["ae"]
-# us_and_canada = ["sk"]
-get_all_data(countries, us_and_canada)
+# get_all_data(countries, us_and_canada)
 
 # table.insert(:station_id=>station[:station_id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_coded=>station[:weather_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
