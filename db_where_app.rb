@@ -51,7 +51,11 @@ get '/where_weather' do
 			stations_table.where(:id=>ea[:station_id].upcase).first
 		end
 
-		match_stations_data = all_matches_in_stations_table.map do |ea|
+		valid_matches = all_matches_in_stations_table.reject do |ea|
+			ea.nil?
+		end
+
+		match_stations_data = valid_matches.map do |ea|
 			Station.from_table(ea)
 		end
 		
@@ -74,10 +78,13 @@ end
 # this populates the drop down with full location name using input from the user and matching with data from LOCATIONS
 get '/location_search' do
 
+	stations_table = DB[:stations]
+	# observations_table = DB[:weather_data]
+
   content_type :json
   query = params[:query]
 
-  matches = stations.where(Sequel.ilike(:name, query+'%'))
+  matches = stations_table.where(Sequel.ilike(:name, query+'%'))
   # matches = station_list.find_all do |ea|
   # 	next if ea[:name].nil? # do i need this anymore, now the database has a name for each location?
   # 	ea[:name].downcase.start_with?(query.downcase)
