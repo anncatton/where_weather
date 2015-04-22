@@ -1,4 +1,5 @@
 require "json"
+require "time"
 
 class Observation
 
@@ -51,21 +52,6 @@ class Observation
 			)
 	end
 
-# for comparing conditions with coded weather, so that you get matches from day or night
-	# def not_valid?
-	# 	temp.nil? || dewpoint.nil? || humidity.nil? || weather_primary_coded.nil? || conditions.nil?
-	# end
-
-# this is not currently being used. time from api is local, with difference from GMT shown as +/-
-	def matches_time?(other_station)
-		other_station.time <= (self.time + 1) && other_station.time >= (self.time - 1)
-	end
-
-	# def too_close?(station)
-	# 	distance = Haversine.distance(self.latitude, self.longitude, station.latitude, station.longitude)
-	# 	distance.to_km < 2000
-	# end
-
 end
 
 def matches?(query_station, observations)
@@ -76,7 +62,6 @@ def matches?(query_station, observations)
 		:wind_kph => (query_station.wind_kph - 5)..(query_station.wind_kph + 5)).exclude(
 		:station_id => query_station.id).all
 end
-# this section to make an Observation instance from the observations table in mydb
 
 # DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 

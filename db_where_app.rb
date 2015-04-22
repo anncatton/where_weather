@@ -2,7 +2,6 @@ require "sinatra"
 require "json"
 require "./models/stations.rb"
 require "./models/observation.rb"
-# require "./models/api_request.rb"
 require "haversine"
 require "byebug"
 require "pg"
@@ -33,18 +32,7 @@ get '/where_weather' do
 		match = table.where{time >= (time_to_compare - 3600)}.where(:station_id=>id.upcase).first 
 		match
 	end
-# 	irb(main):009:0> current_time
-# => 2015-04-20 10:19:00 -0400
-# irb(main):010:0> current_time.to_i
-# => 1429539540
-# irb(main):011:0> previous_time = Time.parse("2015-04-20T09:19:00-04:00")
-# => 2015-04-20 09:19:00 -0400
-# irb(main):012:0> previous_time.to_i
-# => 1429535940
-# irb(main):013:0> 1429539540 - 1429535940
-# => 3600
-# irb(main):014:0> current_time - 3600
-# => 2015-04-20 09:19:00 -0400
+
 # not sure you need a valid check cuz the db search should ignore any records that are missing necessary values
 # at some point you'll need to specify that temp, dewpoint and humidity are to be checked first, and then values like
 # windspeed etc are more optional and can be checked on a second run
@@ -69,7 +57,7 @@ get '/where_weather' do
 
 		matches_within_window = all_matches.reject do |ea|
 			time_to_compare = time_threshold
-			Time.parse(ea[:time]) <= time_to_compare # try with epoch time
+			Time.parse(ea[:time]) <= time_to_compare
 		end
 
 		all_matches_in_stations_table = matches_within_window.map do |ea| # all_matches_in_stations_table is data from stations
