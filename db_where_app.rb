@@ -8,6 +8,7 @@ require "byebug"
 require "pg"
 require "sequel"
 require "logger"
+require "time"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 # DB.sql_log_level = :debug
@@ -18,15 +19,32 @@ get '/' do
 end
 
 get '/where_weather' do
-
+ 
 	stations_table = DB[:stations]
 	observations_table = DB[:weather_data]
-	
-	def find_station(id, table)
-		match = table.where(:station_id=>id.upcase).first
-		match
+
+	def time_threshold
+		current_time = Time.parse("2015-04-20T10:19:00-04:00")
+		current_time - 3600
 	end
 	
+	def find_station(id, table)
+		time_to_compare = time_threshold
+		match = table.where{time >= (time_to_compare - 3600)}.where(:station_id=>id.upcase).first 
+		match
+	end
+# 	irb(main):009:0> current_time
+# => 2015-04-20 10:19:00 -0400
+# irb(main):010:0> current_time.to_i
+# => 1429539540
+# irb(main):011:0> previous_time = Time.parse("2015-04-20T09:19:00-04:00")
+# => 2015-04-20 09:19:00 -0400
+# irb(main):012:0> previous_time.to_i
+# => 1429535940
+# irb(main):013:0> 1429539540 - 1429535940
+# => 3600
+# irb(main):014:0> current_time - 3600
+# => 2015-04-20 09:19:00 -0400
 # not sure you need a valid check cuz the db search should ignore any records that are missing necessary values
 # at some point you'll need to specify that temp, dewpoint and humidity are to be checked first, and then values like
 # windspeed etc are more optional and can be checked on a second run
@@ -41,16 +59,24 @@ get '/where_weather' do
 	else
 		station_id = params[:id]
 		station_to_match = find_station(station_id, observations_table) # station_to_match_data in api_request
+
 		match_in_stations_table = stations_table.where(:id=>station_id.upcase).first
 		station_to_match_data = Observation.from_table(station_to_match)
 
 		station = Station.from_table(match_in_stations_table)
 
 		all_matches = matches?(station_to_match_data, observations_table) # an array of hashes from observations table. not yet Observation instances
-		all_matches_in_stations_table = all_matches.map do |ea| # all_matches_in_stations_table is data from stations
+
+		matches_within_window = all_matches.reject do |ea|
+			time_to_compare = time_threshold
+			Time.parse(ea[:time]) <= time_to_compare # try with epoch time
+		end
+
+		all_matches_in_stations_table = matches_within_window.map do |ea| # all_matches_in_stations_table is data from stations
 			stations_table.where(:id=>ea[:station_id].upcase).first
 		end
 
+# this shouldn't be necessary if you add the foreign key reference back into weather_data
 		valid_matches = all_matches_in_stations_table.reject do |ea|
 			ea.nil?
 		end
