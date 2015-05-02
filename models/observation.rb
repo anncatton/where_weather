@@ -1,5 +1,6 @@
 require "json"
 require "time"
+# require "rspec"
 
 class Observation
 
@@ -52,16 +53,19 @@ class Observation
 			)
 	end
 
+	def find_matches
+		observations_table = DB[:weather_data]
+		observations_table.where(:temp => (temp - 1)..(temp + 1)).where(
+			:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
+			:humidity => (humidity - 5)..(humidity + 5)).where(
+			:weather_primary_coded => weather_primary_coded).where(
+			:wind_kph => (wind_kph - 5)..(wind_kph + 5)).exclude(
+			:station_id => id).all
+	end
+
 end
 
-def matches?(query_station, observations)
-	observations.where(:temp => (query_station.temp - 1)..(query_station.temp + 1)).where(
-		:dewpoint => (query_station.dewpoint - 1)..(query_station.dewpoint + 1)).where(
-		:humidity => (query_station.humidity - 5)..(query_station.humidity + 5)).where(
-		:weather_primary_coded => query_station.weather_primary_coded).where(
-		:wind_kph => (query_station.wind_kph - 5)..(query_station.wind_kph + 5)).exclude(
-		:station_id => query_station.id).all
-end
+
 
 # DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 

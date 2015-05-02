@@ -43,17 +43,17 @@ get '/where_weather' do
 	if params.empty? # this doesn't currently help when you load page without a query attached in the address bar. guess you'll have to
 		# load it with an autoip query maybe? also _results_view has an if/else to handle matching_station being nil
 		erb :index, :layout => :layout, :locals => { :matching_station => nil,
-																								:locations_match => nil }
+																								:locations_match => nil,
+																								:station => nil }
 	else
 		station_id = params[:id]
 		station_to_match = find_station(station_id, observations_table) # station_to_match_data in api_request
 
 		match_in_stations_table = stations_table.where(:id=>station_id.upcase).first
 		station_to_match_data = Observation.from_table(station_to_match)
-
 		station = Station.from_table(match_in_stations_table)
 
-		all_matches = matches?(station_to_match_data, observations_table) # an array of hashes from observations table. not yet Observation instances
+		all_matches = station_to_match_data.find_matches # an array of hashes from observations table. not yet Observation instances
 
 		matches_within_window = all_matches.reject do |ea|
 			time_to_compare = time_threshold
