@@ -14,3 +14,5 @@ gem "activesupport"
 gem "sequel"
 
 gem "pg"
+
+gem "rspec"
