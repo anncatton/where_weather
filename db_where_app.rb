@@ -27,12 +27,20 @@ get '/where_weather' do
 		current_time - 3600
 	end
 	
-	def find_station(id, table)
+	# def find_station(id, table)
+	# 	time_to_compare = time_threshold
+	# 	match = table.where{time >= (time_to_compare - 3600)}.where(:station_id=>id.upcase).first 
+	# 	match
+	# end
+	def find_station_observation(station_id)
+		observations = DB[:weather_data]
 		time_to_compare = time_threshold
-		match = table.where{time >= (time_to_compare - 3600)}.where(:station_id=>id.upcase).first 
-		match
+		# looks like that buron obsv was ignored because its AFTER the time_to_compare
+		matching_observation = observations.where{time >= (time_to_compare - 3600)}.where(:station_id => station_id.upcase).first
+		# matching_observation = observations.where(:time => (time_to_compare - 3600)..(time_to_compare + 3600)).where(:station_id => station_id.upcase).first
+		matching_observation
 	end
-
+#	where(:wind_kph => (wind_kph - 5)..(wind_kph + 5))
 # not sure you need a valid check cuz the db search should ignore any records that are missing necessary values
 # at some point you'll need to specify that temp, dewpoint and humidity are to be checked first, and then values like
 # windspeed etc are more optional and can be checked on a second run
@@ -47,8 +55,9 @@ get '/where_weather' do
 																								:station => nil }
 	else
 		station_id = params[:id]
-		station_to_match = find_station(station_id, observations_table) # station_to_match_data in api_request
-
+		# station_to_match = find_station(station_id, observations_table) # station_to_match_data in api_request
+		station_to_match = find_station_observation(station_id)
+# byebug
 		match_in_stations_table = stations_table.where(:id=>station_id.upcase).first
 		station_to_match_data = Observation.from_table(station_to_match)
 		station = Station.from_table(match_in_stations_table)
@@ -76,7 +85,7 @@ get '/where_weather' do
 		matches_not_too_close = match_stations_data.reject do |ea|
 			too_close?(ea, station)
 		end
-	
+
 		# matches = all_matches.map do |ea| # only if you need to display the weather conditions of the matches
 		# 	Observation.from_table(ea)
 		# end
@@ -105,7 +114,7 @@ get '/location_search' do
   # end
 
   content = if matches.empty?
-  	erb :_no_result
+  	erb :_no_result, :layout => false
 	else
   	erb :_data_field, :layout => false, :locals => { :matches => matches }
 	end
