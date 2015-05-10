@@ -85,5 +85,3 @@ $(document).ready(function() {
 	// });
 
 });
-
-// also want the links to just look better
