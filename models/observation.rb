@@ -55,6 +55,8 @@ class Observation
 
 	def find_matches
 		observations_table = DB[:weather_data]
+		# this is where the error is, when the station entered as the query is missing data: you can't say 'nil - 1' or 'nil + 1'
+		# produces a no method error
 		observations_table.where(:temp => (temp - 1)..(temp + 1)).where(
 			:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
 			:humidity => (humidity - 5)..(humidity + 5)).where(
@@ -63,9 +65,14 @@ class Observation
 			:station_id => id).all
 	end
 
+	# this method is for finding the entry in stations table that matches what the user has entered on the website, so you have
+	# access to the station id (which is needed to locate it in observations). - Incorrect. this is using the id that is passed into
+	# the navigation bar to look in the observations table for that location's record in the database.
+	# in order for this to work, does this have to be an instance of the Observation class? that's what happens when you put a method
+	# inside a class, you can only call that method on instances of that class. but then, similar or same methods for different classes can
+	# have the same name, and ruby will know what to do for each one because it belongs to a class (.to_s is an example of this)
+
 end
-
-
 
 # DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 
