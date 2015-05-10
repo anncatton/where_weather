@@ -23,30 +23,38 @@
 					<%= station.city %>, <%= station.country %>
 				<% end %>
 			</h3>
-			<div class="condition clearfix">
-				<div class="condition-label">Conditions:</div>
-				<div class="condition-value"><%= station_to_match_data.conditions %></div>
-			</div>
-			<div class="condition clearfix">
-				<div class="condition-label">Temperature:</div>
-				<div class="condition-value"><%= station_to_match_data.temp %> C</div>
-			</div>
-			<div class="condition clearfix">
-				<div class="condition-label">Humidity:</div>
-				<div class="condition-value"><%= station_to_match_data.humidity %> %</div>
-			</div>
-			<div class="condition clearfix">
-				<div class="condition-label">Dewpoint:</div>
-				<div class="condition-value"><%= station_to_match_data.dewpoint %> C</div>
-			</div>
-			<div class="condition clearfix">
-				<div class="condition-label">Wind:</div>
-				<div class="condition-value"><%= station_to_match_data.wind_kph %> km/h</div>
-			</div>
-			<div class="condition clearfix">
-				<div class="condition-label">Observed at:</div>
-				<div class="condition-value"><%= Time.parse(station_to_match_data.time).httpdate %></div>
-			</div>
+			<% if station_to_match.nil? %>
+				<div>There are no current observations for this location</div>
+
+			<% elsif station_to_match_data.nil? %>
+				<div>Not enough data is available for this location.</div>
+
+			<% else %>
+				<div class="condition clearfix">
+					<div class="condition-label">Conditions:</div>
+					<div class="condition-value"><%= station_to_match_data.conditions %></div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Temperature:</div>
+					<div class="condition-value"><%= station_to_match_data.temp %> C</div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Humidity:</div>
+					<div class="condition-value"><%= station_to_match_data.humidity %> %</div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Dewpoint:</div>
+					<div class="condition-value"><%= station_to_match_data.dewpoint %> C</div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Wind:</div>
+					<div class="condition-value"><%= station_to_match_data.wind_kph %> km/h</div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Observed at:</div>
+					<div class="condition-value"><%= Time.parse(station_to_match_data.time).httpdate %></div>
+				</div>
+			<% end %>
 
 			</div>
 
