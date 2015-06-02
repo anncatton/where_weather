@@ -65,6 +65,36 @@ class Observation
 			:station_id => id).all
 	end
 
+	def temp_score(query_temp)
+
+		if temp == query_temp
+			score = 30
+		elsif (temp - query_temp) == 1
+			score = 20
+		elsif (query_temp - temp) == 1
+			score = 20
+		else
+			score = 10
+		end
+		
+		score
+	end
+
+	def dewpoint_score(query_dewpoint)
+
+		if dewpoint == query_dewpoint
+			score = 20
+		elsif (dewpoint - query_dewpoint) == 1
+			score = 15
+		elsif (query_dewpoint - dewpoint) == 1
+			score = 15
+		else
+			score = 10
+		end
+
+		score
+	end
+
 	# this method is for finding the entry in stations table that matches what the user has entered on the website, so you have
 	# access to the station id (which is needed to locate it in observations). - Incorrect. this is using the id that is passed into
 	# the navigation bar to look in the observations table for that location's record in the database.

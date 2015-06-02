@@ -27,7 +27,7 @@ get '/where_weather' do
 		current_time - 3600
 	end
 	
-	def find_station_observation(station_id)
+	def find_station_observation(station_id) # this finds the record in observations that is within the time window (the last 60min)
 		observations = DB[:weather_data]
 		time_to_compare = time_threshold
 		matching_observation = observations.where{time >= (time_to_compare - 3600)}.where(:station_id => station_id.upcase).first
@@ -52,8 +52,7 @@ get '/where_weather' do
 		station = Station.from_table(match_in_stations_table)
 
 		# for error when there's no matching observation within the current timeframe (not recent enough)
-		# this uses a db query to filter out observations that aren't recent enough
-		if station_to_match.nil?
+		if station_to_match.nil? # if there's no matching observation for the station id
 			erb :index, :layout => :layout, :locals => {:station => station,
 																									:station_to_match => station_to_match,
 																									:station_to_match_data => nil,
@@ -68,38 +67,79 @@ get '/where_weather' do
 																										:station_to_match_data => nil,
 																										:matches_to_display => []}
 			else
-				all_matches = station_to_match_data.find_matches # an array of hashes from observations table. not yet Observation instances
+				all_matches = station_to_match_data.find_matches # an array of hashes from observations table. not yet Observation instances. this is the first place you have station ids for the matches, so this is the first place you could filter out stations that are too close to the query station
 
 				matches_within_window = all_matches.reject do |ea|
 					time_to_compare = time_threshold
 					Time.parse(ea[:time]) <= time_to_compare
 				end
 
-				all_matches_in_stations_table = matches_within_window.map do |ea| # all_matches_in_stations_table is data from stations
-					stations_table.where(:id=>ea[:station_id].upcase).first
+				all_matches_in_stations = matches_within_window.map do |ea|
+					matches = stations_table.where(:id=>ea[:station_id]).first
+					matches
 				end
-
-		# this shouldn't be necessary if you add the foreign key reference back into weather_data
-				valid_matches = all_matches_in_stations_table.reject do |ea|
+	
+				valid_matches = all_matches_in_stations.reject do |ea|
 					ea.nil?
 				end
 
-				match_stations_data = valid_matches.map do |ea|
+				matching_stations = valid_matches.map do |ea|
 					Station.from_table(ea)
 				end
-				
-				matches_not_too_close = match_stations_data.reject do |ea|
-					too_close?(ea, station)
+
+				matches_not_too_close = matching_stations.reject do |ea|
+					ea.too_close?(station)
 				end
 
-				# matches = all_matches.map do |ea| # only if you need to display the weather conditions of the matches
+				match_ids = matches_not_too_close.map do |ea|
+					ea.id
+				end
+
+# now, to find the percentage matches, you have to take the station ids from matches_not_too_close and find them again in observations so you have just the observations you need
+				# match_observations = matches_within_window.map do |ea| # Observation instances for matches
 				# 	Observation.from_table(ea)
 				# end
+
+# right now this is giving me back all the original matches from matches_within_window
+				final_matches = matches_within_window.select do |ea|
+					matches = match_ids.include?(ea[:station_id])
+					matches
+				end
+
+# is there a way to save this particular record just by referring to the db id number (not the station id) in the observations table? then you could just save it and plug it in when you need it again, as it's a unique record.
+				match_observations = final_matches.map do |ea|
+					observation = Observation.from_table(ea)
+					# puts observation.temp_score(station_to_match_data.temp)
+					temp = observation.temp_score(station_to_match_data.temp)
+					dewpoint = observation.dewpoint_score(station_to_match_data.dewpoint)
+
+					total_score = (temp + dewpoint)/50.0
+					total_score * 100
+				end
+
+				# all_matches_in_stations_table = matches_within_window.map do |ea| # all_matches_in_stations_table is data from stations
+				# 	stations_table.where(:id=>ea[:station_id].upcase).first
+				# end
+
+		# this shouldn't be necessary if you add the foreign key reference back into weather_data
+				# valid_matches = all_matches_in_stations_table.reject do |ea|
+				# 	ea.nil?
+				# end
+
+				# match_stations_data = valid_matches.map do |ea|
+				# 	Station.from_table(ea)
+				# end
+				
+				# matches_not_too_close = match_stations_data.reject do |ea|
+				# 	too_close?(ea, station)
+				# end
+
 
 				erb :index, :layout => :layout, :locals => {:station_to_match_data => station_to_match_data,
 																										:station => station,
 																										:station_to_match => station_to_match,
-																										:matches_to_display => matches_not_too_close }
+																										:matches_to_display => matches_not_too_close,
+																										:match_observations => match_observations }
 			end
 
 		end
