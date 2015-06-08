@@ -69,9 +69,7 @@ class Observation
 
 		if temp == query_temp
 			score = 30
-		elsif (temp - query_temp) == 1
-			score = 20
-		elsif (query_temp - temp) == 1
+		elsif (temp - query_temp) || (query_temp - temp) == 1
 			score = 20
 		else
 			score = 10
@@ -84,9 +82,7 @@ class Observation
 
 		if dewpoint == query_dewpoint
 			score = 20
-		elsif (dewpoint - query_dewpoint) == 1
-			score = 15
-		elsif (query_dewpoint - dewpoint) == 1
+		elsif (dewpoint - query_dewpoint) || (query_dewpoint - dewpoint) == 1
 			score = 15
 		else
 			score = 10
@@ -95,6 +91,43 @@ class Observation
 		score
 	end
 
+	def humidity_score(query_humidity)
+
+		if humidity == query_humidity
+			score = 15
+		elsif (humidity - query_humidity) || (query_humidity - humidity) == 1
+			score = 14
+		elsif (humidity - query_humidity) || (query_humidity - humidity) == 2
+			score = 13
+		elsif (humidity - query_humidity) || (query_humidity - humidity) == 3
+			score = 12
+		elsif (humidity - query_humidity) || (query_humidity - humidity) == 4
+			score = 11
+		else
+			score = 10
+		end
+
+		score
+	end
+
+	def wind_kph_score(query_wind_kph)
+
+		if wind_kph == query_wind_kph
+			score = 15
+		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 1
+			score = 14
+		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 2
+			score = 13
+		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 3
+			score = 12
+		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 4
+			score = 11
+		else
+			score = 10
+		end
+
+		score
+	end
 	# this method is for finding the entry in stations table that matches what the user has entered on the website, so you have
 	# access to the station id (which is needed to locate it in observations). - Incorrect. this is using the id that is passed into
 	# the navigation bar to look in the observations table for that location's record in the database.
