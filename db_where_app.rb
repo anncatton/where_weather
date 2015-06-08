@@ -10,7 +10,6 @@ require "logger"
 require "time"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
-# DB.sql_log_level = :debug
 DB.loggers << Logger.new($stdout)
 
 get '/' do
@@ -19,8 +18,18 @@ end
 
 get '/where_weather' do
  
+#  DB[:items].left_outer_join(:categories, :id => :category_id).sql 
+# # SELECT * FROM items
+# # LEFT OUTER JOIN categories ON categories.id = items.category_id
+
+# DB[:items].join(:categories, :id => :category_id).join(:groups, :id => :items__group_id) 
+# # SELECT * FROM items
+# # INNER JOIN categories ON categories.id = items.category_id
+# # INNER JOIN groups ON groups.id = items.group_id
+
 	stations_table = DB[:stations]
 	observations_table = DB[:weather_data]
+	stations_and_observations_join = stations_table.join(observations_table, :station_id => :id)
 
 	def time_threshold
 		current_time = Time.parse("2015-04-20T10:19:00-04:00")
@@ -30,24 +39,37 @@ get '/where_weather' do
 	def find_station_observation(station_id) # this finds the record in observations that is within the time window (the last 60min)
 		observations = DB[:weather_data]
 		time_to_compare = time_threshold
+		# do i need the upcase call on station_id here?
 		matching_observation = observations.where{time >= (time_to_compare - 3600)}.where(:station_id => station_id.upcase).first
 		matching_observation
 	end
 
-# not sure you need a valid check cuz the db search should ignore any records that are missing necessary values
-# at some point you'll need to specify that temp, dewpoint and humidity are to be checked first, and then values like
-# windspeed etc are more optional and can be checked on a second run
-	# valid_stations = stations_to_compare.reject do |ea|
-	# 	ea.not_valid?
-	# end
+def find_station_observation_new(station_id)
+	stations_table = DB[:stations]
+	observations_table = DB[:weather_data]
+	stations_and_observations_join = stations_table.join(observations_table, :station_id => :id)
+	time_to_compare = time_threshold
+	matching_observation = stations_and_observations_join.where{time >= (time_to_compare - 3600)}.where(:station_id => station_id.upcase).first
+	matching_observation
+end
+
+	# sample2 = find_station_observation_new('CYYZ')
+	# sample1 = stations_and_observations_join.where(:station_id=>'CYYZ').all # sample1 is a hash that has data from both observations and stations
+	# # tables for one location, in this case, CYYZ. however, it doesn't yet discriminate between observation times so it probably isn't choosing the correct observation time. it's actually choosing the first one because that's what you asked it to do, and that'll be the oldest observation
+	# byebug
+
+	# new_station = Station.new(sample1[:station_id], sample1[:name], sample1[:region], sample1[:country], sample1[:latitude], sample1[:longitude])
+	# new_observation = Observation.new(sample1[:station_id], sample1[:time], sample1[:temp], sample1[:dewpoint], sample1[:humidity], sample1[:conditions], sample1[:weather_primary_coded], sample1[:clouds_coded], sample1[:is_day], sample1[:wind_kph], sample1[:wind_direction])
 
 	if params.empty?
 		erb :index, :layout => :layout, :locals => { :matching_station => nil,
 																								:locations_match => nil,
 																								:station => nil }
 	else
+
 		station_id = params[:id]
-		station_to_match = find_station_observation(station_id)
+		station_to_match = find_station_observation_new(station_id)
+		byebug
 		match_in_stations_table = stations_table.where(:id=>station_id.upcase).first
 		station = Station.from_table(match_in_stations_table)
 
@@ -60,7 +82,7 @@ get '/where_weather' do
 		else
 
 			station_to_match_data = Observation.from_table(station_to_match)
-# this is making sure temp, dewpoint and weather conditions coded are present in the query station. can you find this out while querying the db?
+# # this is making sure temp, dewpoint and weather conditions coded are present in the query station. can you find this out while querying the db?
 			if station_to_match_data.temp.nil? || station_to_match_data.dewpoint.nil? || station_to_match_data.weather_primary_coded.nil?
 				erb :index, :layout => :layout, :locals => {:station => station,
 																										:station_to_match => station_to_match,
@@ -95,12 +117,6 @@ get '/where_weather' do
 					ea.id
 				end
 
-# now, to find the percentage matches, you have to take the station ids from matches_not_too_close and find them again in observations so you have just the observations you need
-				# match_observations = matches_within_window.map do |ea| # Observation instances for matches
-				# 	Observation.from_table(ea)
-				# end
-
-# right now this is giving me back all the original matches from matches_within_window
 				final_matches = matches_within_window.select do |ea|
 					matches = match_ids.include?(ea[:station_id])
 					matches
@@ -108,13 +124,17 @@ get '/where_weather' do
 
 # is there a way to save this particular record just by referring to the db id number (not the station id) in the observations table? then you could just save it and plug it in when you need it again, as it's a unique record.
 				match_observations = final_matches.map do |ea|
+					# maybe you can somehow run the match display inside this method?
+					# you need to somehow save the score for and attach it to the station id
 					observation = Observation.from_table(ea)
-					# puts observation.temp_score(station_to_match_data.temp)
 					temp = observation.temp_score(station_to_match_data.temp)
 					dewpoint = observation.dewpoint_score(station_to_match_data.dewpoint)
+					humidity = observation.humidity_score(station_to_match_data.humidity)
+					wind_kph = observation.wind_kph_score(station_to_match_data.wind_kph)
 
-					total_score = (temp + dewpoint)/50.0
-					total_score * 100
+					total_score = (temp + dewpoint + humidity + wind_kph)/80.0
+					(total_score * 100).round(2)
+					
 				end
 
 				# all_matches_in_stations_table = matches_within_window.map do |ea| # all_matches_in_stations_table is data from stations
