@@ -1,5 +1,6 @@
 require "json"
 require "time"
+require "haversine"
 # require "rspec"
 
 class Observation
@@ -54,15 +55,22 @@ class Observation
 	end
 
 	def find_matches
-		observations_table = DB[:weather_data]
-		# this is where the error is, when the station entered as the query is missing data: you can't say 'nil - 1' or 'nil + 1'
-		# produces a no method error
-		observations_table.where(:temp => (temp - 1)..(temp + 1)).where(
+		# in this method, self is an Observation instance, not the whole db record for the query location
+
+		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
+
+		matches = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
 			:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
 			:humidity => (humidity - 5)..(humidity + 5)).where(
 			:weather_primary_coded => weather_primary_coded).where(
 			:wind_kph => (wind_kph - 5)..(wind_kph + 5)).exclude(
 			:station_id => id).all
+
+		matches.reject do |ea|
+			time_to_compare = time_threshold
+			Time.parse(ea[:time]) <= time_to_compare
+		end
+
 	end
 
 	def temp_score(query_temp)
