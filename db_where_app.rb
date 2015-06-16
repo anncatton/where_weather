@@ -45,10 +45,11 @@ get '/where_weather' do
 
 	station_id = params[:id]
 
-	if params.empty?
-		erb :index, :layout => :layout, :locals => { :matching_station => nil,
-																								:locations_match => nil,
-																								:station => nil }
+	if station_id.nil?
+		erb :index, :layout => :layout, :locals => {:station => nil,
+																								:station_to_match => nil,
+																								:station_to_match_data => nil,
+																								:matched_stations_to_display => nil }
 	else
 		station_to_match = find_station_and_observation(station_id)
 
@@ -91,14 +92,14 @@ get '/where_weather' do
 			else
 				
 				all_matches = station_to_match_data.find_matches
+				# i put the time check inside find_matches. is that better than having it here?
 
+				# matches_within_window = all_matches.reject do |ea|
+				# 	time_to_compare = time_threshold
+				# 	Time.parse(ea[:time]) <= time_to_compare
+				# end
 
-				matches_within_window = all_matches.reject do |ea|
-					time_to_compare = time_threshold
-					Time.parse(ea[:time]) <= time_to_compare
-				end
-
-				checked_for_distance = matches_within_window.reject do |ea|
+				checked_for_distance = all_matches.reject do |ea|
 					station_to_check = Station.from_table(ea)
 					station_to_check.too_close?(station)
 				end
