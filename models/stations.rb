@@ -26,9 +26,9 @@ class Station # should station class reflect only the data that's stored in the 
 			)
 	end
 
-def too_close?(query_station)
-	distance = Haversine.distance(query_station.latitude, query_station.longitude, self.latitude, self.longitude)
-	distance.to_km < 2000
-end
+	def too_close?(query_station)
+		distance = Haversine.distance(query_station.latitude, query_station.longitude, self.latitude, self.longitude)
+		distance.to_km < 2000
+	end
 
 end
