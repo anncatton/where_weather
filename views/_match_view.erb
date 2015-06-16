@@ -7,3 +7,8 @@
 		<div class="condition-value"><%= matching_location.city %>, <%= matching_location.country %></div>
 	</div>
 <% end %>
+<div class="condition clearfix">
+	<% match_observation_scores.each do |ea| %>
+		<div class="condition-value"><%= ea %> </div>
+	<% end %>
+</div>
