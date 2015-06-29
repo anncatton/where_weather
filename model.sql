@@ -1,22 +1,19 @@
--- ALTER TABLE stations ADD COLUMN location POINT;
-
--- UPDATE stations SET location = SELECT CAST((longitude, latitude) AS POINT);
-
 DROP TABLE IF EXISTS weather_data;
 DROP TABLE IF EXISTS stations;
 
 CREATE TABLE stations (
 	name text NOT NULL, 
 	region text, 
-	country text NOT NULL, 
-	location point NOT NULL,
+	country text NOT NULL,
+	longitude numeric(5, 2) NOT NULL,
+	latitude numeric(4, 2) NOT NULL,
 	id text PRIMARY KEY
 	);
 
 CREATE TABLE weather_data (
 	id bigserial PRIMARY KEY, -- so that you can add each new set of observations to the growing database
 	station_id text NOT NULL REFERENCES stations (id),
- 	time text NOT NULL, 
+ 	time timestamp NOT NULL, 
  	temp integer, 
  	dewpoint integer, 
  	humidity integer, 
