@@ -9,6 +9,7 @@ require "byebug"
 require "./observation.rb"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+# stations_table = DB[:stations]
 
 # this section is for building requests to the api
 def build_query(query)
@@ -43,19 +44,11 @@ end
 # you'll then want this to automatically update every several hours
 def get_all_data(country_array, state_array)
 
-	File.open("../weather_data/all_stations.json", "w") do |f|
-		f.truncate(f.size)
-	end
-
 	get_region_data(country_array, state_array)
 
 end
 
-# this is the method where the data gets written. so regions is an array of countries/states
 def get_region_data(countries, states)
-
-	# FileUtils.mkdir_p "../weather_data/"
-
 
 	country_data = countries.map do |ea|
 		processed_data_for_country(ea)
@@ -69,10 +62,12 @@ def get_region_data(countries, states)
 
 # writes json data directly to database
 	processed_data.each do |ea|
-		weather_data = DB[:weather_data]
-		insert_into_weather_data(ea, weather_data)
+		# prevents attempt to enter observations that don't have station ids in stations table
+		stations_table = DB[:stations]
+		next if stations_table.where(:id=>ea[:id]).first.nil?
+		insert_into_weather_data(ea)
+
 	end
-	# write_to_json_file(processed_data.to_json)
 
 end
 
@@ -112,8 +107,8 @@ def extract_station_data(raw_data)
 		new_observation = Observation.from_json(ea)
 
 		station = {}
-		station[:id] = new_observation.id
-		station[:time] = new_observation.time
+		station[:id] = new_observation.station # this is .station because it's the .from_json method, not .from_table
+		station[:time] = Time.parse(new_observation.time).utc
 		station[:temp] = new_observation.temp
 		station[:dewpoint] = new_observation.dewpoint
 		station[:humidity] = new_observation.humidity
@@ -126,25 +121,27 @@ def extract_station_data(raw_data)
 
 		all_stations << station
 	end
-# byebug
+
 	all_stations
 
 end
 
-def insert_into_weather_data(station, table)
+def insert_into_weather_data(station)
 
-	table.insert(:station_id=>station[:id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_primary_coded=>station[:weather_primary_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
+	observation_table = DB[:weather_data]
+	
+# need to include if clause to prevent duplicate records, and need to add one that checks if station exists in stations table
+	# if observation_table.where(:station_id=>station[:id]).where(:time=>station[:time]).where(:temp=>station[:temp]).where(:dewpoint=>station[:dewpoint]).where(:humidity=>station[:humidity]).where(:conditions=>station[:conditions]).where(:weather_primary_coded=>station[:weather_primary_coded]).where(:clouds_coded=>station[:clouds_coded]).where(:is_day=>station[:is_day]).where(:wind_kph=>station[:wind_kph]).where(:wind_direction=>station[:wind_direction]).nil?
+
+		observation_table.insert(:station_id=>station[:id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_primary_coded=>station[:weather_primary_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
+	# end
+
 end
 
-# you're going to want this to write directly into the weather_data table, and skip this file-writing step
-# def write_to_json_file(data)
-# 	File.open("../weather_data/all_stations.json", "a") { |file| file.write(data) }
-# end
+# countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
 
-countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
+# us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
 
-us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
-
-# get_all_data(countries, us_and_canada)
-
-# table.insert(:station_id=>station[:station_id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_coded=>station[:weather_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
+countries = ["ae", "af", "ag"]
+us_and_canada = ["ab", "al", "ak"]
+get_all_data(countries, us_and_canada)
