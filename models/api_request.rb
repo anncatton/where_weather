@@ -62,11 +62,17 @@ def get_region_data(countries, states)
 
 # writes json data directly to database
 	processed_data.each do |ea|
-		# prevents attempt to enter observations that don't have station ids in stations table
-		stations_table = DB[:stations]
-		next if stations_table.where(:id=>ea[:id]).first.nil?
-		insert_into_weather_data(ea)
 
+		stations_table = DB[:stations]
+		observation_table = DB[:weather_data]
+	
+	# prevents attempt to enter observations that don't have station ids in stations table
+		next if stations_table.where(:id=>ea[:id]).first.nil?
+
+		if observation_table.where(:station_id=>ea[:id]).where(:time=>ea[:time]).where(:temp=>ea[:temp]).where(:dewpoint=>ea[:dewpoint]).where(:humidity=>ea[:humidity]).where(:conditions=>ea[:conditions]).where(:weather_primary_coded=>ea[:weather_primary_coded]).where(:clouds_coded=>ea[:clouds_coded]).where(:is_day=>ea[:is_day]).where(:wind_kph=>ea[:wind_kph]).where(:wind_direction=>ea[:wind_direction]).first.nil?
+
+		insert_into_weather_data(ea)
+		end
 	end
 
 end
@@ -129,19 +135,16 @@ end
 def insert_into_weather_data(station)
 
 	observation_table = DB[:weather_data]
-	
-# need to include if clause to prevent duplicate records, and need to add one that checks if station exists in stations table
-	# if observation_table.where(:station_id=>station[:id]).where(:time=>station[:time]).where(:temp=>station[:temp]).where(:dewpoint=>station[:dewpoint]).where(:humidity=>station[:humidity]).where(:conditions=>station[:conditions]).where(:weather_primary_coded=>station[:weather_primary_coded]).where(:clouds_coded=>station[:clouds_coded]).where(:is_day=>station[:is_day]).where(:wind_kph=>station[:wind_kph]).where(:wind_direction=>station[:wind_direction]).nil?
 
-		observation_table.insert(:station_id=>station[:id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_primary_coded=>station[:weather_primary_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
-	# end
+	observation_table.insert(:station_id=>station[:id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_primary_coded=>station[:weather_primary_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
 
 end
 
-# countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
+countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bj", "bm", "bo", "br", "bs", "bt", "bw", "by", "bz", "cf", "cg", "ch", "ci", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "es", "et", "fi", "fj", "fk", "fm",  "fr", "ga", "gb", "gd", "ge", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gt", "gw", "gy", "hk", "hn", "hr", "hu", "id", "ie", "il", "in", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "km", "kn", "kr", "kw", "ky", "kz", "la", "lb", "lc", "lk", "lr", "lt", "lu", "lv", "ly", "ma", "md", "mk", "ml", "mm", "mo", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "ne" , "ng", "ni", "nl", "no", "np", "nz", "om", "pa", "pe", "pg", "ph", "pk", "pl", "pt", "py", "qa", "ro", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sn", "sr", "st", "sv", "sy", "sz",  "td", "tg", "th", "tj", "tm", "tn", "tr", "tt", "tw", "tz", "ua", "ug", "uy", "uz", "vc", "ve", "vi", "vn", "vu", "ws", "ye", "za", "zm", "zw"]
 
-# us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
+us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
 
-countries = ["ae", "af", "ag"]
-us_and_canada = ["ab", "al", "ak"]
-get_all_data(countries, us_and_canada)
+# countries = ["af"]
+# us_and_canada = ["pe"]
+
+# get_all_data(countries, us_and_canada)
