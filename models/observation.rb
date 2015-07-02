@@ -5,10 +5,10 @@ require "haversine"
 
 class Observation
 
-	attr_reader :id, :time, :temp, :dewpoint, :humidity, :conditions, :weather_primary_coded, :clouds_coded, :is_day, :wind_kph, :wind_direction
+	attr_reader :station, :time, :temp, :dewpoint, :humidity, :conditions, :weather_primary_coded, :clouds_coded, :is_day, :wind_kph, :wind_direction
 
-	def initialize(id, time, temp, dewpoint, humidity, conditions, weather_primary_coded, clouds_coded, is_day, wind_kph, wind_direction)
-		@id = id
+	def initialize(station, time, temp, dewpoint, humidity, conditions, weather_primary_coded, clouds_coded, is_day, wind_kph, wind_direction)
+		@station = station
 		@time = time
 		@temp = temp
 		@dewpoint = dewpoint
@@ -38,37 +38,48 @@ class Observation
 			)
 	end
 
-	def self.from_table(hash)
+	def self.from_table(join_hash)
 		self.new(
-			hash[:station_id], # need this for identification, and to join with stations table
-			hash[:time],
-			hash[:temp],
-			hash[:dewpoint],
-			hash[:humidity],
-			hash[:conditions],
-			hash[:weather_primary_coded],
-			hash[:clouds_coded],
-			hash[:is_day],
-			hash[:wind_kph],
-			hash[:wind_direction]
+			Station.new(join_hash[:station_id], join_hash[:name], join_hash[:region], join_hash[:country], join_hash[:latitude], join_hash[:longitude]),
+			join_hash[:time],
+			join_hash[:temp],
+			join_hash[:dewpoint],
+			join_hash[:humidity],
+			join_hash[:conditions],
+			join_hash[:weather_primary_coded],
+			join_hash[:clouds_coded],
+			join_hash[:is_day],
+			join_hash[:wind_kph],
+			join_hash[:wind_direction]
 			)
+	end
+
+	def self.match_in_timeframe(station_id, start_time, end_time)
+
+
+		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
+# where{time >= start_time}.where{time <= end_time}.
+		result = stations_and_observations_join.where(:station_id => station_id.upcase).first
+		
+		if result 
+			from_table(result)
+		end
 	end
 
 	def find_matches
 		# in this method, self is an Observation instance, not the whole db record for the query location
-
+		# this method returns an array of db records, not instances of Observation
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
-
+	
 		matches = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
 			:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
-			:humidity => (humidity - 5)..(humidity + 5)).where(
+			:humidity => (humidity - 5)..(humidity + 5)).where(	
 			:weather_primary_coded => weather_primary_coded).where(
 			:wind_kph => (wind_kph - 5)..(wind_kph + 5)).exclude(
-			:station_id => id).all
+			:station_id => station.id).all
 
-		matches.reject do |ea|
-			time_to_compare = time_threshold
-			Time.parse(ea[:time]) <= time_to_compare
+		time_matches = matches.reject do |ea|
+			ea[:time] <= (self.time - 3600)
 		end
 
 	end
