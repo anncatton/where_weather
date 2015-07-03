@@ -13,61 +13,64 @@
 			</ul>
 		</div>
 
-		<% unless station.nil? %>
 		<div id="results">
+		<% unless matching_observation.nil? %>
 			<div id="current_conditions">
-			<h3 class="section_header">
-				<% if station.country == "Canada" || station.country == "United States" %>
-					<%= station.city %>, <%= station.region %>, <%= station.country %>
+				<h3 class="section_header">
+				<% if matching_observation.station.country == "Canada" || matching_observation.station.country == "United States" %>
+					<%= matching_observation.station.city %>, <%= matching_observation.station.region %>, <%= matching_observation.station.country %>
 				<% else %>
-					<%= station.city %>, <%= station.country %>
+					<%= matching_observation.station.city %>, <%= matching_observation.station.country %>
 				<% end %>
-			</h3>
-			<% if station_to_match.nil? %>
-				<div>There are no current observations for this location</div>
-
-			<% elsif station_to_match_data.nil? %>
-				<div>Not enough data is available for this location.</div>
-
-			<% else %>
-				<div class="condition clearfix">
-					<div class="condition-label">Conditions:</div>
-					<div class="condition-value"><%= station_to_match_data.conditions %></div>
-				</div>
-				<div class="condition clearfix">
-					<div class="condition-label">Temperature:</div>
-					<div class="condition-value"><%= station_to_match_data.temp %> C</div>
-				</div>
-				<div class="condition clearfix">
-					<div class="condition-label">Humidity:</div>
-					<div class="condition-value"><%= station_to_match_data.humidity %> %</div>
-				</div>
-				<div class="condition clearfix">
-					<div class="condition-label">Dewpoint:</div>
-					<div class="condition-value"><%= station_to_match_data.dewpoint %> C</div>
-				</div>
-				<div class="condition clearfix">
-					<div class="condition-label">Wind:</div>
-					<div class="condition-value"><%= station_to_match_data.wind_kph %> km/h</div>
-				</div>
-				<div class="condition clearfix">
-					<div class="condition-label">Observed at:</div>
-					<div class="condition-value"><%= Time.parse(station_to_match_data.time).httpdate %></div>
-				</div>
-			<% end %>
+				</h3>
+				<% if observation_values.nil? %>
+					<div class="condition clearfix">There is not enough data to find matches for <%= matching_observation.station.city %></div>
+				<% else %>
+					<div class="condition clearfix">
+						<div class="condition-label">Conditions:</div>
+						<div class="condition-value"><%= matching_observation.conditions %></div>
+					</div>
+					<div class="condition clearfix">
+						<div class="condition-label">Temperature:</div>
+						<div class="condition-value"><%= matching_observation.temp %> C</div>
+					</div>
+					<div class="condition clearfix">
+						<div class="condition-label">Humidity:</div>
+						<div class="condition-value"><%= matching_observation.humidity %> %</div>
+					</div>
+					<div class="condition clearfix">
+						<div class="condition-label">Dewpoint:</div>
+						<div class="condition-value"><%= matching_observation.dewpoint %> C</div>
+					</div>
+					<div class="condition clearfix">
+						<div class="condition-label">Wind:</div>
+						<div class="condition-value"><%= matching_observation.wind_kph %> km/h</div>
+					</div>
+					<div class="condition clearfix">
+						<div class="condition-label">Observed at:</div>
+						<div class="condition-value"><%= matching_observation.time.httpdate %></div>
+					</div>
 
 			</div>
 
 			<div id="matches">
 				<h3 class="section_header">Matches Around the World:</h3>
-				<% matches_to_display.each do |ea| %>
-					<% matching_location = ea %>
-					<%= erb :_match_view, :locals => {:matching_location => matching_location } %>
+				<% if matching_observation.temp.nil? || matching_observation.dewpoint.nil? || matching_observation.weather_primary_coded.nil? %>
+					<div>There is not enough data to find accurate matches.</div>
+				<% else %>
+					<% if matched_observations_to_display.nil? %>
+						<div>No data for matches</div>
+					<% else %>
+						<% matched_observations_to_display.each do |ea| %>
+							<% matching_location = ea %>
+							<%= erb :_match_view, :locals => {:matching_location => matching_location, :scores_hash => scores_hash } %>
+						<% end %>
+					<% end %>
 				<% end %>
 			</div>
-		</div>
+			<% end %>
 		<% end %>
-
+		</div>
 	</body>
 
 </html>
