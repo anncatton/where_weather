@@ -70,9 +70,12 @@ get '/where_weather' do
 			# station_to_match_data = Observation.from_table(station_to_match)
 			
 # this is making sure temp, dewpoint and weather conditions coded are present in the query station. can you find this out while querying the db? and, do you? at least if you'd like to display what data you actually have for the user
-			if matching_observation.temp.nil? || matching_observation.dewpoint.nil? || matching_observation.weather_primary_coded.nil?
-				
+			if matching_observation.temp.nil? || matching_observation.dewpoint.nil? || matching_observation.weather_primary_coded.nil? ||
+				matching_observation.wind_kph.nil? || matching_observation.wind_direction.nil?
+
 				erb :index, :layout => :layout, :locals => {:matching_observation => matching_observation,
+																										:observation_values => nil,
+																										:station => station,
 																										:matched_stations_to_display => []}
 			else
 				
@@ -87,27 +90,33 @@ get '/where_weather' do
 					end
 					
 					# should make sure this also picks the most recent observation, in case there are 2 or more observations that fall within the window
-					# can you do a query that returns the most recent observation from the db?
+					# can you do a query that returns the most recent observation from the db? yes, but if it's not going to make a huge difference in the amount of data coming from the db then you can filter after the query is finished
+					# you may not need this uniq call once you get past those initial duplicate rows
 					checked_for_distance.uniq! { |match| match[:station_id] }
 
 					matched_observations_to_display = checked_for_distance.map do |ea|
 						Observation.from_table(ea)
 					end
 
-					match_observation_scores = matched_observations_to_display.map do |ea|
+					scores_hash = {}
+
+					matched_observations_to_display.map do |ea|
+
 						temp = ea.temp_score(matching_observation.temp)
 						dewpoint = ea.dewpoint_score(matching_observation.dewpoint)
 						humidity = ea.humidity_score(matching_observation.humidity)
 						wind_kph = ea.wind_kph_score(matching_observation.wind_kph)
 
 						total_score = (temp + dewpoint + humidity + wind_kph)/80.0
-						(total_score * 100).round(2)
-						
+						percentage = (total_score * 100).round(2)
+						scores_hash[ea.station.id] = percentage
+
 					end
 
 					erb :index, :layout => :layout, :locals => {:matching_observation => matching_observation,
 																											:matched_observations_to_display => matched_observations_to_display,
-																											:match_observation_scores => match_observation_scores }
+																											:scores_hash => scores_hash,
+																											:observation_values => "you got some" }
 				end
 			end
 
