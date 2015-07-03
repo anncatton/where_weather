@@ -1,14 +1,12 @@
-<% if matching_location.country == "Canada" || matching_location.country == "United States" %>
+<% if matching_location.station.country == "Canada" || matching_location.station.country == "United States" %>
 	<div class="condition clearfix">
-		<div class="condition-value"><%= matching_location.city %>, <%= matching_location.region %>, <%= matching_location.country %></div>
+		<div class="condition-value"><%= matching_location.station.city %>, <%= matching_location.station.region %>, <%= matching_location.station.country %></div>
 	</div>
 <% else %>
 	<div class="condition clearfix">
-		<div class="condition-value"><%= matching_location.city %>, <%= matching_location.country %></div>
+		<div class="condition-value"><%= matching_location.station.city %>, <%= matching_location.station.country %></div>
 	</div>
 <% end %>
 <div class="condition clearfix">
-	<% match_observation_scores.each do |ea| %>
-		<div class="condition-value"><%= ea %> </div>
-	<% end %>
+		<div class="condition-value"><%= scores_hash[matching_location.station.id] %> % </div>
 </div>
