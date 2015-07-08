@@ -24,8 +24,10 @@
 				<% end %>
 				</h3>
 				<% if observation_values.nil? %>
-					<div class="condition clearfix">There is not enough data to find matches for <%= matching_observation.station.city %></div>
+					<div class="condition clearfix"><%= matching_observation.station.city %>, <%= matching_observation.station.country %> is missing some data at this time.</div>
 				<% else %>
+				<!-- this section should be in its own partial, it clogs up the index page. would also help to get rid of the repetition of the divs etc -->
+				<!-- this is where your old partial _results_view.erb used to be used i think -->
 					<div class="condition clearfix">
 						<div class="condition-label">Conditions:</div>
 						<div class="condition-value"><%= matching_observation.conditions %></div>
@@ -55,13 +57,17 @@
 
 			<div id="matches">
 				<h3 class="section_header">Matches Around the World:</h3>
+				<!-- if you're going to use a simple observation_values.nil? to represent missing data, you don't need all these ors. could maybe have a missing data partial too? -->
 				<% if matching_observation.temp.nil? || matching_observation.dewpoint.nil? || matching_observation.weather_primary_coded.nil? %>
 					<div>There is not enough data to find accurate matches.</div>
 				<% else %>
-					<% if matched_observations_to_display.nil? %>
+					<% if matched_observations_to_display.empty? %>
+					<!-- this should say 'There aren't any matches' because that's what nil here would mean, not that there's no data. -->
+					<!-- should say .empty? not nil? because matched_observations_to_display is an array -->
 						<div>No data for matches</div>
 					<% else %>
 						<% matched_observations_to_display.each do |ea| %>
+						<!-- don't need to set this variable. just set :matching_location local to ea -->
 							<% matching_location = ea %>
 							<%= erb :_match_view, :locals => {:matching_location => matching_location, :scores_hash => scores_hash } %>
 						<% end %>
@@ -72,5 +78,5 @@
 		<% end %>
 		</div>
 	</body>
-
+<!-- is there too much logic in general on this page? it seems hard to read -->
 </html>

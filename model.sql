@@ -26,9 +26,8 @@ CREATE TABLE weather_data (
  	);
 
 
--- the station_id in weather_data must be in stations in order to remain valid, but a station id (id) in stations does
--- not need to be in weather_data in order to be valid. so, weather_data is dependent on stations
+-- the station_id in weather_data must be in stations in order to remain valid, but a station id (id) in stations does not need to be in weather_data in order to be valid. so, weather_data is dependent on stations
 -- this is why you have weather_data(station_id) REFERENCES stations(id)
--- more constraints: station ids must be 4 characters long
+-- more constraints: station ids must be 4 characters long. necessary?
 -- Many developers consider explicitly listing the columns better style than relying on the order implicitly. also, i'm
 -- assuming you'll be creating methods to populate your tables, not typing each one in!
