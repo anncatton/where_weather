@@ -80,11 +80,11 @@ class Observation
 	def temp_score(query_temp)
 
 		if temp == query_temp
-			score = 30
+			30
 		elsif (temp - query_temp) || (query_temp - temp) == 1
-			score = 20
+			20
 		else
-			score = 10
+			10
 		end
 		
 	end
@@ -92,11 +92,11 @@ class Observation
 	def dewpoint_score(query_dewpoint)
 
 		if dewpoint == query_dewpoint
-			score = 20
+			20
 		elsif (dewpoint - query_dewpoint) || (query_dewpoint - dewpoint) == 1
-			score = 15
+			15
 		else
-			score = 10
+			10
 		end
 
 	end
@@ -104,17 +104,17 @@ class Observation
 	def humidity_score(query_humidity)
 
 		if humidity == query_humidity
-			score = 15
+			15
 		elsif (humidity - query_humidity) || (query_humidity - humidity) == 1
-			score = 14
+			14
 		elsif (humidity - query_humidity) || (query_humidity - humidity) == 2
-			score = 13
+			13
 		elsif (humidity - query_humidity) || (query_humidity - humidity) == 3
-			score = 12
+			12
 		elsif (humidity - query_humidity) || (query_humidity - humidity) == 4
-			score = 11
+			11
 		else
-			score = 10
+			10
 		end
 
 	end
@@ -122,17 +122,17 @@ class Observation
 	def wind_kph_score(query_wind_kph)
 
 		if wind_kph == query_wind_kph
-			score = 15
+			15
 		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 1
-			score = 14
+			14
 		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 2
-			score = 13
+			13
 		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 3
-			score = 12
+			12
 		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 4
-			score = 11
+			11
 		else
-			score = 10
+			10
 		end
 
 	end
