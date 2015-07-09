@@ -1,7 +1,4 @@
 require "json"
-require "time"
-require "haversine"
-# require "rspec"
 
 class Observation
 
@@ -65,8 +62,7 @@ class Observation
 	end
 
 	def find_matches(start_time, end_time)
-		# in this method, self is an Observation instance, not the whole db record for the query location
-		# this method returns an array of db records, not instances of Observation
+
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
 	
 		matches = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
@@ -91,7 +87,6 @@ class Observation
 			score = 10
 		end
 		
-		score
 	end
 
 	def dewpoint_score(query_dewpoint)
@@ -104,7 +99,6 @@ class Observation
 			score = 10
 		end
 
-		score
 	end
 
 	def humidity_score(query_humidity)
@@ -123,7 +117,6 @@ class Observation
 			score = 10
 		end
 
-		score
 	end
 
 	def wind_kph_score(query_wind_kph)
@@ -142,9 +135,6 @@ class Observation
 			score = 10
 		end
 
-		score
 	end
 
 end
-
-
