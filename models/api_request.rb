@@ -1,7 +1,6 @@
 require "json"
 require "open-uri"
 require "uri"
-require "fileutils"
 require "active_support/core_ext/object/to_query.rb"
 require "pg"
 require "sequel"
@@ -9,9 +8,7 @@ require "byebug"
 require "./observation.rb"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
-# stations_table = DB[:stations]
 
-# this section is for building requests to the api
 def build_query(query)
 	URI::HTTP.build(
 		{
@@ -41,14 +38,7 @@ def uri_for_state(state)
 
 end
 
-# you'll then want this to automatically update every several hours
-def get_all_data(country_array, state_array)
-
-	get_region_data(country_array, state_array)
-
-end
-
-def get_region_data(countries, states)
+def get_all_data(countries, states)
 
 	country_data = countries.map do |ea|
 		processed_data_for_country(ea)
@@ -60,25 +50,24 @@ def get_region_data(countries, states)
 
 	processed_data = country_data.flatten + state_data.flatten
 
-# writes json data directly to database
 	processed_data.each do |ea|
 
 		stations_table = DB[:stations]
-		observation_table = DB[:weather_data]
+		observations_table = DB[:weather_data]
 	
-	# prevents attempt to enter observations that don't have station ids in stations table
 		next if stations_table.where(:id=>ea[:id]).first.nil?
 
-		if observation_table.where(:station_id=>ea[:id]).where(:time=>ea[:time]).where(:temp=>ea[:temp]).where(:dewpoint=>ea[:dewpoint]).where(:humidity=>ea[:humidity]).where(:conditions=>ea[:conditions]).where(:weather_primary_coded=>ea[:weather_primary_coded]).where(:clouds_coded=>ea[:clouds_coded]).where(:is_day=>ea[:is_day]).where(:wind_kph=>ea[:wind_kph]).where(:wind_direction=>ea[:wind_direction]).first.nil?
+		if observations_table.where(:station_id=>ea[:id]).where(:time=>ea[:time]).where(:temp=>ea[:temp]).where(:dewpoint=>ea[:dewpoint]).where(:humidity=>ea[:humidity]).where(:conditions=>ea[:conditions]).where(:weather_primary_coded=>ea[:weather_primary_coded]).where(:clouds_coded=>ea[:clouds_coded]).where(:is_day=>ea[:is_day]).where(:wind_kph=>ea[:wind_kph]).where(:wind_direction=>ea[:wind_direction]).first.nil?
 
 		insert_into_weather_data(ea)
 		end
+		
 	end
 
 end
 
 def processed_data_for_country(country_name)
-	raw_data = get_data_for_country(country_name) # raw_data is straight json coming from api
+	raw_data = get_data_for_country(country_name)
 	extract_station_data(raw_data)
 end
 
@@ -107,13 +96,13 @@ def get_data_for_state(state_name)
 end
 
 def extract_station_data(raw_data)
-	all_stations = [] # so all_stations will be an array of hashes
+	all_stations = []
 
 	raw_data.map do |ea|
 		new_observation = Observation.from_json(ea)
 
 		station = {}
-		station[:id] = new_observation.station # this is .station because it's the .from_json method, not .from_table
+		station[:id] = new_observation.station
 		station[:time] = Time.parse(new_observation.time).utc
 		station[:temp] = new_observation.temp
 		station[:dewpoint] = new_observation.dewpoint
@@ -134,9 +123,9 @@ end
 
 def insert_into_weather_data(station)
 
-	observation_table = DB[:weather_data]
+	observations_table = DB[:weather_data]
 
-	observation_table.insert(:station_id=>station[:id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_primary_coded=>station[:weather_primary_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
+	observations_table.insert(:station_id=>station[:id], :time=>station[:time], :temp=>station[:temp], :dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], :weather_primary_coded=>station[:weather_primary_coded], :clouds_coded=>station[:clouds_coded], :is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
 
 end
 
@@ -144,7 +133,4 @@ countries = ["ae", "af", "ag", "al", "am", "ao", "aq", "ar", "at", "au", "aw", "
 
 us_and_canada = ["ab", "al", "ak", "az", "ar", "bc", "ca", "co", "ct", "de", "dc", "fl", "ga", "hi", "id", "il", "in", "ia", "ks", "ky", "la", "mb", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt", "nb", "ne", "nv", "nh", "nj", "nl", "nm", "ns", "nt", "nu", "ny", "nc", "nd", "oh", "ok", "on", "or", "pa", "pe", "qc", "ri", "sc", "sd", "sk", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi", "wy", "yt"]
 
-# countries = ["af"]
-# us_and_canada = ["pe"]
-
-# get_all_data(countries, us_and_canada)
+get_all_data(countries, us_and_canada)

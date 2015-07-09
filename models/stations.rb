@@ -1,8 +1,7 @@
 require "haversine"
 require "byebug"
 
-class Station # should station class reflect only the data that's stored in the stations table, that is basically permanent data about
-	# each station? has nothing to do with the weather data, which will change constantly and be associated with a station id
+class Station
 
 	attr_reader :id, :city, :region, :country, :latitude, :longitude
 
