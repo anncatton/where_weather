@@ -74,7 +74,6 @@ class Observation
 			time <= end_time}.exclude(
 			:station_id => station.id).all
 
-# somewhere in here maybe create an if/else for observations that are missing just some data values
 	end
 
 	def temp_score(query_temp)
