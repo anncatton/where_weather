@@ -101,7 +101,7 @@ get '/location_search' do
   content = if matches.empty?
   	erb :_no_result, :layout => false
 	else
-  	erb :_data_field, :layout => false, :locals => { :matches => matches }
+  	erb :_drop_down, :layout => false, :locals => { :matches => matches }
 	end
 
  { :html => content }.to_json
