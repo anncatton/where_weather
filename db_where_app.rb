@@ -20,67 +20,65 @@ get '/where_weather' do
 
 	if station_id.nil?
 
-		erb :index, :layout => :layout, :locals => {:matching_observation => nil}
+		erb :index, :layout => :layout, :locals => {:query_observation => nil}
 
 	else
 
-		matching_observation = Observation.match_in_timeframe(station_id, '2015-07-09 14:00:00', '2015-07-09 16:00:00')
+		query_observation = Observation.match_in_timeframe(station_id, '2015-07-09 14:00:00', '2015-07-09 16:00:00')
 
-		if matching_observation.nil?
+		if query_observation.nil?
 
 			station_record = DB[:stations].where(:id=>station_id.upcase).first
 
 			if station_record.nil?
-				erb :index, :layout => :layout, :locals => {:station => nil,
-																										:matching_observation => nil}
+				erb :index, :layout => :layout, :locals => {:query_station => nil,
+																										:query_observation => nil}
 			else
-				station = Station.from_table(station_record)
+				query_station = Station.from_table(station_record)
 
-				erb :index, :layout => :layout, :locals => {:station => station,
-																										:matching_observation => nil}				
+				erb :index, :layout => :layout, :locals => {:query_station => query_station,
+																										:query_observation => nil}				
 			end
 
 		else
-			
-			if matching_observation.temp.nil? || matching_observation.dewpoint.nil? || matching_observation.weather_primary_coded.nil? ||
-				matching_observation.wind_kph.nil? || matching_observation.wind_direction.nil?
+			# take a closer look at this section for value nils
+			if query_observation.temp.nil? || query_observation.dewpoint.nil? || query_observation.weather_primary_coded.nil? ||
+				query_observation.wind_kph.nil? || query_observation.wind_direction.nil?
 
-				erb :index, :layout => :layout, :locals => {:matching_observation => matching_observation,
-																										:observation_values => nil,
-																										:station => station}
+				erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
+																										:query_observation_values => nil}
 			else
 				
-				all_matches = matching_observation.find_matches('2015-07-09 14:00:00', '2015-07-09 16:00:00')
+				all_matches = query_observation.find_matches('2015-07-09 14:00:00', '2015-07-09 16:00:00')
 
 				unless all_matches.nil?
-					checked_for_distance = all_matches.reject do |ea|
-						station_to_check = Station.from_table(ea)
-						station_to_check.too_close?(matching_observation.station)
+					matches_checked_for_distance = all_matches.reject do |ea|
+						Station.from_table(ea).too_close?(query_observation.station)
 					end
-					
-					matched_observations_to_display = checked_for_distance.map do |ea|
+
+					matching_observations = matches_checked_for_distance.map do |ea|
 						Observation.from_table(ea)
 					end
 
 					scores_hash = {}
 
-					matched_observations_to_display.map do |ea|
+					matching_observations.map do |ea|
 
-						temp = ea.temp_score(matching_observation.temp)
-						dewpoint = ea.dewpoint_score(matching_observation.dewpoint)
-						humidity = ea.humidity_score(matching_observation.humidity)
-						wind_kph = ea.wind_kph_score(matching_observation.wind_kph)
+						temp = ea.temp_score(query_observation.temp)
+						dewpoint = ea.dewpoint_score(query_observation.dewpoint)
+						humidity = ea.humidity_score(query_observation.humidity)
+						wind_kph = ea.wind_kph_score(query_observation.wind_kph)
 
 						total_score = (temp + dewpoint + humidity + wind_kph)/80.0
-						percentage = (total_score * 100).round(2)
-						scores_hash[ea.station.id] = percentage
+						percentage_score = (total_score * 100).round(2)
+						scores_hash[ea.station.id] = percentage_score
 
 					end
 
-					erb :index, :layout => :layout, :locals => {:matching_observation => matching_observation,
-																											:matched_observations_to_display => matched_observations_to_display,
+					erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
+																											:matching_observations => matching_observations,
 																											:scores_hash => scores_hash,
-																											:observation_values => "you got some" }
+																											:query_observation_values => "you got some" }
 				end
 			end
 
@@ -103,7 +101,7 @@ get '/location_search' do
   content = if matches.empty?
   	erb :_no_result, :layout => false
 	else
-  	erb :_data_field, :layout => false, :locals => { :matches => matches }
+  	erb :_drop_down, :layout => false, :locals => { :matches => matches }
 	end
 
  { :html => content }.to_json
