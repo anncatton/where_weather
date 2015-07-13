@@ -73,7 +73,7 @@ get '/where_weather' do
 
 						total_score = (temp + dewpoint + humidity + wind_kph)/80.0
 						percentage = (total_score * 100).round(2)
-						scores_hash[ea] = percentage
+						scores_hash[ea.station] = percentage
 
 					end
 
@@ -81,7 +81,6 @@ get '/where_weather' do
 					sorted_scores_hash = sorted_scores.reverse!.to_h
 
 					erb :index, :layout => :layout, :locals => {:matching_observation => matching_observation,
-																											#:matched_observations_to_display => matched_observations_to_display,
 																											:sorted_scores_hash => sorted_scores_hash,
 																											:observation_values => "you got some" }
 				end
