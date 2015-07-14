@@ -20,7 +20,7 @@ def insert_into_stations(station)
 end
 
 LOCATIONS.each do |ea|
-	insert_into_stations(ea, stations)
+	insert_into_stations(ea, stations_table)
 end
 
 def insert_into_weather_data(station)

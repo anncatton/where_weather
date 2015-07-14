@@ -14,48 +14,48 @@
 		</div>
 
 		<div id="results">
-		<% unless matching_observation.nil? %>
+		<% unless query_observation.nil? %>
 			<div id="current_conditions">
 				<h3 class="section_header">
-				<% if matching_observation.station.country == "Canada" || matching_observation.station.country == "United States" %>
-					<%= matching_observation.station.city %>, <%= matching_observation.station.region %>, <%= matching_observation.station.country %>
+				<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
+					<%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
 				<% else %>
-					<%= matching_observation.station.city %>, <%= matching_observation.station.country %>
+					<%= query_observation.station.city %>, <%= query_observation.station.country %>
 				<% end %>
 				</h3>
-				<% if observation_values.nil? %>
-					<div class="condition clearfix">There is not enough data to find matches for <%= matching_observation.station.city %></div>
+				<% if query_observation_values.nil? %>
+					<div class="condition clearfix">There is not enough data to find matches for <%= query_observation.station.city %></div>
 				<% else %>
 					<div class="condition clearfix">
 						<div class="condition-label">Conditions:</div>
-						<div class="condition-value"><%= matching_observation.conditions %></div>
+						<div class="condition-value"><%= query_observation.conditions %></div>
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Temperature:</div>
-						<div class="condition-value"><%= matching_observation.temp %> C</div>
+						<div class="condition-value"><%= query_observation.temp %> C</div>
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Humidity:</div>
-						<div class="condition-value"><%= matching_observation.humidity %> %</div>
+						<div class="condition-value"><%= query_observation.humidity %> %</div>
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Dewpoint:</div>
-						<div class="condition-value"><%= matching_observation.dewpoint %> C</div>
+						<div class="condition-value"><%= query_observation.dewpoint %> C</div>
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Wind:</div>
-						<div class="condition-value"><%= matching_observation.wind_kph %> km/h</div>
+						<div class="condition-value"><%= query_observation.wind_kph %> km/h</div>
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Observed at:</div>
-						<div class="condition-value"><%= matching_observation.time.httpdate %></div>
+						<div class="condition-value"><%= query_observation.time.httpdate %></div>
 					</div>
 
 			</div>
 
 			<div id="matches">
 				<h3 class="section_header">Matches Around the World:</h3>
-				<% if matching_observation.temp.nil? || matching_observation.dewpoint.nil? || matching_observation.weather_primary_coded.nil? %>
+				<% if query_observation.temp.nil? || query_observation.dewpoint.nil? || query_observation.weather_primary_coded.nil? %>
 					<div>There is not enough data to find accurate matches.</div>
 				<% else %>
 					<% if sorted_scores_hash.empty? %>
