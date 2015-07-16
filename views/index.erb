@@ -58,12 +58,11 @@
 				<% if query_observation.temp.nil? || query_observation.dewpoint.nil? || query_observation.weather_primary_coded.nil? %>
 					<div>There is not enough data to find accurate matches.</div>
 				<% else %>
-					<% if matching_observations.nil? %>
+					<% if sorted_scores.empty? %>
 						<div>No data for matches</div>
 					<% else %>
-						<% matching_observations.each do |ea| %>
-							<% matching_location = ea %>
-							<%= erb :_match_view, :locals => {:matching_location => matching_location, :scores_hash => scores_hash } %>
+						<% sorted_scores.each do |ea| %>
+							<%= erb :_match_view, :locals => {:matching_location => ea} %>
 						<% end %>
 					<% end %>
 				<% end %>

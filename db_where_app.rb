@@ -41,7 +41,7 @@ get '/where_weather' do
 			end
 
 		else
-			# take a closer look at this section for value nils
+			# take a closer look at this section for how you're handling nil values. i think i have repeats here?
 			if query_observation.temp.nil? || query_observation.dewpoint.nil? || query_observation.weather_primary_coded.nil? ||
 				query_observation.wind_kph.nil? || query_observation.wind_direction.nil?
 
@@ -60,9 +60,11 @@ get '/where_weather' do
 						Observation.from_table(ea)
 					end
 
-					scores_hash = {}
+					scores_array = []
 
 					matching_observations.map do |ea|
+
+						location_hash = {}
 
 						temp = ea.temp_score(query_observation.temp)
 						dewpoint = ea.dewpoint_score(query_observation.dewpoint)
@@ -71,14 +73,20 @@ get '/where_weather' do
 
 						total_score = (temp + dewpoint + humidity + wind_kph)/80.0
 						percentage_score = (total_score * 100).round(2)
-						scores_hash[ea.station.id] = percentage_score
+						
+						location_hash[:score] = percentage_score
+						location_hash[:location] = ea.station
+						scores_array << location_hash
 
 					end
 
+					sorted_scores = scores_array.sort_by { |hash| hash[:score] }
+					sorted_scores.reverse!
+
 					erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
-																											:matching_observations => matching_observations,
-																											:scores_hash => scores_hash,
+																											:sorted_scores => sorted_scores,
 																											:query_observation_values => "you got some" }
+
 				end
 			end
 
