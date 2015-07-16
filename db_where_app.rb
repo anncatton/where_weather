@@ -60,9 +60,11 @@ get '/where_weather' do
 						Observation.from_table(ea)
 					end
 
-					scores_hash = {}
+					scores_array = []
 
 					matching_observations.map do |ea|
+
+						location_hash = {}
 
 						temp = ea.temp_score(query_observation.temp)
 						dewpoint = ea.dewpoint_score(query_observation.dewpoint)
@@ -71,16 +73,18 @@ get '/where_weather' do
 
 						total_score = (temp + dewpoint + humidity + wind_kph)/80.0
 						percentage_score = (total_score * 100).round(2)
-						scores_hash[ea.station] = percentage_score
+						
+						location_hash[:score] = percentage_score
+						location_hash[:location] = ea.station
+						scores_array << location_hash
 
 					end
 
-						sorted_scores = scores_hash.sort_by { |k, v| v }
-						sorted_scores_hash = sorted_scores.reverse!.to_h
+					sorted_scores = scores_array.sort_by { |hash| hash[:score] }
+					sorted_scores.reverse!
 
-						erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
-																											:sorted_scores_hash => sorted_scores_hash,
-																											:matching_observations => matching_observations,
+					erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
+																											:sorted_scores => sorted_scores,
 																											:query_observation_values => "you got some" }
 
 				end
