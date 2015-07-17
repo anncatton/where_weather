@@ -30,15 +30,10 @@ get '/where_weather' do
 
 			station_record = DB[:stations].where(:id=>station_id.upcase).first
 
-			if station_record.nil?
-				erb :index, :layout => :layout, :locals => {:query_station => nil,
-																										:query_observation => nil}
-			else
-				query_station = Station.from_table(station_record)
+			query_station = Station.from_table(station_record) unless station_record.nil?
 
-				erb :index, :layout => :layout, :locals => {:query_station => query_station,
-																										:query_observation => nil}				
-			end
+			erb :index, :layout => :layout, :locals => {:query_station => query_station,
+																									:query_observation => nil}				
 
 		else
 			# take a closer look at this section for how you're handling nil values. i think i have repeats here?
