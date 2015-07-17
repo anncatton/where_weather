@@ -59,7 +59,7 @@
 					<div>There is not enough data to find accurate matches.</div>
 				<% else %>
 					<% if sorted_scores.empty? %>
-						<div>No data for matches</div>
+						<div>There are no matches for <%= query_observation.station.city %>.</div>
 					<% else %>
 						<% sorted_scores.each do |ea| %>
 							<%= erb :_match_view, :locals => {:matching_location => ea} %>
