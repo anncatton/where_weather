@@ -12,54 +12,50 @@
 			<ul class="search_results">
 			</ul>
 		</div>
-
+  
 		<div id="results">
-		<% unless query_observation.nil? %>
 			<div id="current_conditions">
 				<h3 class="section_header">
-				<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
-					<%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
+				<% if query_observation.nil? %>
+					<div class="condition clearfix">There is not enough data to find matches for <%= query_station.city %></div>
 				<% else %>
-					<%= query_observation.station.city %>, <%= query_observation.station.country %>
-				<% end %>
+					<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
+						<%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
+					<% else %>
+						<%= query_observation.station.city %>, <%= query_observation.station.country %>
+					<% end %>
 				</h3>
-				<% if query_observation_values.nil? %>
-					<div class="condition clearfix">There is not enough data to find matches for <%= query_observation.station.city %></div>
-				<% else %>
-					<div class="condition clearfix">
-						<div class="condition-label">Conditions:</div>
-						<div class="condition-value"><%= query_observation.conditions %></div>
-					</div>
-					<div class="condition clearfix">
-						<div class="condition-label">Temperature:</div>
-						<div class="condition-value"><%= query_observation.temp %> C</div>
-					</div>
-					<div class="condition clearfix">
-						<div class="condition-label">Humidity:</div>
-						<div class="condition-value"><%= query_observation.humidity %> %</div>
-					</div>
-					<div class="condition clearfix">
-						<div class="condition-label">Dewpoint:</div>
-						<div class="condition-value"><%= query_observation.dewpoint %> C</div>
-					</div>
-					<div class="condition clearfix">
-						<div class="condition-label">Wind:</div>
-						<div class="condition-value"><%= query_observation.wind_kph %> km/h</div>
-					</div>
-					<div class="condition clearfix">
-						<div class="condition-label">Observed at:</div>
-						<div class="condition-value"><%= query_observation.time.httpdate %></div>
-					</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Conditions:</div>
+					<div class="condition-value"><%= query_observation.conditions %></div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Temperature:</div>
+					<div class="condition-value"><%= query_observation.temp %> C</div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Humidity:</div>
+					<div class="condition-value"><%= query_observation.humidity %> %</div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Dewpoint:</div>
+					<div class="condition-value"><%= query_observation.dewpoint %> C</div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Wind:</div>
+					<div class="condition-value"><%= query_observation.wind_kph %> km/h</div>
+				</div>
+				<div class="condition clearfix">
+					<div class="condition-label">Observed at:</div>
+					<div class="condition-value"><%= query_observation.time.httpdate %></div>
+				</div>
 
 			</div>
 
 			<div id="matches">
 				<h3 class="section_header">Matches Around the World:</h3>
-				<% if query_observation.temp.nil? || query_observation.dewpoint.nil? || query_observation.weather_primary_coded.nil? %>
-					<div>There is not enough data to find accurate matches.</div>
-				<% else %>
 					<% if sorted_scores.empty? %>
-						<div>There are no matches for <%= query_observation.station.city %>.</div>
+						<div>Nope. Looks like your weather is unique!</div>
 					<% else %>
 						<% sorted_scores.each do |ea| %>
 							<%= erb :_match_view, :locals => {:matching_location => ea} %>
@@ -67,8 +63,6 @@
 					<% end %>
 				<% end %>
 			</div>
-			<% end %>
-		<% end %>
 		</div>
 	</body>
 

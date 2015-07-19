@@ -57,22 +57,36 @@ class Observation
 		result = stations_and_observations_join.where(:station_id => station_id.upcase).where{time >= start_time}.where{time <= end_time}.first
 		
 		if result 
-			from_table(result)
+			if result[:temp].nil? || result[:dewpoint].nil? || result[:weather_primary_coded].nil?
+				result = nil
+			else
+				from_table(result)
+			end
 		end
+
 	end
 
 	def find_matches(start_time, end_time)
 
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
 	
-		matches = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
-			:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
-			:humidity => (humidity - 5)..(humidity + 5)).where(	
-			:weather_primary_coded => weather_primary_coded).where(
-			:wind_kph => (wind_kph - 5)..(wind_kph + 5)).where{
-			time >= start_time}.where{
-			time <= end_time}.exclude(
-			:station_id => station.id).all
+		if wind_kph.nil? || humidity.nil?
+			matches = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
+				:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(	
+				:weather_primary_coded => weather_primary_coded).where{
+				time >= start_time}.where{
+				time <= end_time}.exclude(
+				:station_id => station.id).all
+		else
+			matches = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
+				:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
+				:humidity => (humidity - 5)..(humidity + 5)).where(	
+				:weather_primary_coded => weather_primary_coded).where(
+				:wind_kph => (wind_kph - 5)..(wind_kph + 5)).where{
+				time >= start_time}.where{
+				time <= end_time}.exclude(
+				:station_id => station.id).all
+		end
 
 	end
 
@@ -102,7 +116,9 @@ class Observation
 
 	def humidity_score(query_humidity)
 
-		if humidity == query_humidity
+		if query_humidity.nil?
+			0
+		elsif humidity == query_humidity
 			15
 		elsif (humidity - query_humidity) || (query_humidity - humidity) == 1
 			14
@@ -120,7 +136,9 @@ class Observation
 
 	def wind_kph_score(query_wind_kph)
 
-		if wind_kph == query_wind_kph
+		if query_wind_kph.nil?
+			0
+		elsif wind_kph == query_wind_kph
 			15
 		elsif (wind_kph - query_wind_kph) || (query_wind_kph - wind_kph) == 1
 			14

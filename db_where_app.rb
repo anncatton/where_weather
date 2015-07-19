@@ -36,14 +36,7 @@ get '/where_weather' do
 																									:query_observation => nil}				
 
 		else
-			# take a closer look at this section for how you're handling nil values. i think i have repeats here?
-			if query_observation.temp.nil? || query_observation.dewpoint.nil? || query_observation.weather_primary_coded.nil? ||
-				query_observation.wind_kph.nil? || query_observation.wind_direction.nil?
 
-				erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
-																										:query_observation_values => nil}
-			else
-				
 				all_matches = query_observation.find_matches('2015-07-17 00:30:00', '2015-07-17 02:30:00')
 
 				unless all_matches.nil?
@@ -79,11 +72,9 @@ get '/where_weather' do
 					sorted_scores.reverse!
 
 					erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
-																											:sorted_scores => sorted_scores,
-																											:query_observation_values => "you got some" }
+																											:sorted_scores => sorted_scores}
 
 				end
-			end
 
 		end
 
