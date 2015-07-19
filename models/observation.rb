@@ -94,7 +94,7 @@ class Observation
 
 		if temp == query_temp
 			30
-		elsif (temp - query_temp) || (query_temp - temp) == 1
+		elsif ((temp - query_temp) || (query_temp - temp)) == 1
 			20
 		else
 			10
@@ -106,7 +106,7 @@ class Observation
 
 		if dewpoint == query_dewpoint
 			20
-		elsif (dewpoint - query_dewpoint) || (query_dewpoint - dewpoint) == 1
+		elsif ((dewpoint - query_dewpoint) || (query_dewpoint - dewpoint)) == 1
 			15
 		else
 			10
