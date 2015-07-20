@@ -94,7 +94,7 @@ class Observation
 
 		if temp == query_temp
 			30
-		elsif ((temp - query_temp) || (query_temp - temp)) == 1
+		elsif ((temp - query_temp) || (query_temp - temp)).abs == 1
 			20
 		else
 			10
@@ -106,7 +106,7 @@ class Observation
 
 		if dewpoint == query_dewpoint
 			20
-		elsif ((dewpoint - query_dewpoint) || (query_dewpoint - dewpoint)) == 1
+		elsif ((dewpoint - query_dewpoint) || (query_dewpoint - dewpoint)).abs == 1
 			15
 		else
 			10
@@ -120,13 +120,13 @@ class Observation
 			0
 		elsif humidity == query_humidity
 			15
-		elsif ((humidity - query_humidity) || (query_humidity - humidity)) == 1
+		elsif ((humidity - query_humidity) || (query_humidity - humidity)).abs == 1
 			14
-		elsif ((humidity - query_humidity) || (query_humidity - humidity)) == 2
+		elsif ((humidity - query_humidity) || (query_humidity - humidity)).abs == 2
 			13
-		elsif ((humidity - query_humidity) || (query_humidity - humidity)) == 3
+		elsif ((humidity - query_humidity) || (query_humidity - humidity)).abs == 3
 			12
-		elsif ((humidity - query_humidity) || (query_humidity - humidity)) == 4
+		elsif ((humidity - query_humidity) || (query_humidity - humidity)).abs == 4
 			11
 		else
 			10
@@ -140,13 +140,13 @@ class Observation
 			0
 		elsif wind_kph == query_wind_kph
 			15
-		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)) == 1
+		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)).abs == 1
 			14
-		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)) == 2
+		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)).abs == 2
 			13
-		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)) == 3
+		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)).abs == 3
 			12
-		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)) == 4
+		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)).abs == 4
 			11
 		else
 			10
