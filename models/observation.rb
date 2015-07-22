@@ -56,7 +56,7 @@ class Observation
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
 		result = stations_and_observations_join.where(:station_id => station_id.upcase).where{time >= start_time}.where{time <= end_time}.first
 		
-		if result 
+		if result
 			if result[:temp].nil? || result[:dewpoint].nil? || result[:weather_primary_coded].nil?
 				result = nil
 			else
@@ -70,22 +70,19 @@ class Observation
 
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
 	
+		initial_match_query = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
+			:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
+			:weather_primary_coded => weather_primary_coded).where{
+			time >= start_time}.where{
+			time <= end_time}.exclude(
+			:station_id => station.id)
+
 		if wind_kph.nil? || humidity.nil?
-			matches = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
-				:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(	
-				:weather_primary_coded => weather_primary_coded).where{
-				time >= start_time}.where{
-				time <= end_time}.exclude(
-				:station_id => station.id).all
+			matches = initial_match_query.all
 		else
-			matches = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
-				:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
-				:humidity => (humidity - 5)..(humidity + 5)).where(	
-				:weather_primary_coded => weather_primary_coded).where(
-				:wind_kph => (wind_kph - 5)..(wind_kph + 5)).where{
-				time >= start_time}.where{
-				time <= end_time}.exclude(
-				:station_id => station.id).all
+			matches = initial_match_query.where(
+				:humidity => (humidity - 5)..(humidity + 5)).where(
+				:wind_kph => (wind_kph - 5)..(wind_kph + 5)).all
 		end
 
 	end
