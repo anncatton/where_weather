@@ -55,9 +55,12 @@ get '/where_weather' do
 						Observation.from_table(ea)
 					end
 
+					sorted_by_time = matching_observations.sort_by { |ea| ea.time }
+					sorted_by_time.reverse!.uniq! { |ea| ea.station.id }
+
 					scores_array = []
 
-					matching_observations.map do |ea|
+					sorted_by_time.map do |ea|
 
 						location_hash = {}
 
