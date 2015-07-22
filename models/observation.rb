@@ -2,9 +2,11 @@ require "json"
 
 class Observation
 
-	attr_reader :station, :time, :temp, :dewpoint, :humidity, :conditions, :weather_primary_coded, :clouds_coded, :is_day, :wind_kph, :wind_direction
+	attr_reader :station, :time, :temp, :dewpoint, :humidity, :conditions, :weather_primary_coded, :clouds_coded,
+		:is_day, :wind_kph, :wind_direction
 
-	def initialize(station, time, temp, dewpoint, humidity, conditions, weather_primary_coded, clouds_coded, is_day, wind_kph, wind_direction)
+	def initialize(station, time, temp, dewpoint, humidity, conditions, weather_primary_coded, clouds_coded,
+		is_day, wind_kph, wind_direction)
 		@station = station
 		@time = time
 		@temp = temp
@@ -37,7 +39,12 @@ class Observation
 
 	def self.from_table(join_hash)
 		self.new(
-			Station.new(join_hash[:station_id], join_hash[:name], join_hash[:region], join_hash[:country], join_hash[:latitude], join_hash[:longitude]),
+			Station.new(join_hash[:station_id],
+				join_hash[:name],
+				join_hash[:region], 
+				join_hash[:country], 
+				join_hash[:latitude], 
+				join_hash[:longitude]),
 			join_hash[:time],
 			join_hash[:temp],
 			join_hash[:dewpoint],
@@ -54,7 +61,8 @@ class Observation
 	def self.match_in_timeframe(station_id, start_time, end_time)
 
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
-		result = stations_and_observations_join.where(:station_id => station_id.upcase).where{time >= start_time}.where{time <= end_time}.first
+		result = stations_and_observations_join.where(:station_id => station_id.upcase).where
+			{time >= start_time}.where{time <= end_time}.first
 		
 		if result
 			if result[:temp].nil? || result[:dewpoint].nil? || result[:weather_primary_coded].nil?
@@ -70,7 +78,8 @@ class Observation
 
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
 	
-		initial_match_query = stations_and_observations_join.where(:temp => (temp - 1)..(temp + 1)).where(
+		initial_match_query = stations_and_observations_join.where(
+			:temp => (temp - 1)..(temp + 1)).where(
 			:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(
 			:weather_primary_coded => weather_primary_coded).where{
 			time >= start_time}.where{
