@@ -78,9 +78,9 @@ class Observation
 			:station_id => station.id)
 
 		if wind_kph.nil? || humidity.nil?
-			matches = initial_match_query.all
+			initial_match_query.all
 		else
-			matches = initial_match_query.where(
+			initial_match_query.where(
 				:humidity => (humidity - 5)..(humidity + 5)).where(
 				:wind_kph => (wind_kph - 5)..(wind_kph + 5)).all
 		end
