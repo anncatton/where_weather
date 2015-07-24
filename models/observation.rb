@@ -61,8 +61,10 @@ class Observation
 	def self.match_in_timeframe(station_id, start_time, end_time)
 
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
-		result = stations_and_observations_join.where(:station_id => station_id.upcase).where
-			{time >= start_time}.where{time <= end_time}.first
+		result = stations_and_observations_join.where(
+			:station_id => station_id.upcase).where{
+			time >= start_time}.where{
+			time <= end_time}.first
 		
 		if result
 			if result[:temp].nil? || result[:dewpoint].nil? || result[:weather_primary_coded].nil?
