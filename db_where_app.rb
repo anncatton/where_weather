@@ -51,16 +51,18 @@ get '/where_weather' do
 						Station.from_table(ea).too_close?(query_observation.station)
 					end
 
-					matching_observations = matches_checked_for_distance.map do |ea|
-						Observation.from_table(ea)
-					end
+					matches_grouped_by_id = matches_checked_for_distance.group_by { |ea| ea[:station_id]}
 
-					matches_sorted_by_time = matching_observations.sort_by { |ea| ea.time }
-					matches_sorted_by_time.reverse!.uniq! { |ea| ea.station.id }
+					most_recent_matches = matches_grouped_by_id.map do |station_id, observations|
+						most_recent = observations.max do |a, b|
+							a[:time] <=> b[:time]
+						end
+						Observation.from_table(most_recent)
+					end
 
 					scores_array = []
 
-					matches_sorted_by_time.map do |ea|
+					most_recent_matches.map do |ea|
 
 						location_hash = {}
 
