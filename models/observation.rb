@@ -79,7 +79,7 @@ class Observation
 	def find_matches(start_time, end_time)
 
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
-	
+
 		initial_match_query = stations_and_observations_join.where(
 			:temp => (temp - 1)..(temp + 1)).where(
 			:dewpoint => (dewpoint - 1)..(dewpoint + 1)).where(

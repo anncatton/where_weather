@@ -19,12 +19,12 @@ get '/where_weather' do
 	station_id = params[:id]
 
 	if station_id.nil?
-
-		erb :index, :layout => :layout, :locals => {:query_observation => nil}
+		erb :index, :layout => :layout, :locals => {:query_station => nil,
+													:query_observation => nil}
 
 	else
 
-		query_observation = Observation.match_in_timeframe(station_id, '2015-07-17 00:30:00', '2015-07-17 02:30:00')
+		query_observation = Observation.match_in_timeframe(station_id, '2015-07-27 23:50:00', '2015-07-28 01:50:00')
 
 		if query_observation.nil?
 
@@ -33,11 +33,11 @@ get '/where_weather' do
 			query_station = Station.from_table(station_record) unless station_record.nil?
 
 			erb :index, :layout => :layout, :locals => {:query_station => query_station,
-																									:query_observation => nil}				
+														:query_observation => nil}				
 
 		else
 
-				all_matches = query_observation.find_matches('2015-07-17 00:30:00', '2015-07-17 02:30:00')
+				all_matches = query_observation.find_matches('2015-07-27 23:50:00', '2015-07-28 01:50:00')
 
 				unless all_matches.nil?
 					matches_checked_for_distance = all_matches.reject do |ea|
@@ -77,7 +77,7 @@ get '/where_weather' do
 					sorted_scores.reverse!
 
 					erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
-																											:sorted_scores => sorted_scores}
+																:sorted_scores => sorted_scores}
 
 				end
 
@@ -90,7 +90,7 @@ end
 
 get '/location_search' do
 
-	stations_table = DB[:stations]
+ 	stations_table = DB[:stations]
 
   content_type :json
   query = params[:query]
@@ -106,3 +106,4 @@ get '/location_search' do
  { :html => content }.to_json
 
 end
+
