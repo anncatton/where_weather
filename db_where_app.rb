@@ -90,7 +90,7 @@ end
 
 get '/location_search' do
 
- 	stations_table = DB[:stations]
+	stations_table = DB[:stations]
 
   content_type :json
   query = params[:query]

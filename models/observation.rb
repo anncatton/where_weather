@@ -88,19 +88,19 @@ class Observation
 			time <= end_time}.exclude(
 			:station_id => station.id)
 
-		if wind_kph && humidity
-			initial_match_query.where(
-				:humidity => (humidity -5)..(humidity + 5)).where(
-				:wind_kph => (wind_kph -5)..(wind_kph + 5)).all
-		elsif wind_kph
-			initial_match_query.where(
-				:wind_kph => (wind_kph - 5)..(wind_kph + 5)).all
-		elsif humidity
-			initial_match_query.where(
-				:humidity => (humidity - 5)..(humidity + 5)).all
-		else
-			initial_match_query.all
+		query = initial_match_query
+
+		if wind_kph
+			query = query.where(
+				:wind_kph => (wind_kph - 5)..(wind_kph + 5))
 		end
+
+		if humidity
+			query = query.where(
+				:humidity => (humidity - 5)..(humidity + 5))
+		end
+
+		query.all
 
 	end
 
