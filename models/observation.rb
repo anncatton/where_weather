@@ -88,13 +88,19 @@ class Observation
 			time <= end_time}.exclude(
 			:station_id => station.id)
 
-		if wind_kph.nil? || humidity.nil?
-			initial_match_query.all
-		else
-			initial_match_query.where(
-				:humidity => (humidity - 5)..(humidity + 5)).where(
-				:wind_kph => (wind_kph - 5)..(wind_kph + 5)).all
+		query = initial_match_query
+
+		if wind_kph
+			query = query.where(
+				:wind_kph => (wind_kph - 5)..(wind_kph + 5))
 		end
+
+		if humidity
+			query = query.where(
+				:humidity => (humidity - 5)..(humidity + 5))
+		end
+
+		query.all
 
 	end
 
@@ -124,7 +130,7 @@ class Observation
 
 	def humidity_score(query_humidity)
 
-		if query_humidity.nil?
+		if query_humidity.nil? || humidity.nil?
 			0
 		elsif humidity == query_humidity
 			15
@@ -144,7 +150,7 @@ class Observation
 
 	def wind_kph_score(query_wind_kph)
 
-		if query_wind_kph.nil?
+		if query_wind_kph.nil? || wind_kph.nil?
 			0
 		elsif wind_kph == query_wind_kph
 			15
