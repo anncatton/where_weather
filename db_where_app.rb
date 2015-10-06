@@ -18,13 +18,28 @@ get '/where_weather' do
 
 	station_id = params[:id]
 
+
+# def find_most_recent_time(station_id)
+# 	stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
+# 	results = stations_and_observations_join.where(:station_id => station_id).all
+# 	times = results.map do |ea|
+# 		ea[:time]
+# 	end
+
+# 	latest_time = times.max
+# 	byebug
+# end
+
+# start_time = find_most_recent_time(station_id) - 3600
+# end_time = find_most_recent_time(station_id) + 3600
+
 	if station_id.nil?
 		erb :index, :layout => :layout, :locals => {:query_station => nil,
 													:query_observation => nil}
 
 	else
 
-		query_observation = Observation.match_in_timeframe(station_id, '2015-07-27 23:50:00', '2015-07-28 01:50:00')
+		query_observation = Observation.match_in_timeframe(station_id, '2015-09-10 11:00:00', '2015-09-10 13:00:00')
 
 		if query_observation.nil?
 
@@ -37,7 +52,7 @@ get '/where_weather' do
 
 		else
 
-				all_matches = query_observation.find_matches('2015-07-27 23:50:00', '2015-07-28 01:50:00')
+				all_matches = query_observation.find_matches('2015-09-10 11:00:00', '2015-09-10 13:00:00')
 
 				unless all_matches.nil?
 					matches_checked_for_distance = all_matches.reject do |ea|
