@@ -9,7 +9,7 @@ require "logger"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 DB.loggers << Logger.new($stdout)
-
+# test
 get '/' do
 	redirect to('/where_weather')
 end
