@@ -1,0 +1,29 @@
+<div class="condition clearfix">
+	<div class="condition-label">Conditions:</div>
+	<div class="condition-value"><%= matching_observation.conditions %></div>
+</div>
+<div class="condition clearfix">
+	<div class="condition-label">Temperature:</div>
+	<div class="condition-value"><%= matching_observation.temp %> C</div>
+</div>
+<div class="condition clearfix">
+	<div class="condition-label">Humidity:</div>
+	<div class="condition-value"><%= matching_observation.humidity %> %</div>
+</div>
+<div class="condition clearfix">
+	<div class="condition-label">Dewpoint:</div>
+	<div class="condition-value"><%= matching_observation.dewpoint %> C</div>
+</div>
+<div class="condition clearfix">
+	<div class="condition-label">Wind:</div>
+	<div class="condition-value"><%= matching_observation.wind_kph %> km/h</div>
+</div>
+<div class="condition clearfix">
+	<div class="condition-label">Observed at:</div>
+	<div class="condition-value"><%= matching_observation.time.httpdate %></div>
+</div>
+
+<div class="condition clearfix">
+	<div class="condition-label"><%= category %>:</div>
+	<div class="condition-value"><%= value %><%= unit %></div>
+</div>

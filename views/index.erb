@@ -8,7 +8,7 @@
 	<body>
 		<h2 class="header">Weather for <%= Date.today %></h2>
 		<div class="location_menu">
-			<input type="text" class="location_input" value="Start typing your location">
+			<input type="text" class="location_input" placeholder="Start typing your location">
 			<ul class="search_results">
 			</ul>
 		</div>
@@ -16,7 +16,9 @@
 		<div id="results">
 			<div id="current_conditions">
 				<% if query_observation.nil? %>
-					<div class="condition clearfix">There is not enough data to find matches for <%= query_station.city %></div>
+					<div class="condition clearfix">There is not enough data to find matches for <%= query_station.city %>,
+						<%= query_station.country %>
+					</div>
 				<% else %>
 					<h3 class="section_header">
 					<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>

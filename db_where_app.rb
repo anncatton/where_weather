@@ -1,7 +1,7 @@
 require "sinatra"
 require "json"
-require "./models/stations.rb"
-require "./models/observation.rb"
+require_relative "./models/stations.rb"
+require_relative "./models/observation.rb"
 require "byebug"
 require "pg"
 require "sequel"
@@ -39,7 +39,7 @@ get '/where_weather' do
 
 	else
 
-		query_observation = Observation.match_in_timeframe(station_id, '2015-09-10 11:00:00', '2015-09-10 13:00:00')
+		query_observation = Observation.match_in_timeframe(station_id, '2015-10-28 21:00:00', '2015-10-29 0:00:00')
 
 		if query_observation.nil?
 
@@ -52,7 +52,7 @@ get '/where_weather' do
 
 		else
 
-				all_matches = query_observation.find_matches('2015-09-10 11:00:00', '2015-09-10 13:00:00')
+				all_matches = query_observation.find_matches('2015-10-28 21:00:00', '2015-10-29 00:00:00')
 
 				unless all_matches.nil?
 					matches_checked_for_distance = all_matches.reject do |ea|

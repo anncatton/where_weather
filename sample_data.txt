@@ -1,0 +1,352 @@
+Roma, Italy
+
+Conditions:Mostly Sunny
+Temperature:18 C
+Humidity:56 %
+Dewpoint:9 C
+Wind:17 km/h
+
+conditions: 30
+- must be an exact match
+temp: 30/20/10
++/- 2 degrees
+dewpoint: 20/15/10
++/- 2 degrees
+
+humidity: 15/14/13/12/11/10
++/- 5%
+windspeed: 15/14/13/12/11/10
++/- 5kph
+
+isDay: for now, just an * if it's opposite the query location
+
+Max total = 110 pts = 100%
+Min total = 72 pts = 65%
+whittle your matches down as much as you can before you turn them into observations. right now you're checking if they're too close at the very end of the script.
+maybe change temp and dewpoint tolerance to +/- 2 degrees
+i'm thinking maybe lose more points for humidity difference than wind? hmm
+max score is 30 + 30 + 20 + 15 + 15 = 110
+with this system, temp, dewpoint and conditions are still the baseline, and humidity and windspeed are just icing on the cake
+where to include isDay or time of day? for now i'd like to keep the original comparison values, and then just note whether a match is day or night (if it's opposite of the query location)
+
+ {:id=>6544,
+  :station_id=>"DTTG",
+  :time=>"2015-04-01T23:00:00+01:00",
+  :temp=>18,
+  :dewpoint=>9,
+  :humidity=>56,
+  :conditions=>"Mostly Clear",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>false,
+  :wind_kph=>15,
+  :wind_direction=>"ENE"},
+= conditions: 30 + temp: 30 + dewpoint: 20 + humidity: 15 + wind: 13 = 108 = 98% match
+
+ {:id=>14829,
+  :station_id=>"LFRL",
+  :time=>"2015-04-20T16:00:00+02:00",
+  :temp=>18,
+  :dewpoint=>9,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>15,
+  :wind_direction=>"NNE"},
+= conditions: 30 + temp: 30 + dewpoint: 20 + humidity: 15 + wind: 13 = 108 = 98% match
+
+ {:id=>15236,
+  :station_id=>"LIRI",
+  :time=>"2015-04-20T15:50:00+02:00",
+  :temp=>18,
+  :dewpoint=>9,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>19,
+  :wind_direction=>"WSW"},
+= conditions: 30 + temp: 30 + dewpoint: 20 + humidity: 15 + wind: 13 = 108 = 98% match
+
+ {:id=>15432,
+  :station_id=>"UAII",
+  :time=>"2015-04-20T20:00:00+06:00",
+  :temp=>18,
+  :dewpoint=>9,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>14,
+  :wind_direction=>"S"},
+= conditions: 30 + temp: 30 + dewpoint: 20 + humidity: 15 + wind: 12 = 107 = 97% match
+
+ {:id=>14835,
+  :station_id=>"LFML",
+  :time=>"2015-04-20T16:00:00+02:00",
+  :temp=>18,
+  :dewpoint=>9,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>22,
+  :wind_direction=>"WSW"},
+= conditions: 30 + temp: 30 + dewpoint: 20 + humidity: 15 + wind: 10 = 105 = 95% match
+
+ {:id=>15048,
+  :station_id=>"LGSR",
+  :time=>"2015-04-20T16:50:00+03:00",
+  :temp=>18,
+  :dewpoint=>9,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>22,
+  :wind_direction=>"N"},
+= conditions: 30 + temp: 30 + dewpoint: 20 + humidity: 15 + wind: 10 = 105 = 95% match
+
+ {:id=>10921,
+  :station_id=>"LPMA",
+  :time=>"2015-04-19T18:30:00+01:00",
+  :temp=>18,
+  :dewpoint=>10,
+  :humidity=>60,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>17,
+  :wind_direction=>"N"},
+= conditions: 30 + temp: 30 + dewpoint: 15 + humidity: 11 + wind: 15 = 101 = 92% match
+
+ {:id=>9451,
+  :station_id=>"YPPH",
+  :time=>"2015-04-20T01:30:00+08:00",
+  :temp=>18,
+  :dewpoint=>8,
+  :humidity=>52,
+  :conditions=>"Mostly Clear",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>false,
+  :wind_kph=>15,
+  :wind_direction=>"ENE"},
+= conditions: 30 + temp: 30 + dewpoint: 15 + humidity: 11 + wind: 13 = 99 = 90% match
+
+ {:id=>18489,
+  :station_id=>"KDRT",
+  :time=>"2015-04-20T08:53:00-05:00",
+  :temp=>18,
+  :dewpoint=>8,
+  :humidity=>52,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>15,
+  :wind_direction=>"ENE"}]
+= conditions: 30 + temp: 30 + dewpoint: 15 + humidity: 11 + wind: 13 = 99 = 90% match
+
+ {:id=>14882,
+  :station_id=>"LFMI",
+  :time=>"2015-04-20T16:00:00+02:00",
+  :temp=>18,
+  :dewpoint=>8,
+  :humidity=>52,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>20,
+  :wind_direction=>"WSW"},
+= conditions: 30 + temp: 30 + dewpoint: 15 + humidity: 11 + wind: 12 = 98 = 89% match
+
+ {:id=>9464,
+  :station_id=>"YPJT",
+  :time=>"2015-04-20T01:30:00+08:00",
+  :temp=>18,
+  :dewpoint=>8,
+  :humidity=>52,
+  :conditions=>"Mostly Clear",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>false,
+  :wind_kph=>13,
+  :wind_direction=>"ENE"},
+= conditions: 30 + temp: 30 + dewpoint: 15 + humidity: 11 + wind: 11 = 97 = 88% match
+
+ {:id=>10646,
+  :station_id=>"GMTT",
+  :time=>"2015-04-19T17:30:00+00:00",
+  :temp=>17,
+  :dewpoint=>9,
+  :humidity=>59,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>19,
+  :wind_direction=>"NW"},
+= conditions: 30 + temp: 20 + dewpoint: 20 + humidity: 12 + wind: 13 = 95 = 86% match
+
+ {:id=>14900,
+  :station_id=>"LFBH",
+  :time=>"2015-04-20T16:00:00+02:00",
+  :temp=>17,
+  :dewpoint=>8,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>17,
+  :wind_direction=>"W"},
+= conditions: 30 + temp: 20 + dewpoint: 15 + humidity: 15 + wind: 15 = 95 = 86% match
+
+ {:id=>10917,
+  :station_id=>"LPFL",
+  :time=>"2015-04-19T17:30:00+00:00",
+  :temp=>17,
+  :dewpoint=>9,
+  :humidity=>59,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>20,
+  :wind_direction=>"S"},
+= conditions: 30 + temp: 20 + dewpoint: 20 + humidity: 12 + wind: 12 = 94 = 85% match
+
+ {:id=>14826,
+  :station_id=>"LFMD",
+  :time=>"2015-04-20T16:00:00+02:00",
+  :temp=>19,
+  :dewpoint=>9,
+  :humidity=>52,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>19,
+  :wind_direction=>"SSW"},
+= conditions: 30 + temp: 20 + dewpoint: 20 + humidity: 11 + wind: 13 = 94 = 85% match
+
+ {:id=>14843,
+  :station_id=>"LFRD",
+  :time=>"2015-04-20T16:00:00+02:00",
+  :temp=>17,
+  :dewpoint=>9,
+  :humidity=>59,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>20,
+  :wind_direction=>"NNE"},
+= conditions: 30 + temp: 20 + dewpoint: 20 + humidity: 12 + wind: 12 = 94 = 85% match
+
+[{:id=>5010,
+  :station_id=>"YCBB",
+  :time=>"2015-04-02T09:00:00+11:00",
+  :temp=>19,
+  :dewpoint=>9,
+  :humidity=>52,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>15,
+  :wind_direction=>"NNW"},
+= conditions: 30 + temp: 20 + dewpoint:20 + humidity: 11 + wind: 13 = 94 = 85% match
+
+ {:id=>9924,
+  :station_id=>"DABC",
+  :time=>"2015-04-19T18:30:00+01:00",
+  :temp=>19,
+  :dewpoint=>10,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>15,
+  :wind_direction=>"N"},
+= conditions: 30 + temp: 20 + dewpoint: 15 + humidity: 15 + wind: 13 = 93 = 84% match
+
+ {:id=>15037,
+  :station_id=>"LGRX",
+  :time=>"2015-04-20T16:50:00+03:00",
+  :temp=>19,
+  :dewpoint=>10,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>15,
+  :wind_direction=>"W"},
+= conditions: 30 + temp: 20 + dewpoint: 15 + humidity: 15 + wind: 13 = 93 84% match
+
+ {:id=>15047,
+  :station_id=>"LGPA",
+  :time=>"2015-04-20T16:50:00+03:00",
+  :temp=>17,
+  :dewpoint=>8,
+  :humidity=>56,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>19,
+  :wind_direction=>"NNE"},
+= conditions: 30 + temp: 20 + dewpoint: 15 + humidity: 15 + wind: 13 = 93 84% match
+
+ {:id=>15754,
+  :station_id=>"LPPR",
+  :time=>"2015-04-20T15:00:00+01:00",
+  :temp=>17,
+  :dewpoint=>9,
+  :humidity=>59,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>13,
+  :wind_direction=>"WNW"},
+= conditions: 30 + temp: 20 + dewpoint: 20 + humidity: 12 + wind: 11 = 93 84% match
+
+ {:id=>14905,
+  :station_id=>"LFKF",
+  :time=>"2015-04-20T16:00:00+02:00",
+  :temp=>19,
+  :dewpoint=>9,
+  :humidity=>52,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>13,
+  :wind_direction=>"WSW"},
+= conditions: 30 + temp: 20 + dewpoint: 20 + humidity: 11 + wind: 11 = 92 = 84% match
+
+ {:id=>15292,
+  :station_id=>"LIMU",
+  :time=>"2015-04-20T15:55:00+02:00",
+  :temp=>17,
+  :dewpoint=>9,
+  :humidity=>59,
+  :conditions=>"Mostly Sunny",
+  :weather_primary_coded=>"::FW",
+  :clouds_coded=>"FW",
+  :is_day=>true,
+  :wind_kph=>22,
+  :wind_direction=>"SW"},
+= conditions: 30 + temp: 20 + dewpoint: 20 + humidity: 12 + wind: 10 = 92 = 84% match
