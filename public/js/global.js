@@ -1,7 +1,11 @@
 $(document).ready(function() {
 
 	$(".location_input").on("select focus", function(event) {
-		 if (this.value=="Start typing your location") this.value="";
+		// if ($(this).prop('placeholder') == 'Start typing your location') {
+		// 	$(this).value ="";
+		// 	dropMenu();
+		// }
+		 if (this.placeholder=="Start typing your location") this.value="";
 		 dropMenu();
 	});
 
