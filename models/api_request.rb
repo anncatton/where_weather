@@ -15,8 +15,8 @@ def build_query(query)
 			:host => "api.aerisapi.com", 
 			:path => "/observations/search", 
 			:query => {
-				:client_id => CLIENT_ID, 
-				:client_secret => API_KEY,
+				:client_id => ENV['AERIS_CLIENT_ID'], 
+				:client_secret => ENV['AERIS_CLIENT_SECRET'],
 				:limit => 250,
 				:query => query
 			}.to_query
