@@ -19,7 +19,7 @@
 			</div>
   	</div>
 
-		<div id="results">
+		<div id="results" class="clearfix">
 			<div id="current-conditions">
 
 				<% if query_observation.nil? %>
@@ -62,7 +62,7 @@
 						<div class="condition-label">Observed at:</div>
 						<div class="condition-value"><%= query_observation.time.httpdate %></div>
 					</div>
-
+					<span class="disclaimer">*Weather data is updated 3 times a day</span>
 			</div>
 
 			<div id="matches">

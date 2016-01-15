@@ -1,9 +1,10 @@
-body {
+html {
 	font-family: Optima, sans-serif;
 	font-size: 14px;
 	color: #aaa;
 	background-color: #566879;
 }
+
 h1, h2, h3, h4, h5, h6 {
 	font-weight: 100;
 }
@@ -68,40 +69,14 @@ input:focus {
 	margin-top: 5em;
 }
 
-#current-conditions, #matches {
-	font-size: 1.1rem;
-	width: 380px;
-	padding-left: 20px;
+#current-conditions,
+#matches {
+	position: relative;
+	float: left;
+	width: 50%;
+	font-size: 1.2rem;
 	padding-bottom: 20px;
 }
-
-#current-conditions {
-	position: absolute;
-	left: 15%;
-	margin-bottom: 20px;
-}
-
-#matches {
-	position: absolute;
-	right: 9%;
-	height: auto;
-}
-
-/*
-.header {
-	background-color: #80cccc;
-	font-size: 20px;
-	color: #E7F9F9;
-	position: fixed;
-	width: 100%;
-	z-index: 1;
-	margin-top: -10px;
-	margin-right: -10px;
-	margin-left: -10px;
-	padding-left: 30px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-}*/
 
 .match-view,
 .condition-label,
@@ -123,7 +98,6 @@ input:focus {
 
 .condition-label {
 	width: 100px;
-	text-align: right;
 	margin-right: 20px;
 }
 
@@ -157,4 +131,14 @@ a {
 
 .selected {
 	background-color: #caecec;
+}
+
+.match-score {
+/*	padding-left: 10%;
+*/}
+
+.disclaimer {
+	color: #aaa;
+	font-size: 0.8rem;
+	padding-left: 2%;
 }
