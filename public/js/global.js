@@ -1,27 +1,18 @@
 $(document).ready(function() {
 
-	$(".location_input").on("select focus", function(event) {
-		// if ($(this).prop('placeholder') == 'Start typing your location') {
-		// 	$(this).value ="";
-		// 	dropMenu();
-		// }
-		 if (this.placeholder=="Start typing your location") this.value="";
-		 dropMenu();
-	});
-
 	function dropMenu() {
-		$(".search_results").show();
+		$(".search-results").show();
 	};
 
 	function raiseMenu() {
-		$(".search_results").hide();
+		$(".search-results").hide();
 	};
 
 // this for the drop down menu
 	function populateDropDown(query) {
 		raiseMenu();
 		$.get('/location_search', {query: query}, function(data) {
-				$(".search_results").html($(data.html));
+				$(".search-results").html($(data.html));
 				dropMenu();	
 		});
 	};

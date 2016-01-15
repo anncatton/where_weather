@@ -6,16 +6,19 @@
 	</head>
 
 	<body>
-		<h2 id="intro">Where else in the world is <strong>your</strong> weather?</h2>
-		<p>Ever wondered what other places in the world might feel the same as your city does, right now?</p>
-		<p>Check it out:</p>
 
-		<div class="location_menu">
-			<input type="text" class="location_input" placeholder="Start typing your location">
-			<ul class="search_results">
-			</ul>
-		</div>
-  
+		<div class="container">
+			<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
+
+			<div class="location_menu">
+				<form class="something">
+					<input type="text" class="location_input" placeholder="Start typing your location">
+					<ul class="search-results">
+					</ul>
+				</form>
+			</div>
+  	</div>
+
 		<div id="results">
 			<div id="current_conditions">
 				<% if query_observation.nil? %>
@@ -52,7 +55,7 @@
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Observed at:</div>
-						<div class="condition-value"><%= query_observation.time.httpdate %></div>
+						<div class="condition-value"><%= query_observation.time %></div>
 					</div>
 
 			</div>

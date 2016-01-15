@@ -1,66 +1,93 @@
 body {
-	font-family: Arial, sans-serif;
-	color: gray;
+	font-family: Optima, sans-serif;
+	font-size: 14px;
+	color: #aaa;
+	background-color: #566879;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 100;
+}
+.container {
+	margin-top: 10em;
 }
 
 #intro {
 	text-align: center;
+	font-size: 1.8rem;
 }
 
-.section_header {
-	color: #4DBFBF;
+.something {
+	width: 510px;
+	position: relative;
+	margin-right: auto;
+	margin-left: auto;
 }
 
-#results {
-	margin-right: 80px;
-	margin-top: 70px;
-}
-
-#current_conditions, #matches {
-	width: 380px;
-	border: 2px solid #80cccc;
-	padding-left: 20px;
-	padding-bottom: 20px;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-}
-
-#current_conditions {
-	margin-bottom: 20px;
+.search-results {
+	position: absolute;
+	width: 510px;
+	left: 0px;
+	top: 85px;
+	background-color: #CEE4E4;
+	opacity: 0.9;
+	z-index: 100;
 }
 
 input {
-	font-family: Arial, sans-serif;
+	font-family: Optima, sans-serif;
+	font-size: 1.5rem;
+	color: #666;
+	border: none;
+}
+
+input:focus {
+	outline-color: #ddd;
+}
+
+::-webkit-input-placeholder  {
+	color: #ccc;
 }
 
 .location_input {
 	width: 500px;
 	font-size: 42px;
-	color: #4DBFBF;
-	border: 1px dotted #368686;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	padding-left: 7px;
-	padding-bottom: 5px;
-	margin-top: 150px;
+	border-radius: 10px;	
+	padding-left: 20px;
+	padding-bottom: 8px;
+	padding-top: 7px;
+	margin-top: 40px;
+}
+
+.section_header {
+	color: #688888;
+}
+
+#results {
+	margin-right: 6%;
+	margin-left: 6%;
+	margin-top: 5em;
+}
+
+#current_conditions, #matches {
+	font-size: 1.1rem;
+	width: 380px;
+	padding-left: 20px;
+	padding-bottom: 20px;
+}
+
+#current_conditions {
+	position: absolute;
+	left: 15%;
+	margin-bottom: 20px;
 }
 
 #matches {
+	position: absolute;
+	right: 9%;
 	height: auto;
 }
 
-.location_menu {
-	margin-top: 50px;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-input:focus {
-	outline-color: #80cccc;
-}
-
+/*
 .header {
 	background-color: #80cccc;
 	font-size: 20px;
@@ -74,7 +101,7 @@ input:focus {
 	padding-left: 30px;
 	padding-top: 10px;
 	padding-bottom: 10px;
-}
+}*/
 
 .match-view,
 .condition-label,
@@ -86,10 +113,6 @@ input:focus {
   content: "";
   display: table;
   clear: both;
-}
-
-.condition {
-
 }
 
 .condition-label,
