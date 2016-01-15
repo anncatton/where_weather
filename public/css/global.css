@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6 {
 	font-size: 1.8rem;
 }
 
-.something {
+.location-search {
 	width: 510px;
 	position: relative;
 	margin-right: auto;
@@ -48,7 +48,7 @@ input:focus {
 	color: #ccc;
 }
 
-.location_input {
+.location-input {
 	width: 500px;
 	font-size: 42px;
 	border-radius: 10px;	
@@ -68,14 +68,14 @@ input:focus {
 	margin-top: 5em;
 }
 
-#current_conditions, #matches {
+#current-conditions, #matches {
 	font-size: 1.1rem;
 	width: 380px;
 	padding-left: 20px;
 	padding-bottom: 20px;
 }
 
-#current_conditions {
+#current-conditions {
 	position: absolute;
 	left: 15%;
 	margin-bottom: 20px;

@@ -18,10 +18,10 @@ $(document).ready(function() {
 	};
 
 	var timeout;
- 	$(".location_input").keyup(function(event) {
+ 	$(".location-input").keyup(function(event) {
 
  		var $target = $(event.target);
- 		var $targetParent = $target.closest(".location_menu");
+ 		var $targetParent = $target.closest(".location-menu");
 
 // for down arrow
  		if (event.keyCode == 40) {

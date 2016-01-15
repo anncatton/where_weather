@@ -10,9 +10,9 @@
 		<div class="container">
 			<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
 
-			<div class="location_menu">
-				<form class="something">
-					<input type="text" class="location_input" placeholder="Start typing your location">
+			<div class="location-menu">
+				<form class="location-search">
+					<input type="text" class="location-input" placeholder="Start typing your location">
 					<ul class="search-results">
 					</ul>
 				</form>
@@ -20,7 +20,7 @@
   	</div>
 
 		<div id="results">
-			<div id="current_conditions">
+			<div id="current-conditions">
 				<% if query_observation.nil? %>
 					<div class="condition clearfix">There is not enough data to find matches for <%= query_station.city %>,
 						<%= query_station.country %>
