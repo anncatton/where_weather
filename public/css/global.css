@@ -1,63 +1,93 @@
 body {
-	font-family: Arial, sans-serif;
-	color: gray;
+	font-family: Optima, sans-serif;
+	font-size: 14px;
+	color: #aaa;
+	background-color: #566879;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 100;
+}
+.container {
+	margin-top: 10em;
 }
 
-.section_header {
-	color: #4DBFBF;
+#intro {
+	text-align: center;
+	font-size: 1.8rem;
 }
 
-#results {
-	float: right;
-	margin-right: 80px;
-	margin-top: 70px;
+.location-search {
+	width: 510px;
+	position: relative;
+	margin-right: auto;
+	margin-left: auto;
 }
 
-#current_conditions, #matches {
-	width: 380px;
-	border: 2px solid #80cccc;
-	padding-left: 20px;
-	padding-bottom: 20px;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-}
-
-#current_conditions {
-	margin-bottom: 20px;
+.search-results {
+	position: absolute;
+	width: 510px;
+	left: 0px;
+	top: 85px;
+	background-color: #CEE4E4;
+	opacity: 0.9;
+	z-index: 100;
 }
 
 input {
-	font-family: Arial, sans-serif;
-}
-
-.location_input {
-	width: 500px;
-	font-size: 42px;
-	color: #4DBFBF;
-	border: 1px dotted #368686;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	padding-left: 7px;
-	padding-bottom: 5px;
-	margin-top: 150px;
-}
-
-#matches {
-	height: auto;
-}
-
-.location_menu {
-	float: left;
-	margin-top: 50px;
-	margin-left: 75px;
+	font-family: Optima, sans-serif;
+	font-size: 1.5rem;
+	color: #666;
+	border: none;
 }
 
 input:focus {
-	outline-color: #80cccc;
+	outline-color: #ddd;
 }
 
+::-webkit-input-placeholder  {
+	color: #ccc;
+}
+
+.location-input {
+	width: 500px;
+	font-size: 42px;
+	border-radius: 10px;	
+	padding-left: 20px;
+	padding-bottom: 8px;
+	padding-top: 7px;
+	margin-top: 40px;
+}
+
+.section_header {
+	color: #688888;
+}
+
+#results {
+	margin-right: 6%;
+	margin-left: 6%;
+	margin-top: 5em;
+}
+
+#current-conditions, #matches {
+	font-size: 1.1rem;
+	width: 380px;
+	padding-left: 20px;
+	padding-bottom: 20px;
+}
+
+#current-conditions {
+	position: absolute;
+	left: 15%;
+	margin-bottom: 20px;
+}
+
+#matches {
+	position: absolute;
+	right: 9%;
+	height: auto;
+}
+
+/*
 .header {
 	background-color: #80cccc;
 	font-size: 20px;
@@ -71,7 +101,7 @@ input:focus {
 	padding-left: 30px;
 	padding-top: 10px;
 	padding-bottom: 10px;
-}
+}*/
 
 .match-view,
 .condition-label,
@@ -83,10 +113,6 @@ input:focus {
   content: "";
   display: table;
   clear: both;
-}
-
-.condition {
-
 }
 
 .condition-label,
