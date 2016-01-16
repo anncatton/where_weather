@@ -1,14 +1,14 @@
 <% if matching_location[:location].country == "Canada" || matching_location[:location].country == "United States" %>
-  <div class="condition">
-  	<div class="condition-value">
+  <div class="condition match">
+  	<div class="condition-label">
       <%= matching_location[:location].city %>, <%= matching_location[:location].region %>, <%= matching_location[:location].country %>
     </div>
   </div>
 <% else %>
-  <div class="condition">
-  	<div class="condition-value">
+  <div class="condition match">
+  	<div class="condition-label">
       <%= matching_location[:location].city %>, <%= matching_location[:location].country %>
     </div>
   </div>
 <% end %>
-<span class="condition-value match-score"><%= matching_location[:score] %> % </span>
+<div class="condition-value"><%= matching_location[:score].round %> % </div>

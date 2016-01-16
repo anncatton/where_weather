@@ -20,17 +20,16 @@
   	</div>
 
 		<div id="results" class="clearfix">
-			<div id="current-conditions">
-
 				<% if query_observation.nil? %>
 					<% if query_station.nil? %>
 						<div></div>
 					<% else %>
-						<div class="condition clearfix">There is not enough data to find matches for <%= query_station.city %>,
+						<div class="no-result">There is not enough data to find matches for <%= query_station.city %>,
 							<%= query_station.country %>
 						</div>
 					<% end %>
 				<% else %>
+				<div id="current-conditions">
 					<h3 class="section_header">
 					<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
 						<%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
@@ -56,13 +55,13 @@
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Wind:</div>
-						<div class="condition-value"><%= query_observation.wind_kph %> km/h</div>
+						<div class="condition-value"><%= query_observation.wind_kph || 0 %> km/h</div>
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Observed at:</div>
 						<div class="condition-value"><%= query_observation.time.httpdate %></div>
 					</div>
-					<span class="disclaimer">*Weather data is updated 3 times a day</span>
+					<span class="observation-note">*Weather data is updated 3 times a day</span>
 			</div>
 
 			<div id="matches">
