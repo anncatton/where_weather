@@ -1,1 +1,1 @@
-web: bundle exec ruby where_app.rb -p $PORT
+web: bundle exec ruby db_where_app.rb -p $PORT
