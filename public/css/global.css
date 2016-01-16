@@ -1,14 +1,16 @@
-body {
+html {
 	font-family: Optima, sans-serif;
 	font-size: 14px;
 	color: #aaa;
 	background-color: #566879;
 }
+
 h1, h2, h3, h4, h5, h6 {
 	font-weight: 100;
 }
+
 .container {
-	margin-top: 10em;
+	margin-top: 8rem;
 }
 
 #intro {
@@ -16,21 +18,32 @@ h1, h2, h3, h4, h5, h6 {
 	font-size: 1.8rem;
 }
 
+.location-menu {
+	text-align: center;
+}
+
 .location-search {
-	width: 510px;
 	position: relative;
-	margin-right: auto;
-	margin-left: auto;
+	width: 60%;
+	margin-right: 20%;
+	margin-left: 20%;
 }
 
 .search-results {
 	position: absolute;
-	width: 510px;
-	left: 0px;
-	top: 85px;
+  width: 100%;
+  left: 0;
+	top: 5.8rem;
 	background-color: #CEE4E4;
 	opacity: 0.9;
 	z-index: 100;
+	text-align: left;
+}
+
+.search-results li {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.5rem;
 }
 
 input {
@@ -49,13 +62,14 @@ input:focus {
 }
 
 .location-input {
-	width: 500px;
-	font-size: 42px;
+	width: 95%;
+	font-size: 3rem;
 	border-radius: 10px;	
-	padding-left: 20px;
-	padding-bottom: 8px;
-	padding-top: 7px;
-	margin-top: 40px;
+	padding-left: 2.5%;
+	padding-right: 2.5%;
+	padding-bottom: 0.6rem;
+	padding-top: 0.6rem;
+	margin-top: 3.4rem;
 }
 
 .section_header {
@@ -65,48 +79,31 @@ input:focus {
 #results {
 	margin-right: 6%;
 	margin-left: 6%;
-	margin-top: 5em;
+	margin-top: 3em;
 }
 
-#current-conditions, #matches {
-	font-size: 1.1rem;
-	width: 380px;
-	padding-left: 20px;
-	padding-bottom: 20px;
+#current-conditions,
+#matches {
+	position: relative;
+	float: left;
+	width: 41.5%;
+	font-size: 1.2rem;
 }
 
 #current-conditions {
-	position: absolute;
-	left: 15%;
-	margin-bottom: 20px;
+  text-align: right;
+  margin-left: 7%;
 }
 
 #matches {
-	position: absolute;
-	right: 9%;
-	height: auto;
+	margin-right: 5%;
+  padding-left: 5%;
 }
-
-/*
-.header {
-	background-color: #80cccc;
-	font-size: 20px;
-	color: #E7F9F9;
-	position: fixed;
-	width: 100%;
-	z-index: 1;
-	margin-top: -10px;
-	margin-right: -10px;
-	margin-left: -10px;
-	padding-left: 30px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-}*/
 
 .match-view,
 .condition-label,
 .condition-value {
-	padding-bottom: 10px;
+	padding-bottom: 0.8rem;
 }
 
 .clearfix:after {
@@ -115,16 +112,19 @@ input:focus {
   clear: both;
 }
 
-.condition-label,
-.condition-value {
-	float: left;
+.condition-label {
+	display: inline;
 	position: relative;
+	float: left;
 }
 
-.condition-label {
-	width: 100px;
-	text-align: right;
-	margin-right: 20px;
+.condition {
+}
+
+.condition-value {
+	display: inline;
+	float: right;
+	position: relative;
 }
 
 .match-conditions {
@@ -157,4 +157,22 @@ a {
 
 .selected {
 	background-color: #caecec;
+}
+
+.match {
+	clear: both;
+}
+
+.observation-note {
+	color: #aaa;
+	font-size: 0.8rem;
+	padding-left: 3%;
+	padding-top: 0.8rem;
+	float: left;
+}
+
+.no-result {
+	font-size: 1.5rem;
+  text-align: center;
+  margin-top: 8rem;
 }
