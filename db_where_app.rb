@@ -7,7 +7,7 @@ require "pg"
 require "sequel"
 require "logger"
 
-DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://anncatton:@localhost:5432/mydb')
 DB.loggers << Logger.new($stdout)
 
 get '/' do
