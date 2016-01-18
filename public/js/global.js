@@ -17,6 +17,7 @@ $(document).ready(function() {
 	};
 
 	var timeout;
+
  	$('.location-input').keyup(function(event) {
 
  		var $target = $(event.target);
@@ -55,8 +56,11 @@ $(document).ready(function() {
  			}
 
  		} else if (event.keyCode == 13) {
+
  			var currentlySelectedLink = $targetParent.find('.drop-down-item.selected a');
- 			window.location = currentlySelectedLink.attr('href');
+ 			if (currentlySelectedLink.length > 0) {
+ 				window.location.href = currentlySelectedLink.attr('href');
+ 			}
  			
  		} else {
 
@@ -67,15 +71,11 @@ $(document).ready(function() {
 	 				populateDropDown(query);
 	 			}
 	 		};
+	 		
 	 		clearTimeout(timeout);
 	 		timeout = setTimeout(handleKeyup, 200);
 	 	}
     
  	});
-
-// raises menu before you can click link. will this matter once you have selection without cursor?
-	// $('.location-input').blur(function(event) {
-	// 	raiseMenu();
-	// });
 
 });
