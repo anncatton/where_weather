@@ -1,9 +1,9 @@
 require "active_support/core_ext/object/to_query.rb"
-require "json"
-require "open-uri"
-require "uri"
+# require "json"
+# require "open-uri"
+# require "uri"
 require "byebug"
-require "haversine"
+# require "haversine"
 require "fileutils"
 require "csv"
 
