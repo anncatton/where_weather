@@ -3,14 +3,14 @@ require 'sequel'
 require 'byebug'
 require './models/edited_cities_map.rb'
 
+# DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+# DB = Sequel.connect('postgres://anncatton:@localhost:5432/heroku_weather')
 
-DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+stations_table = DB[:stations]
 
-def insert_into_stations(station)
+def insert_into_stations(station, table)
 
-	stations_table = DB[:stations]
-	
-	stations_table.insert(:name => station[:city], 
+	table.insert(:name => station[:city], 
 		:region => station[:region], 
 		:country => station[:country], 
 		:id => station[:station], 
