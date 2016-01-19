@@ -39,7 +39,7 @@ get '/where_weather' do
 
 	else
 
-		query_observation = Observation.match_in_timeframe(station_id, '2016-01-18 21:59:00', '2016-01-18 23:30:00')
+		query_observation = Observation.match_in_timeframe(station_id, '2016-01-19 19:30:00', '2016-01-19 21:30:00')
 
 		if query_observation.nil?
 
@@ -52,7 +52,7 @@ get '/where_weather' do
 
 		else
 
-				all_matches = query_observation.find_matches('2016-01-18 21:59:00', '2016-01-18 23:30:00')
+				all_matches = query_observation.find_matches('2016-01-19 19:30:00', '2016-01-19 21:30:00')
 
 				unless all_matches.nil?
 					matches_checked_for_distance = all_matches.reject do |ea|
