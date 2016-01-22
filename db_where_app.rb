@@ -18,7 +18,6 @@ get '/where_weather' do
 
 	station_id = params[:id]
 
-
 # def find_most_recent_time(station_id)
 # 	stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
 # 	results = stations_and_observations_join.where(:station_id => station_id).all
