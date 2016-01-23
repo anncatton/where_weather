@@ -58,10 +58,11 @@ $(document).ready(function() {
  		} else if (event.keyCode == 13) {
 
  			var currentlySelectedLink = $targetParent.find('.drop-down-item.selected a');
- 			if (currentlySelectedLink.length > 0) {
- 				window.location.href = currentlySelectedLink.attr('href');
+ 			if ($target.val().length > 2) {
+	 			if (currentlySelectedLink.length > 0) {
+	 				window.location.href = currentlySelectedLink.attr('href');
+	 			}
  			}
- 			
  		} else {
 
 // for all other keys
@@ -69,7 +70,10 @@ $(document).ready(function() {
 	 			var query = $target.val();
 	 			if (query.length >= 3) {
 	 				populateDropDown(query);
+	 			} else {
+	 				raiseMenu();
 	 			}
+
 	 		};
 	 		
 	 		clearTimeout(timeout);
