@@ -1,4 +1,5 @@
 require "json"
+require "ruby-prof"
 
 class Observation
 
@@ -69,7 +70,7 @@ class Observation
 			:station_id => station_id.upcase).where{
 			time >= start_time}.where{
 			time <= end_time}.first
-		
+
 		if result
 			if result[:temp].nil? || result[:dewpoint].nil? || result[:weather_primary_coded].nil?
 				result = nil

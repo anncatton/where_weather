@@ -8,6 +8,7 @@ require "sequel"
 require "./observation.rb"
 
 DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+# DBHeroku = Sequel.connect('postgres://anncatton:@localhost:5432/heroku_weather')
 
 def build_query(query)
 	URI::HTTP.build(
@@ -121,14 +122,41 @@ def extract_station_data(raw_data)
 
 end
 
+# in this method, you could set it to write to both databases
 def insert_into_weather_data(station)
 
 	observations_table = DB[:weather_data]
+#	heroku_obs_table = DBHeroku[:weather_data]
 
-	observations_table.insert(:station_id=>station[:id], :time=>station[:time], :temp=>station[:temp], 
-		:dewpoint=>station[:dewpoint], :humidity=>station[:humidity], :conditions=>station[:conditions], 
-		:weather_primary_coded=>station[:weather_primary_coded], :clouds_coded=>station[:clouds_coded], 
-		:is_day=>station[:is_day], :wind_kph=>station[:wind_kph], :wind_direction=>station[:wind_direction])
+# remember that you still need to erase the heroku weather_data before you write to it.
+# use a sequel delete command first, then write to it
+	# heroku_obs_table.insert(
+	# :station_id=>station[:id],
+	# :time=>station[:time],
+	# :temp=>station[:temp], 
+	# :dewpoint=>station[:dewpoint],
+	# :humidity=>station[:humidity],
+	# :conditions=>station[:conditions], 
+	# :weather_primary_coded=>station[:weather_primary_coded],
+	# :clouds_coded=>station[:clouds_coded], 
+	# :is_day=>station[:is_day],
+	# :wind_kph=>station[:wind_kph],
+	# :wind_direction=>station[:wind_direction]
+	# )
+
+	observations_table.insert(
+		:station_id=>station[:id],
+		:time=>station[:time],
+		:temp=>station[:temp], 
+		:dewpoint=>station[:dewpoint],
+		:humidity=>station[:humidity],
+		:conditions=>station[:conditions], 
+		:weather_primary_coded=>station[:weather_primary_coded],
+		:clouds_coded=>station[:clouds_coded], 
+		:is_day=>station[:is_day],
+		:wind_kph=>station[:wind_kph],
+		:wind_direction=>station[:wind_direction]
+		)
 
 end
 
