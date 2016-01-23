@@ -7,7 +7,14 @@ require "pg"
 require "sequel"
 require "logger"
 
+# RubyProf.start
+
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://anncatton:@localhost:5432/mydb')
+
+# result = RubyProf.stop
+# printer = RubyProf::FlatPrinter.new(result)
+# printer.print(STDOUT)
+
 DB.loggers << Logger.new($stdout)
 
 get '/' do
@@ -38,7 +45,7 @@ get '/where_weather' do
 
 	else
 
-		query_observation = Observation.match_in_timeframe(station_id, '2016-01-22 07:54:00', '2016-01-23 13:00:00')
+		query_observation = Observation.match_in_timeframe(station_id, '2016-01-22 20:20:00', '2016-01-23 13:00:00')
 
 		if query_observation.nil?
 
@@ -51,7 +58,7 @@ get '/where_weather' do
 
 		else
 
-				all_matches = query_observation.find_matches('2016-01-22 07:54:00', '2016-01-23 13:00:00')
+				all_matches = query_observation.find_matches('2016-01-22 20:20:00', '2016-01-23 13:00:00')
 
 				unless all_matches.nil?
 					matches_checked_for_distance = all_matches.reject do |ea|
@@ -118,11 +125,5 @@ get '/location_search' do
 
  { :html => content }.to_json
 
-end
-
-get '/admin_update_data' do
-
-	# the path where the form submit would go
-	# SELECT * FROM weather_data ORDER BY time DESC LIMIT 4584;
 
 end
