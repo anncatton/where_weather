@@ -8,7 +8,14 @@ require "sequel"
 require "logger"
 require "ruby-prof"
 
+# RubyProf.start
+
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://anncatton:@localhost:5432/mydb')
+
+# result = RubyProf.stop
+# printer = RubyProf::FlatPrinter.new(result)
+# printer.print(STDOUT)
+
 DB.loggers << Logger.new($stdout)
 
 get '/' do
@@ -18,7 +25,6 @@ end
 get '/where_weather' do
 
 	station_id = params[:id]
-
 
 # def find_most_recent_time(station_id)
 # 	stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
@@ -40,8 +46,7 @@ get '/where_weather' do
 
 	else
 
-
-		query_observation = Observation.match_in_timeframe(station_id, '2016-01-22 12:00:00', '2016-01-23 13:00:00')
+		query_observation = Observation.match_in_timeframe(station_id, '2016-01-22 20:20:00', '2016-01-23 13:00:00')
 
 		if query_observation.nil?
 
@@ -54,49 +59,49 @@ get '/where_weather' do
 
 		else
 
-				all_matches = query_observation.find_matches('2016-01-22 12:00:00', '2016-01-23 13:00:00')
+			all_matches = query_observation.find_matches('2016-01-22 20:20:00', '2016-01-23 13:00:00')
 
-				unless all_matches.nil?
-					matches_checked_for_distance = all_matches.reject do |ea|
-						Station.from_table(ea).too_close?(query_observation.station)
+			unless all_matches.nil?
+				matches_checked_for_distance = all_matches.reject do |ea|
+					Station.from_table(ea).too_close?(query_observation.station)
+				end
+
+				matches_grouped_by_id = matches_checked_for_distance.group_by { |ea| ea[:station_id]}
+
+				most_recent_matches = matches_grouped_by_id.map do |station_id, observations|
+					most_recent = observations.max do |a, b|
+						a[:time] <=> b[:time]
 					end
+					Observation.from_table(most_recent)
+				end
 
-					matches_grouped_by_id = matches_checked_for_distance.group_by { |ea| ea[:station_id]}
+				scores_array = []
 
-					most_recent_matches = matches_grouped_by_id.map do |station_id, observations|
-						most_recent = observations.max do |a, b|
-							a[:time] <=> b[:time]
-						end
-						Observation.from_table(most_recent)
-					end
+				most_recent_matches.map do |ea|
 
-					scores_array = []
+					location_hash = {}
 
-					most_recent_matches.map do |ea|
+					temp = ea.temp_score(query_observation.temp)
+					dewpoint = ea.dewpoint_score(query_observation.dewpoint)
+					humidity = ea.humidity_score(query_observation.humidity)
+					wind_kph = ea.wind_kph_score(query_observation.wind_kph)
 
-						location_hash = {}
-
-						temp = ea.temp_score(query_observation.temp)
-						dewpoint = ea.dewpoint_score(query_observation.dewpoint)
-						humidity = ea.humidity_score(query_observation.humidity)
-						wind_kph = ea.wind_kph_score(query_observation.wind_kph)
-
-						total_score = (temp + dewpoint + humidity + wind_kph)/80.0
-						percentage_score = (total_score * 100).round(2)
-						
-						location_hash[:score] = percentage_score
-						location_hash[:location] = ea.station
-						scores_array << location_hash
-
-					end
-
-					sorted_scores = scores_array.sort_by { |hash| hash[:score] }
-					sorted_scores.reverse!
-
-					erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
-																:sorted_scores => sorted_scores}
+					total_score = (temp + dewpoint + humidity + wind_kph)/80.0
+					percentage_score = (total_score * 100).round(2)
+					
+					location_hash[:score] = percentage_score
+					location_hash[:location] = ea.station
+					scores_array << location_hash
 
 				end
+
+				sorted_scores = scores_array.sort_by { |hash| hash[:score] }
+				sorted_scores.reverse!
+
+				erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
+															:sorted_scores => sorted_scores}
+
+			end
 
 		end
 
