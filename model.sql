@@ -24,3 +24,5 @@ CREATE TABLE weather_data (
  	wind_kph integer, 
  	wind_direction text
  	);
+
+-- CREATE INDEX station_name_index ON stations USING btree ( lower (name) text_pattern_ops);
