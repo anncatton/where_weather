@@ -1,5 +1,5 @@
 require "json"
-require "ruby-prof"
+# require "ruby-prof"
 
 class Observation
 
