@@ -6,7 +6,7 @@ require "byebug"
 require "pg"
 require "sequel"
 require "logger"
-require "ruby-prof"
+# require "ruby-prof"
 
 # RubyProf.start
 
