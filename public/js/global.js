@@ -56,8 +56,7 @@ $(document).ready(function() {
  			}
 
  		} else if (event.keyCode == 13) {
-// the bug here now is that if type in a name that exists, then delete and type in another name really fast and hit enter,
-// the page will load that first name because its the last selectedListItem
+
  			var currentlySelectedLink = $targetParent.find('.drop-down-item.selected a');
  			if ($target.val().length > 2) {
 	 			if (currentlySelectedLink.length > 0) {
