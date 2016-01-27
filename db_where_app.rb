@@ -10,9 +10,9 @@ require "logger"
 
 # RubyProf.start
 
-# DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://anncatton:@localhost:5432/mydb')
+DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://anncatton:@localhost:5432/mydb')
 # DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
-DB = Sequel.connect('postgres://anncatton:@localhost:5432/heroku_weather')
+# DB = Sequel.connect('postgres://anncatton:@localhost:5432/heroku_weather')
 
 # result = RubyProf.stop
 # printer = RubyProf::FlatPrinter.new(result)
@@ -32,7 +32,7 @@ get '/where_weather' do
 	# start_time = DB[:weather_data].min(:time)
 	# end_time = DB[:weather_data].max(:time)
 
-# this 
+# this uses the query station's last observed time as a reference point for start and end time
 	def find_most_recent_observation(station_id)
 		observations = DB[:weather_data]
 		result = observations.where(station_id: station_id).max(:time)
@@ -44,18 +44,17 @@ get '/where_weather' do
 
 	else
 
-# i think there's still a problem with time zones
 		query_time = find_most_recent_observation(station_id)
 		start_time = query_time - 3600
 		end_time = query_time + 3600
 
-		puts "Query time is: #{query_time}"
-		puts "Start time is: #{start_time}"
-		puts "End time is: #{end_time}"
-
+		# puts "Query time is: #{query_time}"
+		# puts "Start time is: #{start_time}"
+		# puts "End time is: #{end_time}"
 
 		query_observation = Observation.match_in_timeframe(station_id, start_time, end_time)
 
+puts query_observation.inspect
 
 		if query_observation.nil?
 
