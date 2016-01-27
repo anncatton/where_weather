@@ -54,8 +54,6 @@ get '/where_weather' do
 
 		query_observation = Observation.match_in_timeframe(station_id, start_time, end_time)
 
-puts query_observation.inspect
-
 		if query_observation.nil?
 
 			station_record = DB[:stations].where(:id=>station_id.upcase).first
