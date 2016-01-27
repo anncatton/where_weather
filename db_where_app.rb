@@ -10,8 +10,10 @@ require "logger"
 
 # RubyProf.start
 
-DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://anncatton:@localhost:5432/mydb')
+# DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://anncatton:@localhost:5432/mydb')
 # DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
+DB = Sequel.connect('postgres://anncatton:@localhost:5432/heroku_weather')
+
 # result = RubyProf.stop
 # printer = RubyProf::FlatPrinter.new(result)
 # printer.print(STDOUT)
@@ -26,19 +28,15 @@ get '/where_weather' do
 
 	station_id = params[:id]
 
-# def find_most_recent_time(station_id)
-# 	stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
-# 	results = stations_and_observations_join.where(:station_id => station_id).all
-# 	times = results.map do |ea|
-# 		ea[:time]
-# 	end
+# this will only work with the single row table you have in heroku_weather right now
+	# start_time = DB[:weather_data].min(:time)
+	# end_time = DB[:weather_data].max(:time)
 
-# 	latest_time = times.max
-# 	byebug
-# end
-
-# start_time = find_most_recent_time(station_id) - 3600
-# end_time = find_most_recent_time(station_id) + 3600
+# this 
+	def find_most_recent_observation(station_id)
+		observations = DB[:weather_data]
+		result = observations.where(station_id: station_id).max(:time)
+	end
 
 	if station_id.nil?
 		erb :index, :layout => :layout, :locals => {:query_station => nil,
@@ -46,7 +44,17 @@ get '/where_weather' do
 
 	else
 
-		query_observation = Observation.match_in_timeframe(station_id, '2016-01-26 20:00:00', '2016-01-27 02:00:00')
+# i think there's still a problem with time zones
+		query_time = find_most_recent_observation(station_id)
+		start_time = query_time - 3600
+		end_time = query_time + 3600
+
+		puts "Query time is: #{query_time}"
+		puts "Start time is: #{start_time}"
+		puts "End time is: #{end_time}"
+
+
+		query_observation = Observation.match_in_timeframe(station_id, start_time, end_time)
 
 
 		if query_observation.nil?
@@ -60,7 +68,7 @@ get '/where_weather' do
 
 		else
 
-			all_matches = query_observation.find_matches('2016-01-26 20:00:00', '2016-01-27 02:00:00')
+			all_matches = query_observation.find_matches(start_time, end_time)
 
 			unless all_matches.nil?
 				matches_checked_for_distance = all_matches.reject do |ea|

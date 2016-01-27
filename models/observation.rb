@@ -59,10 +59,6 @@ class Observation
 			)
 	end
 
-	# start_time = most_recent_time - 3600
-	# end_time = most_recent_time + 3600
-	# all times currently in utc. but when you do Time.parse it converts to local time (-0400 )
-
 	def self.match_in_timeframe(station_id, start_time, end_time)
 
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
@@ -80,6 +76,7 @@ class Observation
 		end
 
 	end
+
 
 # are you getting the right time matches? or is it changing db times to local time when they're actually utc?
 # your hash result from above parses to local time
