@@ -59,13 +59,21 @@ class Observation
 			)
 	end
 
-	def self.match_in_timeframe(station_id, start_time, end_time)
+# this uses the query station's last observed time as a reference point for start and end time
+	# def find_most_recent_observation(station_id)
+	# 	observations = DB[:weather_data]
+	# 	observations.where(station_id: station_id.upcase).max(:time)
+	# end
+
+	def self.match_in_timeframe(station_id)
+
+		observations = DB[:weather_data]
+		query_time = observations.where(station_id: station_id.upcase).max(:time)
 
 		stations_and_observations_join = DB[:stations].join(DB[:weather_data], :station_id => :id)
 		result = stations_and_observations_join.where(
-			:station_id => station_id.upcase).where{
-			time >= start_time}.where{
-			time <= end_time}.first
+			:station_id => station_id.upcase).where(
+			time: query_time).first
 
 		if result
 			if result[:temp].nil? || result[:dewpoint].nil? || result[:weather_primary_coded].nil?
