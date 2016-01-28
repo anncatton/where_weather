@@ -45,16 +45,12 @@ get '/where_weather' do
 	else
 
 		query_time = find_most_recent_observation(station_id)
-		start_time = query_time - 3600
-		end_time = query_time + 3600
 
 		# puts "Query time is: #{query_time}"
 		# puts "Start time is: #{start_time}"
 		# puts "End time is: #{end_time}"
 
-		query_observation = Observation.match_in_timeframe(station_id, start_time, end_time)
-
-		if query_observation.nil?
+		if query_time.nil?
 
 			station_record = DB[:stations].where(:id=>station_id.upcase).first
 
@@ -64,6 +60,11 @@ get '/where_weather' do
 														:query_observation => nil}				
 
 		else
+
+			start_time = query_time - 3600
+			end_time = query_time + 3600
+
+			query_observation = Observation.match_in_timeframe(station_id, start_time, end_time)
 
 			all_matches = query_observation.find_matches(start_time, end_time)
 
