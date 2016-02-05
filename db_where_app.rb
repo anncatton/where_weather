@@ -93,6 +93,8 @@ get '/where_weather' do
 				erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
 															:sorted_scores => sorted_scores}
 
+				{ :html => content }.to_json # possibly where you're going to put match location data google maps needs
+
 			end
 
 		end

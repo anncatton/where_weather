@@ -2,26 +2,59 @@
 <html>
 	<head>
 		<link href="/css/global.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<%= yield %>
+	</body>
 		<!-- <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script> -->
 		<!--<script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js" type="text/javascript"></script> -->
 		<script src="/js/lib/jquery-2.1.4.js"></script>
 		<script src="/js/global.js"></script>
-	</head>
-	<body>
-		<%= yield %> <!-- this yields to the body content of whichever file you're pointing to -->
-	</body>
 		<script>
+
 			function initMap() {
+
         var centralLatLng = {lat: 49.2599126, lng: -123.1340487 };
+        var matchMarkers = []
 
 				var worldMap = new google.maps.Map(document.getElementById('map'), {
 					zoom: 1,
 					center: centralLatLng
 				});
+	  
+		  	function createMarker(position, map, title, id) {
 
+			    var marker = new google.maps.Marker({
+			      position: position,
+			      map: map,
+			      title: title,
+			      id: id,
+			    });
+
+		    	matchMarkers.push(marker);
+		    	return marker;
+		  	}
+
+			  function createMarkerInfo(content) {
+			    var markerInfo = new google.maps.InfoWindow({
+			      content: content
+			    });
+			    return markerInfo;
+			  }
+
+			  function addAListener(marker, markerInfo){
+			    marker.addListener('click', function() {
+			      markerInfo.open(map, marker);
+			    });
+			  }
+
+				if (matchMarkers.length !== 0) {
+					addMarkers(matchMarkers);
+				}
+				
 			}
-		</script>
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAP_WEATHER_KEY&callback=initMap"></script>
 
+		</script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWKs-3M99WIwFFFocWmVct7NHbzCe6Ht8&callback=initMap"></script>
 
 </html>
