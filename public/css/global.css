@@ -176,3 +176,9 @@ a {
   text-align: center;
   margin-top: 8rem;
 }
+
+#map {
+	height: 15rem;
+	width: 50%;
+	border: 1px white solid;
+}

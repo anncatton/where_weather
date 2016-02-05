@@ -10,4 +10,18 @@
 	<body>
 		<%= yield %> <!-- this yields to the body content of whichever file you're pointing to -->
 	</body>
+		<script>
+			function initMap() {
+        var centralLatLng = {lat: 49.2599126, lng: -123.1340487 };
+
+				var worldMap = new google.maps.Map(document.getElementById('map'), {
+					zoom: 1,
+					center: centralLatLng
+				});
+
+			}
+		</script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAP_WEATHER_KEY&callback=initMap"></script>
+
+
 </html>
