@@ -93,13 +93,23 @@ get '/where_weather' do
 				erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
 															:sorted_scores => sorted_scores}
 
-				{ :html => content }.to_json # possibly where you're going to put match location data google maps needs
-
 			end
 
 		end
 
 	end
+
+end
+
+get '/map_markers' do
+
+	content_type :json
+	
+	marker_content = most_recent_matches.map do |ea|
+		ea.station
+	end
+
+	{ markers: marker_content }.to_json
 
 end
 
