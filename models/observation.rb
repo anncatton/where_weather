@@ -154,8 +154,10 @@ class Observation
 			12
 		elsif ((humidity - query_humidity) || (query_humidity - humidity)).abs == 4
 			11
-		else
+		elsif ((humidity - query_humidity) || (query_humidity - humidity)).abs == 5
 			10
+		else
+			0
 		end
 
 	end
@@ -174,8 +176,10 @@ class Observation
 			12
 		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)).abs == 4
 			11
-		else
+		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)).abs == 5
 			10
+		else
+			0
 		end
 
 	end
