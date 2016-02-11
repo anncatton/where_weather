@@ -55,7 +55,11 @@
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Wind:</div>
-						<div class="condition-value"><%= query_observation.wind_kph || 0 %> km/h</div>
+						<% if query_observation.wind_kph.nil? %>
+							<div class="condition-value">Not Observed</div>
+						<% else %>
+							<div class="condition-value"><%= query_observation.wind_kph %> km/h</div>
+						<% end %>
 					</div>
 					<div class="condition clearfix">
 						<div class="condition-label">Observed at:</div>
