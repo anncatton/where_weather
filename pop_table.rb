@@ -10,12 +10,12 @@ stations_table = DB[:stations]
 
 def insert_into_stations(station, table)
 
-	table.insert(:name => station[:city], 
-		:region => station[:region], 
-		:country => station[:country], 
-		:id => station[:station], 
-		:longitude => station[:longitude].round(2), 
-		:latitude => station[:latitude].round(2))
+	table.insert(name: station[:city], 
+		region: station[:region], 
+		country: station[:country], 
+		id: station[:station], 
+		longitude: station[:longitude].round(2), 
+		latitude: station[:latitude].round(2))
 
 end
 
