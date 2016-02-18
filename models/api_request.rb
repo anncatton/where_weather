@@ -81,6 +81,7 @@ def open_region_uri(uri)
 	open(uri) do |io|
 
 		json_string = io.read
+		# maybe here is where you can filter out the weird characters
 		data_hash = JSON.parse(json_string)
 		data_hash["response"]
 	end

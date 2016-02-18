@@ -1,5 +1,36 @@
 $(document).ready(function() {
 
+
+  // 	function createMarker(position, map, title, id) {
+
+	 //    var marker = new google.maps.Marker({
+	 //      position: position,
+	 //      map: map,
+	 //      title: title,
+	 //      id: id,
+	 //    });
+
+  //   	matchMarkers.push(marker);
+  //   	return marker;
+  // 	}
+
+	 //  function createMarkerInfo(content) {
+	 //    var markerInfo = new google.maps.InfoWindow({
+	 //      content: content
+	 //    });
+	 //    return markerInfo;
+	 //  }
+
+	 //  function addAListener(marker, markerInfo){
+	 //    marker.addListener('click', function() {
+	 //      markerInfo.open(map, marker);
+	 //    });
+	 //  }
+
+		// if (matchMarkers.length !== 0) {
+		// 	addMarkers(matchMarkers);
+		// }
+
 	function dropMenu() {
 		$('.search-results').show();
 	};
