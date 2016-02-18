@@ -17,7 +17,7 @@
 		    var matchMarkers = []
 
 				var worldMap = new google.maps.Map(document.getElementById('map'), {
-					zoom: 1,
+					zoom: 2,
 					center: centralLatLng
 				});
 
@@ -36,7 +36,6 @@
 					}
 				}
 
-				// if matches? do this
         function createMarker(match) {
         	var lat = $(match).data('lat');
         	var lng = $(match).data('lng');
