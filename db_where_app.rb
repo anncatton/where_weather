@@ -101,18 +101,6 @@ get '/where_weather' do
 
 end
 
-get '/map_markers' do
-
-	content_type :json
-	
-	marker_content = most_recent_matches.map do |ea|
-		ea.station
-	end
-
-	{ markers: marker_content }.to_json
-
-end
-
 get '/location_search' do
 
 	stations_table = DB[:stations]

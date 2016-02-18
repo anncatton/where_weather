@@ -21,6 +21,34 @@
 					center: centralLatLng
 				});
 
+				// this needs to run on a forEach loop
+				// also, have it check there are matches first, then do the forEach
+				function getMatchData() {
+					console.log("here");
+					
+					$.get('/map_markers', function(result) {
+						console.log(result);
+					});
+				}
+
+				function mapEachMatch() {
+
+				}
+
+        function createMarker(position, map, title) {       
+          var marker = new google.maps.Marker({
+            position: position,
+            map: worldMap,
+            title: title, // station name and country
+          });
+          markers.push(marker);
+          return marker; // why do i need to return the marker if i', putting it in the markers array?
+        }
+
+        $('#map').on('click', function() {
+        	console.log("You clicked on the map!");
+        	getMatchData();
+        });
 			}
 		</script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWKs-3M99WIwFFFocWmVct7NHbzCe6Ht8&callback=initMap"></script>
