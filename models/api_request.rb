@@ -13,13 +13,13 @@ DBHeroku = Sequel.connect('postgres://anncatton:@localhost:5432/heroku_weather')
 def build_query(query)
 	URI::HTTP.build(
 		{
-			:host => "api.aerisapi.com", 
-			:path => "/observations/search", 
-			:query => {
-				:client_id => ENV['AERIS_CLIENT_ID'], 
-				:client_secret => ENV['AERIS_CLIENT_SECRET'],
-				:limit => 250,
-				:query => query
+			host: "api.aerisapi.com", 
+			path: "/observations/search", 
+			query: {
+				client_id: ENV['AERIS_CLIENT_ID'], 
+				client_secret: ENV['AERIS_CLIENT_SECRET'],
+				limit: 250,
+				query: query
 			}.to_query
 		}
 	)
@@ -58,7 +58,7 @@ def get_all_data(countries, states)
 	
 		next if stations_table.where(:id=>ea[:id]).first.nil?
 
-		if observations_table.where(:station_id=>ea[:id]).where(:time=>ea[:time]).where(:temp=>ea[:temp]).where(:dewpoint=>ea[:dewpoint]).where(:humidity=>ea[:humidity]).where(:conditions=>ea[:conditions]).where(:weather_primary_coded=>ea[:weather_primary_coded]).where(:clouds_coded=>ea[:clouds_coded]).where(:is_day=>ea[:is_day]).where(:wind_kph=>ea[:wind_kph]).where(:wind_direction=>ea[:wind_direction]).first.nil?
+		if observations_table.where(station_id: ea[:id]).where(time: ea[:time]).where(temp: ea[:temp]).where(dewpoint: ea[:dewpoint]).where(humidity: ea[:humidity]).where(conditions: ea[:conditions]).where(weather_primary_coded: ea[:weather_primary_coded]).where(clouds_coded: ea[:clouds_coded]).where(is_day: ea[:is_day]).where(wind_kph: ea[:wind_kph]).where(wind_direction: ea[:wind_direction]).first.nil?
 
 		insert_into_weather_data(ea)
 		end
@@ -132,31 +132,31 @@ def insert_into_weather_data(station)
 # remember that you still need to erase the heroku weather_data before you write to it.
 # use a sequel delete command first, then write to it
 	heroku_obs_table.insert(
-	:station_id=>station[:id],
-	:time=>station[:time],
-	:temp=>station[:temp], 
-	:dewpoint=>station[:dewpoint],
-	:humidity=>station[:humidity],
-	:conditions=>station[:conditions], 
-	:weather_primary_coded=>station[:weather_primary_coded],
-	:clouds_coded=>station[:clouds_coded], 
-	:is_day=>station[:is_day],
-	:wind_kph=>station[:wind_kph],
-	:wind_direction=>station[:wind_direction]
+	station_id: station[:id],
+	time: station[:time],
+	temp: station[:temp], 
+	dewpoint: station[:dewpoint],
+	humidity: station[:humidity],
+	conditions: station[:conditions], 
+	weather_primary_coded: station[:weather_primary_coded],
+	clouds_coded: station[:clouds_coded], 
+	is_day: station[:is_day],
+	wind_kph: station[:wind_kph],
+	wind_direction: station[:wind_direction]
 	)
 
 	observations_table.insert(
-		:station_id=>station[:id],
-		:time=>station[:time],
-		:temp=>station[:temp], 
-		:dewpoint=>station[:dewpoint],
-		:humidity=>station[:humidity],
-		:conditions=>station[:conditions], 
-		:weather_primary_coded=>station[:weather_primary_coded],
-		:clouds_coded=>station[:clouds_coded], 
-		:is_day=>station[:is_day],
-		:wind_kph=>station[:wind_kph],
-		:wind_direction=>station[:wind_direction]
+		station_id: station[:id],
+		time: station[:time],
+		temp: station[:temp], 
+		dewpoint: station[:dewpoint],
+		humidity: station[:humidity],
+		conditions: station[:conditions], 
+		weather_primary_coded: station[:weather_primary_coded],
+		clouds_coded: station[:clouds_coded], 
+		is_day: station[:is_day],
+		wind_kph: station[:wind_kph],
+		wind_direction: station[:wind_direction]
 		)
 
 end

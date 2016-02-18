@@ -29,8 +29,8 @@ get '/where_weather' do
 	station_id = params[:id]
 
 	if station_id.nil?
-		erb :index, :layout => :layout, :locals => {:query_station => nil,
-													:query_observation => nil}
+		erb :index, layout: :layout, locals: { query_station: nil,
+																					query_observation: nil }
 
 	else
 
@@ -38,12 +38,12 @@ get '/where_weather' do
 
 		if query_observation.nil?
 
-			station_record = DB[:stations].where(:id=>station_id.upcase).first
+			station_record = DB[:stations].where(id: station_id.upcase).first
 
 			query_station = Station.from_table(station_record) unless station_record.nil?
 
-			erb :index, :layout => :layout, :locals => {:query_station => query_station,
-														:query_observation => nil}				
+			erb :index, layout: :layout, locals: { query_station: query_station,
+																						query_observation: nil }				
 
 		else
 
@@ -58,7 +58,7 @@ get '/where_weather' do
 					Station.from_table(ea).too_close?(query_observation.station)
 				end
 
-				matches_grouped_by_id = matches_checked_for_distance.group_by { |ea| ea[:station_id]}
+				matches_grouped_by_id = matches_checked_for_distance.group_by { |ea| ea[:station_id] }
 
 				most_recent_matches = matches_grouped_by_id.map do |station_id, observations|
 					most_recent = observations.max do |a, b|
@@ -90,8 +90,8 @@ get '/where_weather' do
 				sorted_scores = scores_array.sort_by { |hash| hash[:score] }
 				sorted_scores.reverse!
 
-				erb :index, :layout => :layout, :locals => {:query_observation => query_observation,
-															:sorted_scores => sorted_scores}
+				erb :index, layout: :layout, locals: { query_observation: query_observation,
+																							sorted_scores: sorted_scores }
 
 			end
 
@@ -111,11 +111,11 @@ get '/location_search' do
   matches = stations_table.where(Sequel.ilike(:name, query+'%'))
 
   content = if matches.empty?
-  	erb :_no_result, :layout => false
+  	erb :_no_result, layout: false
 	else
-  	erb :_drop_down, :layout => false, :locals => { :matches => matches }
+  	erb :_drop_down, layout: false, :locals => { matches: matches }
 	end
 
- { :html => content }.to_json
+ { html: content }.to_json
 
 end

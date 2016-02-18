@@ -102,6 +102,8 @@ class Observation
 
 		query = initial_match_query
 
+# have example where this is not filtering out a match with a difference greater than 5
+# if this was working properly you wouldn't need the more specific humidity/windspeed scoring
 		if wind_kph
 			query = query.where(
 				:wind_kph => (wind_kph - 5)..(wind_kph + 5))
@@ -154,8 +156,10 @@ class Observation
 			12
 		elsif ((humidity - query_humidity) || (query_humidity - humidity)).abs == 4
 			11
-		else
+		elsif ((humidity - query_humidity) || (query_humidity - humidity)).abs == 5
 			10
+		else
+			0
 		end
 
 	end
@@ -174,8 +178,10 @@ class Observation
 			12
 		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)).abs == 4
 			11
-		else
+		elsif ((wind_kph - query_wind_kph) || (query_wind_kph - wind_kph)).abs == 5
 			10
+		else
+			0
 		end
 
 	end
