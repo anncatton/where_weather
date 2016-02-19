@@ -21,9 +21,6 @@
 					center: centralLatLng
 				});
 
-				// this needs to run on a forEach loop
-				// also, have it check there are matches first, then do the forEach
-
 				var $matches = $('.match');
 				var $query = $('.section_header');
 
@@ -42,16 +39,16 @@
 					}
 				}
 
-        function createMarker(match) {
-        	var lat = $(match).data('lat');
-        	var lng = $(match).data('lng');
-        	var city = $(match).data('city');
-        	var country = $(match).data('country');
+        function createMarker(location) {
+        	var lat = $(location).data('lat');
+        	var lng = $(location).data('lng');
+        	var city = $(location).data('city');
+        	var country = $(location).data('country');
 
           var marker = new google.maps.Marker({
             position: {lat: Number(lat), lng: Number(lng)},
             map: worldMap,
-            title: city + " ," + country,
+            title: city + ", " + country,
           });
 
           matchMarkers.push(marker);
