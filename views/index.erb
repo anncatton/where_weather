@@ -30,7 +30,7 @@
 					<% end %>
 				<% else %>
 				<div id="current-conditions">
-					<h3 class="section_header">
+					<h3 class="section_header" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
 					<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
 						<%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
 					<% else %>

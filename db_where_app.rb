@@ -10,6 +10,7 @@ require "logger"
 
 # RubyProf.start
 
+GOOGLE_MAP_KEY = ENV['GOOGLE_MAP_WEATHER_KEY']
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://anncatton:@localhost:5432/mydb')
 # DB = Sequel.connect('postgres://anncatton:@localhost:5432/mydb')
 # DB = Sequel.connect('postgres://anncatton:@localhost:5432/heroku_weather')
@@ -90,7 +91,8 @@ get '/where_weather' do
 				sorted_scores = scores_array.sort_by { |hash| hash[:score] }
 				sorted_scores.reverse!
 
-				erb :index, layout: :layout, locals: { query_observation: query_observation,
+				erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
+																							query_observation: query_observation,
 																							sorted_scores: sorted_scores }
 
 			end

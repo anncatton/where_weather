@@ -25,6 +25,12 @@
 				// also, have it check there are matches first, then do the forEach
 
 				var $matches = $('.match');
+				var $query = $('.section_header');
+
+				function mapQueryLocation() {
+					console.log('you got a query location');
+					createMarker($query);
+				}
 
 				function mapMatches() {
 					
@@ -51,9 +57,10 @@
           matchMarkers.push(marker);
         }
 
+        mapQueryLocation();
 	      mapMatches();
 			}
 		</script>
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAP_KEY&callback=initMap"></script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= google_map_key %>&callback=initMap"></script>
 
 </html>
