@@ -15,6 +15,16 @@
 
 		    var centralLatLng = {lat: 30, lng: -50.1340487 };
 		    var matchMarkers = []
+        var iconBase = 'http://maps.google.com/mapfiles/ms/icons/'
+
+        var icons = {
+         queryLocation: {
+           icon: iconBase + 'red-dot.png'
+         },
+         matchLocation: {
+           icon: iconBase + 'yellow-dot.png'
+         }
+        };
 
 				var worldMap = new google.maps.Map(document.getElementById('map'), {
 					zoom: 2,
@@ -26,7 +36,7 @@
 
 				function mapQueryLocation() {
 					console.log('you got a query location');
-					createMarker($query);
+					createMarker($query, 'queryLocation');
 				}
 
 				function mapMatches() {
@@ -34,12 +44,12 @@
 					if ($matches.length > 0) {
 						console.log("you got matches");
 						$matches.each(function(index, ea) {
-							createMarker(ea);
+							createMarker(ea, 'matchLocation');
 						});
 					}
 				}
 
-        function createMarker(location) {
+        function createMarker(location, feature) {
         	var lat = $(location).data('lat');
         	var lng = $(location).data('lng');
         	var city = $(location).data('city');
@@ -49,6 +59,7 @@
             position: {lat: Number(lat), lng: Number(lng)},
             map: worldMap,
             title: city + ", " + country,
+            icon: icons[feature].icon
           });
 
           matchMarkers.push(marker);
