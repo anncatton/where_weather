@@ -30,7 +30,8 @@ get '/where_weather' do
 	station_id = params[:id]
 
 	if station_id.nil?
-		erb :index, layout: :layout, locals: { query_station: nil,
+		erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
+																					query_station: nil,
 																					query_observation: nil }
 
 	else
@@ -43,7 +44,8 @@ get '/where_weather' do
 
 			query_station = Station.from_table(station_record) unless station_record.nil?
 
-			erb :index, layout: :layout, locals: { query_station: query_station,
+			erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
+																						query_station: query_station,
 																						query_observation: nil }				
 
 		else
