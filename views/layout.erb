@@ -10,65 +10,6 @@
 		<!--<script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js" type="text/javascript"></script> -->
 		<script src="/js/lib/jquery-2.1.4.js"></script>
 		<script src="/js/global.js"></script>
-		<script>
-			function initMap() {
 
-		    var centralLatLng = {lat: 30, lng: -50.1340487 };
-		    var matchMarkers = []
-        var iconBase = 'http://maps.google.com/mapfiles/ms/icons/'
-
-        var icons = {
-         queryLocation: {
-           icon: iconBase + 'red-dot.png'
-         },
-         matchLocation: {
-           icon: iconBase + 'yellow-dot.png'
-         }
-        };
-
-				var worldMap = new google.maps.Map(document.getElementById('map'), {
-					zoom: 2,
-					center: centralLatLng
-				});
-
-				var $matches = $('.match');
-				var $query = $('.section_header');
-
-				function mapQueryLocation() {
-					console.log('you got a query location');
-					createMarker($query, 'queryLocation');
-				}
-
-				function mapMatches() {
-					
-					if ($matches.length > 0) {
-						console.log("you got matches");
-						$matches.each(function(index, ea) {
-							createMarker(ea, 'matchLocation');
-						});
-					}
-				}
-
-        function createMarker(location, feature) {
-        	var lat = $(location).data('lat');
-        	var lng = $(location).data('lng');
-        	var city = $(location).data('city');
-        	var country = $(location).data('country');
-
-          var marker = new google.maps.Marker({
-            position: {lat: Number(lat), lng: Number(lng)},
-            map: worldMap,
-            title: city + ", " + country,
-            icon: icons[feature].icon
-          });
-
-          matchMarkers.push(marker);
-        }
-
-        mapQueryLocation();
-	      mapMatches();
-			}
-		</script>
-		<script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= google_map_key %>&callback=initMap"></script>
 
 </html>
