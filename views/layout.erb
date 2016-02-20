@@ -2,12 +2,58 @@
 <html>
 	<head>
 		<link href="/css/global.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<%= yield %>
+	</body>
 		<!-- <script src="https://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script> -->
 		<!--<script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js" type="text/javascript"></script> -->
 		<script src="/js/lib/jquery-2.1.4.js"></script>
 		<script src="/js/global.js"></script>
-	</head>
-	<body>
-		<%= yield %> <!-- this yields to the body content of whichever file you're pointing to -->
-	</body>
+		<script>
+			function initMap() {
+
+		    var centralLatLng = {lat: 30, lng: -50.1340487 };
+		    var matchMarkers = []
+
+				var worldMap = new google.maps.Map(document.getElementById('map'), {
+					zoom: 2,
+					center: centralLatLng
+				});
+
+				// this needs to run on a forEach loop
+				// also, have it check there are matches first, then do the forEach
+
+				var $matches = $('.match');
+
+				function mapMatches() {
+					
+					if ($matches.length > 0) {
+						console.log("you got matches");
+						$matches.each(function(index, ea) {
+							createMarker(ea);
+						});
+					}
+				}
+
+        function createMarker(match) {
+        	var lat = $(match).data('lat');
+        	var lng = $(match).data('lng');
+        	var city = $(match).data('city');
+        	var country = $(match).data('country');
+
+          var marker = new google.maps.Marker({
+            position: {lat: Number(lat), lng: Number(lng)},
+            map: worldMap,
+            title: city + " ," + country,
+          });
+
+          matchMarkers.push(marker);
+        }
+
+	      mapMatches();
+			}
+		</script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWKs-3M99WIwFFFocWmVct7NHbzCe6Ht8&callback=initMap"></script>
+
 </html>

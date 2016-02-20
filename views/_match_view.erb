@@ -1,11 +1,11 @@
 <% if matching_location[:location].country == "Canada" || matching_location[:location].country == "United States" %>
-  <div class="condition match">
+  <div class="condition match" data-city=<%= matching_location[:location].city %> data-country=<%= matching_location[:location].country %> data-lat=<%= matching_location[:location].latitude %> data-lng=<%= matching_location[:location].longitude %>>
   	<div class="condition-label">
       <%= matching_location[:location].city %>, <%= matching_location[:location].region %>, <%= matching_location[:location].country %>
     </div>
   </div>
 <% else %>
-  <div class="condition match">
+  <div class="condition match" data-city=<%= matching_location[:location].city %> data-country=<%= matching_location[:location].country %> data-lat=<%= matching_location[:location].latitude %> data-lng=<%= matching_location[:location].longitude %>>
   	<div class="condition-label">
       <%= matching_location[:location].city %>, <%= matching_location[:location].country %>
     </div>
