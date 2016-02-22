@@ -17,12 +17,30 @@
         var matchMarkers = []
         var iconBase = 'http://maps.google.com/mapfiles/ms/icons/'
 
+        var star = {
+          path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
+          fillColor: 'orange',
+          fillOpacity: 1,
+          scale: 0.06,
+          strokeColor: 'darkblue',
+          strokeWeight: 1.2
+        };
+
+        var dot = {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: 'gold',
+          fillOpacity: 1,
+          scale: 5,
+          strokeColor: 'darkblue',
+          strokeWeight: 1.2
+        }
+
         var icons = {
          queryLocation: {
-           icon: iconBase + 'red-dot.png'
+           icon: star
          },
          matchLocation: {
-           icon: iconBase + 'yellow-dot.png'
+          icon: dot
          }
         };
 
