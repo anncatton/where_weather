@@ -70,7 +70,7 @@
 
 			<div id="matches">
 				<h3 class="section_header">Matches Around the World
-					<span class="section_header right">Accuracy</span>
+					<span class="section_header percentage hidden">Similarity</span>
 				</h3>
 					<% if sorted_scores.empty? %>
 						<div>Nope. Looks like your weather is unique!</div>
@@ -83,7 +83,7 @@
 			</div>
 
 		</div>
-		<div id="map"></div>
+		<div id="map" class="hidden"></div>
 
 	</body>
 

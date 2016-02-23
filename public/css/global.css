@@ -40,9 +40,8 @@ h1, h2, h3, h4, h5, h6 {
 	text-align: left;
 }
 
-.right {
+.percentage {
 	float: right;
-	display: inline;
 }
 
 .search-results li {
@@ -189,4 +188,8 @@ a {
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 1rem;
+}
+
+.hidden {
+	display: none;
 }

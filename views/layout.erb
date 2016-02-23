@@ -54,17 +54,21 @@
         var $query = $('.section_header');
 
         function mapQueryLocation() {
-          console.log('you got a query location');
           createMarker($query, 'queryLocation');
         }
 
         function mapMatches() {
           
           if ($matches.length > 0) {
-            console.log("you got matches");
+            $('#map').removeClass('hidden');
+            $('.percentage').removeClass('hidden');
+
             $matches.each(function(index, ea) {
               createMarker(ea, 'matchLocation');
             });
+          } else {
+            $('#map').addClass('hidden');
+            $('.percentage').addClass('hidden');
           }
         }
 
