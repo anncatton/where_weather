@@ -113,11 +113,12 @@ get '/location_search' do
   query = params[:query]
 
   matches = stations_table.where(Sequel.ilike(:name, query+'%'))
-
+	
   content = if matches.empty?
   	erb :_no_result, layout: false
 	else
-  	erb :_drop_down, layout: false, :locals => { matches: matches }
+		unique_matches = matches.all.uniq { |ea| ea[:name] && ea[:region] }
+  	erb :_drop_down, layout: false, :locals => { matches: unique_matches }
 	end
 
  { html: content }.to_json
