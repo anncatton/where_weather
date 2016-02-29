@@ -13,7 +13,7 @@
     <script>
       function initMap() {
 
-        var centralLatLng = {lat: 30, lng: -50.1340487 };
+        var centralLatLng = {lat: 30, lng: 10.1340487 };
         var matchMarkers = []
         var iconBase = 'http://maps.google.com/mapfiles/ms/icons/'
 
@@ -73,6 +73,26 @@
           }
         }
 
+        var locationContent = '<div id="info-window">' +
+          '<span class="temp"></span>'+
+          '<span class="dewpoint"></span>'
+          '<span class="wind-kph"></span>'
+          '<span class="humidity"></span>'
+          '<span class="conditions"></span>'
+          ;
+
+        function createInfoWindow(content) {
+          var locationInfoWindow = new google.maps.InfoWindow({
+            content: locationContent
+          });
+          return locationInfoWindow;
+        }
+
+        function addAListener(marker, markerInfo){
+          marker.addListener('click', function() {
+            markerInfo.open(map, marker);
+          });
+        }
         function createMarker(location, feature) {
           var lat = $(location).data('lat');
           var lng = $(location).data('lng');
