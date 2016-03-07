@@ -1,14 +1,25 @@
-<% if matching_location[:location].country == "Canada" || matching_location[:location].country == "United States" %>
-  <div class="condition match" data-city="<%= matching_location[:location].city %>" data-country="<%= matching_location[:location].country %>" data-lat=<%= matching_location[:location].latitude %> data-lng=<%= matching_location[:location].longitude %>>
+<% if matching_location.station.country == "Canada" || matching_location.station.country == "United States" %>
+  <div class="condition match">
   	<div class="condition-label">
-      <%= matching_location[:location].city %>, <%= matching_location[:location].region %>, <%= matching_location[:location].country %>
+      <%= matching_location.station.city %>, <%= matching_location.station.region %>, <%= matching_location.station.country %>
     </div>
   </div>
 <% else %>
-  <div class="condition match" data-city="<%= matching_location[:location].city %>" data-country="<%= matching_location[:location].country %>" data-lat=<%= matching_location[:location].latitude %> data-lng=<%= matching_location[:location].longitude %>>
+  <div class="condition match">
   	<div class="condition-label">
-      <%= matching_location[:location].city %>, <%= matching_location[:location].country %>
+      <%= matching_location.station.city %>, <%= matching_location.station.country %>
     </div>
   </div>
 <% end %>
-<div class="condition-value"><%= matching_location[:score].round %> % </div>
+<div class="info-values <%= matching_location.station.city %>"
+  data-city="<%= matching_location.station.city %>" 
+  data-country="<%= matching_location.station.country %>" 
+  data-lat=<%= matching_location.station.latitude %> 
+  data-lng=<%= matching_location.station.longitude %>
+  data-conditions="<%= matching_location.conditions %>"
+  data-temp="<%= matching_location.temp %>"
+  data-dewpoint="<%= matching_location.dewpoint %>"
+  data-humidity="<%= matching_location.humidity %>"
+  data-wind-kph="<%= matching_location.wind_kph %>"> >
+</div>
+<div class="condition-value"><%= matching_location.score.round %> % </div>

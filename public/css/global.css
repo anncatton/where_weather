@@ -190,6 +190,6 @@ a {
 	margin-top: 1rem;
 }
 
-.hidden {
+.hidden, .info-values {
 	display: none;
 }

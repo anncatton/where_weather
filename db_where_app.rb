@@ -2,6 +2,7 @@ require "sinatra"
 require "json"
 require_relative "./models/stations.rb"
 require_relative "./models/observation.rb"
+require_relative "./models/match_result.rb"
 require "byebug"
 require "pg"
 require "sequel"
@@ -68,9 +69,10 @@ get '/where_weather' do
 						a[:time] <=> b[:time]
 					end
 					Observation.from_table(most_recent)
+
 				end
 
-				scores_array = []
+				match_results = []
 
 				most_recent_matches.map do |ea|
 
@@ -86,16 +88,17 @@ get '/where_weather' do
 					
 					location_hash[:score] = percentage_score
 					location_hash[:location] = ea.station
-					scores_array << location_hash
+
+					match_results << MatchResult.new(ea.station, ea.conditions, ea.temp, ea.dewpoint, ea.humidity, ea.wind_kph, percentage_score)
 
 				end
-
-				sorted_scores = scores_array.sort_by { |hash| hash[:score] }
-				sorted_scores.reverse!
+				
+				sorted_matches = match_results.sort_by { |hash| hash.score }
+				sorted_matches.reverse!
 
 				erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
 																							query_observation: query_observation,
-																							sorted_scores: sorted_scores }
+																							sorted_matches: sorted_matches }
 
 			end
 
