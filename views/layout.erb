@@ -54,9 +54,20 @@
 
         var $matches = $('.info-values');
         var $query = $('.section_header');
+        var infoWindow = new google.maps.InfoWindow({
+          content: ''
+        });
 
         function mapQueryLocation() {
           createMarker($query, 'queryLocation');
+        }
+
+        function addAListener(marker, markerInfo, content){
+          marker.addListener('click', function() {
+            infoWindow.close();
+            infoWindow.setContent(content);
+            markerInfo.open(worldMap, marker);
+          });
         }
 
         function mapMatches() {
@@ -72,12 +83,6 @@
             $('#map').addClass('hidden');
             $('.percentage').addClass('hidden');
           }
-        }
-
-        function addAListener(marker, markerInfo){
-          marker.addListener('click', function() {
-            markerInfo.open(worldMap, marker);
-          });
         }
 
         function createMarker(location, feature) {
@@ -125,12 +130,8 @@
             windDiv +
             '</div>';
 
-          var infoWindow = new google.maps.InfoWindow({
-            content: content
-          });
-
           matchMarkers.push(marker);
-          addAListener(marker, infoWindow);
+          addAListener(marker, infoWindow, content);
         }
 
         mapQueryLocation();
