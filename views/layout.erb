@@ -108,6 +108,11 @@
             title: city + ", " + country,
             icon: icons[feature].icon,
           });
+          if (windKPH == "Not observed") {
+            windDiv = ('<div>Wind: ' + windKPH + '</div>');
+          } else {
+            windDiv = ('<div>Wind: ' + windKPH + ' kph</div>');
+          }
 
           var content = '<div id="info-window">' +
             '<span>' + city + ', </span>' +
@@ -116,7 +121,7 @@
             '<div>Temperature: ' + temp + ' C</div>' +
             '<div>Dewpoint: ' + dewpoint + ' C</div>' +
             '<div>Humidity: ' + humidity + ' %</div>' +
-            '<div>Wind: ' + windKPH + ' kph</div>' +
+            windDiv +
             '</div>';
 
           var infoWindow = new google.maps.InfoWindow({
