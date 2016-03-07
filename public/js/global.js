@@ -30,6 +30,7 @@ $(document).ready(function() {
 		// if (matchMarkers.length !== 0) {
 		// 	addMarkers(matchMarkers);
 		// }
+	$("time.timeago").timeago();
 
 	function dropMenu() {
 		$('.search-results').show();
