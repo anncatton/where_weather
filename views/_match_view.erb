@@ -11,7 +11,8 @@
     </div>
   </div>
 <% end %>
-<div class="info-values <%= matching_location.station.city %>"
+<div class="info-values <%= matching_location.station.id %>"
+  data-station-id="<%= matching_location.station.id %>"
   data-city="<%= matching_location.station.city %>" 
   data-country="<%= matching_location.station.country %>" 
   data-lat=<%= matching_location.station.latitude %> 

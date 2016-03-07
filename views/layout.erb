@@ -79,15 +79,13 @@
           });
         }
 
-
-        // when you click a marker, use the location name to get the location weather data
-
         function createMarker(location, feature) {
 
           var lat = $(location).data('lat');
           var lng = $(location).data('lng');
           var city = $(location).data('city');
           var country = $(location).data('country');
+          var stationID = $(location).data('station-id');
 
           if (feature == 'queryLocation') {
             var conditions = $('#current-conditions').find('.condition-value').data('query-conditions');
@@ -96,11 +94,11 @@
             var humidity = $('.humidity').data('query-humidity');
             var windKPH = $('.wind-kph').data('query-wind-kph');
           } else {
-            var conditions = $('.info-values.' + city).data('conditions');
-            var temp = $('.info-values.' + city).data('temp');
-            var dewpoint = $('.info-values.' + city).data('dewpoint');
-            var humidity = $('.info-values.' + city).data('humidity');
-            var windKPH =$('.info-values.' + city).data('wind-kph');
+            var conditions = $('.info-values.' + stationID).data('conditions');
+            var temp = $('.info-values.' + stationID).data('temp');
+            var dewpoint = $('.info-values.' + stationID).data('dewpoint');
+            var humidity = $('.info-values.' + stationID).data('humidity');
+            var windKPH =$('.info-values.' + stationID).data('wind-kph');
           };
 
           var marker = new google.maps.Marker({
