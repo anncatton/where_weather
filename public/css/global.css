@@ -63,15 +63,16 @@ h1, h2, h3, h4, h5, h6 {
   padding-left: 0.5rem;
 }
 
-input, button {
-	display: inline-block;
+input {
 	font-family: Optima, sans-serif;
 	font-size: 1.5rem;
 	color: #666;
+	background-color: #F5F5F5;
 	border: none;
 }
 
-button {
+input[type="button"] {
+	color: #647892;
 	cursor: pointer;
 }
 
