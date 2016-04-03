@@ -2,16 +2,28 @@ html {
 	font-family: Optima, sans-serif;
 	font-size: 14px;
 	color: #aaa;
+/*	background-color: #566879;
+*/	background-image:  url('/images/intro_image.jpg');
+	background-size: cover;
+}
+
+body {
+	margin: 0px;
+}
+
+.container {
+	height: 20rem;
+	width: 100%;
+	margin-top: 18rem;
+	padding-top: 2rem;
 	background-color: #566879;
+	opacity: 0.9;
 }
 
 h1, h2, h3, h4, h5, h6 {
 	font-weight: 100;
 }
 
-.container {
-	margin-top: 8rem;
-}
 
 #intro {
 	text-align: center;
@@ -189,4 +201,10 @@ a {
 
 .hidden, .info-values {
 	display: none;
+}
+
+#intro-image {
+	height: 25rem;
+	width: 100%;
+	margin: 0px;
 }

@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
 	<head>
+    <meta charset="utf-8">
+    <title>Where in the World is Your Weather?</title>
 		<link href="/css/global.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
@@ -18,7 +20,7 @@
         var matchMarkers = []
         var iconBase = 'http://maps.google.com/mapfiles/ms/icons/'
 
-        var star = {
+        var queryLocationMarker = {
           // path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
           path: google.maps.SymbolPath.CIRCLE,
           fillColor: 'orange',
@@ -28,7 +30,7 @@
           strokeWeight: 1.2
         };
 
-        var dot = {
+        var matchLocationMarker = {
           path: google.maps.SymbolPath.CIRCLE,
           fillColor: 'gold',
           fillOpacity: 1,
@@ -39,10 +41,10 @@
 
         var icons = {
          queryLocation: {
-           icon: star
+           icon: queryLocationMarker
          },
          matchLocation: {
-          icon: dot
+          icon: matchLocationMarker
          }
         };
 
