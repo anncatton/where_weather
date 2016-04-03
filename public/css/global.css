@@ -18,10 +18,14 @@ body {
 	width: 100%;
 	margin-top: 18rem;
 	padding-top: 2rem;
-	background-color: #6F8294;
-	opacity: 0.9;
+	background-color: #2D565A;
+	opacity: 0.8;
 }
-
+/*#6F8294
+*//*
+#405658
+#2D565A
+#28585D*/
 h1, h2, h3, h4, h5, h6 {
 	font-weight: 100;
 }
@@ -29,6 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 #intro {
 	text-align: center;
 	font-size: 1.8rem;
+	color: #E5E6E3;
 }
 
 .location-menu {
