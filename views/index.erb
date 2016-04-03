@@ -12,15 +12,15 @@
 
 				<div class="location-menu">
 					<div class="location-search">
-						<input type="text" class="location-input" id="city-search" placeholder="Search for your city" />
-						<input type="text" class="location-input" id="address-search" placeholder="Tell us your address" />
-						<input type="button" class="location-input" id="address-search" value="Or let us find you!" />
+						<input type="text" class="location-input" id="city-search" placeholder="Search for a city or address" />
+						<input type="button" class="location-input" id="geo-locate" value="Or let us find you!" />
 						<ul class="search-results">
 						</ul>
 					</div>
 				</div>
 			</div>
- 
+    </div>
+    
 	    <div id="results" class="clearfix">
 	        <% if query_observation.nil? %>
 	          <% if query_station.nil? %>
@@ -85,7 +85,6 @@
 
 	    </div>
     	<div id="map"></div>
-    </div>
 
 	</body>
 

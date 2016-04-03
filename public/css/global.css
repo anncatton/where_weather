@@ -2,10 +2,10 @@ html {
 	font-family: Optima, sans-serif;
 	font-size: 14px;
 	color: #aaa;
-/*	background-color: #566879;
-*/	background-image:  url('/images/intro_image.jpg');
+	background-image:  url('/images/iberianpeninsula_amo_2016052_lrg_edit.jpg');
 	background-size: cover;
-}
+/*	background-repeat: none; right now this doesn't work when window is really narrow
+*/}
 
 body {
 	margin: 0px;
@@ -68,14 +68,6 @@ h1, h2, h3, h4, h5, h6 {
   padding-left: 0.5rem;
 }
 
-input {
-	font-family: Optima, sans-serif;
-	font-size: 1.5rem;
-	color: #666;
-	background-color: #F5F5F5;
-	border: none;
-}
-
 input[type="button"] {
 	color: #647892;
 	cursor: pointer;
@@ -90,8 +82,12 @@ input:focus, button:focus {
 }
 
 .location-input {
+	font-family: Optima, sans-serif;
+	color: #666;
+	background-color: #f5f5f5;
+	border: none;
 	display: inline-block;
-	width: 25%;
+	width: 40%;
 	font-size: 1.5rem;
 	border-radius: 10px;
 	padding-left: 2.5%;
@@ -99,6 +95,7 @@ input:focus, button:focus {
 	padding-bottom: 0.6rem;
 	padding-top: 0.6rem;
 	margin-top: 3.4rem;
+	margin-right: 2%;
 }
 
 .section_header {
