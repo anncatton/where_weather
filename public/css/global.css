@@ -20,7 +20,7 @@ body {
 	margin-top: 18rem;
 	padding-top: 2rem;
 	background-color: #2D565A;
-	opacity: 0.8;
+	opacity: 0.9;
 }
 /*#6F8294
 *//*
@@ -196,9 +196,9 @@ a {
 }
 
 .no-result {
-	font-size: 1.5rem;
-  text-align: center;
-  margin-top: 2rem;
+	font-size: 1.1rem;
+	text-align: center;
+	margin-top: 2rem;
 }
 
 #map {
