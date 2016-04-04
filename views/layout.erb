@@ -3,7 +3,9 @@
 	<head>
     <meta charset="utf-8">
     <title>Where in the World is Your Weather?</title>
-		<link href="/css/global.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="/css/global.css" />
+    <link rel="stylesheet" media="(max-width: 640px; max-height: )" href="/css/max-640px.css">
+
 	</head>
 	<body>
 		<%= yield %>
@@ -21,7 +23,6 @@
         var iconBase = 'http://maps.google.com/mapfiles/ms/icons/'
 
         var queryLocationMarker = {
-          // path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
           path: google.maps.SymbolPath.CIRCLE,
           fillColor: 'orange',
           fillOpacity: 1,

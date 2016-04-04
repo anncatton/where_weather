@@ -2,10 +2,11 @@ html {
 	font-family: Optima, sans-serif;
 	font-size: 14px;
 	color: #aaa;
-	background-image:  url('/images/iberianpeninsula_amo_2016052_lrg_edit.jpg');
+	background-image: url('/images/iberianpeninsula_amo_2016052_lrg.jpg');
+	background-position: center fixed;
 	background-size: cover;
-/*	background-repeat: none; right now this doesn't work when window is really narrow
-*/}
+	background-repeat: no-repeat;
+}
 
 body {
 	margin: 0px;
@@ -77,7 +78,7 @@ input:focus, button:focus {
 	outline-color: #ddd;
 }
 
-::-webkit-input-placeholder  {
+::-webkit-input-placeholder {
 	color: #ccc;
 }
 
