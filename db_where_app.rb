@@ -27,7 +27,6 @@ get '/' do
 end
 
 get '/where_weather' do
-
 	station_id = params[:id]
 
 	if station_id.nil?
@@ -35,7 +34,6 @@ get '/where_weather' do
 																					query_observation: nil }
 
 	else
-
 		query_observation = Observation.match_in_timeframe(station_id)
 
 		if query_observation.nil?
@@ -94,7 +92,7 @@ get '/where_weather' do
 				sorted_matches = match_results.sort_by { |hash| hash.score }
 				sorted_matches.reverse!
 
-				erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
+				erb :show_matches, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
 																							query_observation: query_observation,
 																							sorted_matches: sorted_matches }
 
