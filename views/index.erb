@@ -1,91 +1,15 @@
-<!doctype html>
-<html lang="en">
-	<head>
-	</head>
+<div class="container">
 
-	<body>
+	<div class="intro">
+		<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
 
-		<div class="container">
-
-			<div class="intro">
-				<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
-
-				<div class="location-menu">
-					<div class="location-search">
-						<input type="text" class="location-input" id="city-search" placeholder="Search for a city or address" />
-						<input type="button" class="location-input" id="geo-locate" value="Or let us find you!" />
-						<ul class="search-results">
-						</ul>
-					</div>
-				</div>
+		<div class="location-menu">
+			<div class="location-search">
+				<input type="text" class="location-input" id="city-search" placeholder="Search for a city or address" />
+				<input type="button" class="location-input" id="geo-locate" value="Or let us find you!" />
+				<ul class="search-results">
+				</ul>
 			</div>
-    </div>
-    
-	    <div id="results" class="clearfix">
-	        <% if query_observation.nil? %>
-	          <% if query_station.nil? %>
-	            <div></div>
-	          <% else %>
-	            <div class="no-result">There is not enough data to find matches for <%= query_station.city %>,
-	              <%= query_station.country %>
-	            </div>
-	          <% end %>
-	        <% else %>
-	        <div id="current-conditions">
-	          <h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
-	          <% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
-	            <%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
-	          <% else %>
-	            <%= query_observation.station.city %>, <%= query_observation.station.country %>
-	          <% end %>
-	          </h3>
-	          <div class="condition clearfix">
-	            <div class="condition-label">Conditions:</div>
-	            <div class="condition-value" data-query-conditions="<%= query_observation.conditions %>"><%= query_observation.conditions %></div>
-	          </div>
-	          <div class="condition clearfix">
-	            <div class="condition-label">Temperature:</div>
-	            <div class="condition-value temp" data-query-temp="<%= query_observation.temp %>"><%= query_observation.temp %> C</div>
-	          </div>
-	          <div class="condition clearfix">
-	            <div class="condition-label">Humidity:</div>
-	            <div class="condition-value humidity" data-query-humidity="<%= query_observation.humidity %>"><%= query_observation.humidity %> %</div>
-	          </div>
-	          <div class="condition clearfix">
-	            <div class="condition-label">Dewpoint:</div>
-	            <div class="condition-value dewpoint" data-query-dewpoint="<%= query_observation.dewpoint %>"><%= query_observation.dewpoint %> C</div>
-	          </div>
-	          <div class="condition clearfix">
-	            <div class="condition-label">Wind:</div>
-	            <% if query_observation.wind_kph.nil? %>
-	              <div class="condition-value wind-kph" data-query-wind-kph="Not observed">Not Observed</div>
-	            <% else %>
-	              <div class="condition-value wind-kph" data-query-wind-kph="<%= query_observation.wind_kph %>"><%= query_observation.wind_kph %> km/h</div>
-	            <% end %>
-	          </div>
-	          <div class="condition clearfix">Observed
-	            <time class="timeago" datetime="<%= query_observation.time %>"><%= query_observation.time %></time>
-	          </div>
-	          <span class="observation-note">*Weather data is updated 3 times a day</span>
-	      </div>
-
-	      <div id="matches">
-	        <h3 class="section_header">Matches Around the World
-	          <span class="section_header percentage hidden">Similarity</span>
-	        </h3>
-	          <% if sorted_matches.empty? %>
-	            <div>Nope. Looks like your weather is unique!</div>
-	          <% else %>
-	            <% sorted_matches.each do |ea| %>
-	              <%= erb :_match_view, :locals => {matching_location: ea} %>
-	            <% end %>
-	          <% end %>
-	        <% end %>
-	      </div>
-
-	    </div>
-    	<div id="map"></div>
-
-	</body>
-
-</html>
+		</div>
+	</div>
+</div>

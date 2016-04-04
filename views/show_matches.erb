@@ -1,3 +1,22 @@
+<!--still need search bar -->
+
+<div id="matches">
+  <h3 class="section_header">Matches Around the World
+    <span class="section_header percentage hidden">Similarity</span>
+  </h3>
+    <% if sorted_matches.empty? %>
+      <div>Nope. Looks like your weather is unique!</div>
+    <% else %>
+      <% sorted_matches.each do |ea| %>
+        <%= erb :_match_view, :locals => {matching_location: ea} %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+</div>
+<div id="map"></div>
+
 <script>
   function initMap() {
 
@@ -6,7 +25,6 @@
     var iconBase = 'http://maps.google.com/mapfiles/ms/icons/'
 
     var star = {
-      // path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
       path: google.maps.SymbolPath.CIRCLE,
       fillColor: 'orange',
       fillOpacity: 1,

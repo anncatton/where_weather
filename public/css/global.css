@@ -3,7 +3,7 @@ html {
 	font-size: 14px;
 	color: #aaa;
 	background-image: url('/images/iberianpeninsula_amo_2016052_lrg.jpg');
-	background-position: center fixed;
+	background-position: left top;
 	background-size: cover;
 	background-repeat: no-repeat;
 }
@@ -79,7 +79,7 @@ input:focus, button:focus {
 }
 
 ::-webkit-input-placeholder {
-	color: #ccc;
+	color: #555;
 }
 
 .location-input {
