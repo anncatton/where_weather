@@ -20,7 +20,7 @@ body {
 	margin-top: 18rem;
 	padding-top: 2rem;
 	background-color: #2D565A;
-	opacity: 0.9;
+	opacity: 0.8;
 }
 /*#6F8294
 *//*
@@ -106,7 +106,7 @@ input:focus, button:focus {
 #results {
 	margin-right: 6%;
 	margin-left: 6%;
-	margin-top: 3em;
+	margin-top: 1em;
 }
 
 #current-conditions,
@@ -114,11 +114,11 @@ input:focus, button:focus {
 	position: relative;
 	float: left;
 	width: 41.5%;
-	font-size: 1.2rem;
+	font-size: 1.1rem;
 }
 
 #current-conditions {
-  text-align: right;
+  text-align: left;
   margin-left: 7%;
 }
 
@@ -203,7 +203,7 @@ a {
 
 #map {
 	height: 30rem;
-	width: 85%;
+	width: 80%;
 	border: 1px white solid;
 	margin-left: auto;
 	margin-right: auto;
