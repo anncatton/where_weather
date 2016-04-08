@@ -1,7 +1,8 @@
 <div class="container">
-
-  <%= erb :_search_bar %>
-
+	<div class="intro">
+	  <h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
+	  <%= erb :_search_bar %>
+	</div>
 	<% if query_station.nil? %>
 	  <div></div>
 	<% else %>
