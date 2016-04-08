@@ -9,7 +9,7 @@
   </div>
 <% else %>
   <div id="map"></div>
-  
+
   <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
 
   <div id="results" class="clearfix">
@@ -142,7 +142,7 @@
       var stationID = $(location).data('station-id');
 
       if (feature == 'queryLocator') {
-        var conditions = $('#current-conditions').find('.condition-value').data('query-conditions');
+        var conditions = $('.condition-value').data('query-conditions');
         var temp = $('.temp').data('query-temp');
         var dewpoint = $('.dewpoint').data('query-dewpoint');
         var humidity = $('.humidity').data('query-humidity');
