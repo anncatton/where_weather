@@ -2,86 +2,64 @@
   <link rel="stylesheet" type="text/css" href="../css/matches.css" />
 </head>
 
-<div id="map"></div>
+<% if sorted_matches.empty? %>
+  <div id="no-matches">
+    Looks like the weather for <%= query_observation.station.city %>, <%= query_observation.station.country %> is unique!
+    <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
+  </div>
+<% else %>
+  <div id="map"></div>
+  
+  <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
 
-<div id="results" class="clearfix">
-  <div id="current-conditions">
-    <h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
-      <% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
-        <%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
-      <% else %>
-        <%= query_observation.station.city %>, <%= query_observation.station.country %>
-      <% end %>
-      matches:
-    </h3>
-
-    <div class="condition clearfix">
-      <div class="condition-label">Conditions:</div>
-      <div class="condition-value" data-query-conditions="<%= query_observation.conditions %>"><%= query_observation.conditions %></div>
-    </div>
-    <div class="condition clearfix">
-      <div class="condition-label">Temperature:</div>
-      <div class="condition-value temp" data-query-temp="<%= query_observation.temp %>"><%= query_observation.temp %> C</div>
-    </div>
-    <div class="condition clearfix">
-      <div class="condition-label">Humidity:</div>
-      <div class="condition-value humidity" data-query-humidity="<%= query_observation.humidity %>"><%= query_observation.humidity %> %</div>
-    </div>
-    <div class="condition clearfix">
-      <div class="condition-label">Dewpoint:</div>
-      <div class="condition-value dewpoint" data-query-dewpoint="<%= query_observation.dewpoint %>"><%= query_observation.dewpoint %> C</div>
-    </div>
-    <div class="condition clearfix">
-      <div class="condition-label">Wind:</div>
-        <% if query_observation.wind_kph.nil? %>
-          <div class="condition-value wind-kph" data-query-wind-kph="Not observed">Not Observed</div>
+  <div id="results" class="clearfix">
+    <div id="current-conditions">
+      <h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
+        <% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
+          <%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
         <% else %>
-          <div class="condition-value wind-kph" data-query-wind-kph="<%= query_observation.wind_kph %>"><%= query_observation.wind_kph %> kph</div>
+          <%= query_observation.station.city %>, <%= query_observation.station.country %>
         <% end %>
+        matches:
+      </h3>
+
     </div>
 
-    <div class="condition clearfix">Observed
-      <time class="timeago" datetime="<%= query_observation.time %>"><%= query_observation.time %></time>
-    </div>
-    <span class="observation-note">*Weather data is updated 3 times a day</span>
+      <% sorted_matches.each do |ea| %>
+        <%= erb :_match_view, :locals => { matching_location: ea } %>
+      <% end %>
   </div>
 
-      <% if sorted_matches.empty? %>
-        <div>Nope. Looks like your weather is unique!</div>
-      <% else %>
-        <% sorted_matches.each do |ea| %>
-          <%= erb :_match_view, :locals => {matching_location: ea} %>
-        <% end %>
-      <% end %>
+<% end %>
 
-</div>
+<span class="observation-note">*Weather data is updated 3 times a day</span>
 
 <%= erb :_search_bar %>
 
 <script>
   function initMap() {
   
-    var styles = [
-      {
-        stylers: [
-          { hue: "#8696A8" },
-          { saturation: -20 }
-        ]
-      },{
-        featureType: "road",
-        elementType: "geometry",
-        stylers: [
-          { lightness: 100 },
-          { visibility: "simplified" }
-        ]
-      },{
-        featureType: "road",
-        elementType: "labels",
-        stylers: [
-          { visibility: "off" }
-        ]
-      }
-    ];
+    // var styles = [
+    //   {
+    //     stylers: [
+    //       { hue: "#8696A8" },
+    //       { saturation: -20 }
+    //     ]
+    //   },{
+    //     featureType: "road",
+    //     elementType: "geometry",
+    //     stylers: [
+    //       { lightness: 100 },
+    //       { visibility: "simplified" }
+    //     ]
+    //   },{
+    //     featureType: "road",
+    //     elementType: "labels",
+    //     stylers: [
+    //       { visibility: "off" }
+    //     ]
+    //   }
+    // ];
 
     var centralLatLng = {lat: 30, lng: 10.1340487 };
     var matchMarkers = []
@@ -106,12 +84,12 @@
     }
 
     var icons = {
-     queryLocator: {
-       icon: star
-     },
-     matchLocator: {
-      icon: dot
-     }
+      queryLocator: {
+        icon: star
+      },
+      matchLocator: {
+        icon: dot
+      }
     };
 
     var worldMap = new google.maps.Map(document.getElementById('map'), {

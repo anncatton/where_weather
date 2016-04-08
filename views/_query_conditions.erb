@@ -1,29 +1,24 @@
-<div class="condition clearfix">
-	<div class="condition-label">Conditions:</div>
-	<div class="condition-value"><%= matching_observation.conditions %></div>
-</div>
-<div class="condition clearfix">
-	<div class="condition-label">Temperature:</div>
-	<div class="condition-value"><%= matching_observation.temp %> C</div>
-</div>
-<div class="condition clearfix">
-	<div class="condition-label">Humidity:</div>
-	<div class="condition-value"><%= matching_observation.humidity %> %</div>
-</div>
-<div class="condition clearfix">
-	<div class="condition-label">Dewpoint:</div>
-	<div class="condition-value"><%= matching_observation.dewpoint %> C</div>
-</div>
-<div class="condition clearfix">
-	<div class="condition-label">Wind:</div>
-	<div class="condition-value"><%= matching_observation.wind_kph %> km/h</div>
-</div>
-<div class="condition clearfix">
-	<div class="condition-label">Observed at:</div>
-	<div class="condition-value"><%= matching_observation.time.httpdate %></div>
-</div>
-
-<div class="condition clearfix">
-	<div class="condition-label"><%= category %>:</div>
-	<div class="condition-value"><%= value %><%= unit %></div>
-</div>
+    <div class="condition clearfix">
+      <div class="condition-label">Conditions:</div>
+      <div class="condition-value" data-query-conditions="<%= query_observation.conditions %>"><%= query_observation.conditions %></div>
+    </div>
+    <div class="condition clearfix">
+      <div class="condition-label">Temperature:</div>
+      <div class="condition-value temp" data-query-temp="<%= query_observation.temp %>"><%= query_observation.temp %> C</div>
+    </div>
+    <div class="condition clearfix">
+      <div class="condition-label">Humidity:</div>
+      <div class="condition-value humidity" data-query-humidity="<%= query_observation.humidity %>"><%= query_observation.humidity %> %</div>
+    </div>
+    <div class="condition clearfix">
+      <div class="condition-label">Dewpoint:</div>
+      <div class="condition-value dewpoint" data-query-dewpoint="<%= query_observation.dewpoint %>"><%= query_observation.dewpoint %> C</div>
+    </div>
+    <div class="condition clearfix">
+      <div class="condition-label">Wind:</div>
+        <% if query_observation.wind_kph.nil? %>
+          <div class="condition-value wind-kph" data-query-wind-kph="Not observed">Not Observed</div>
+        <% else %>
+          <div class="condition-value wind-kph" data-query-wind-kph="<%= query_observation.wind_kph %>"><%= query_observation.wind_kph %> kph</div>
+        <% end %>
+    </div>
