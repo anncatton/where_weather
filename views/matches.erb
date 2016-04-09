@@ -2,37 +2,45 @@
   <link rel="stylesheet" type="text/css" href="../css/matches.css" />
 </head>
 
-<% if sorted_matches.empty? %>
-  <div id="no-matches">
-    Looks like the weather for <%= query_observation.station.city %>, <%= query_observation.station.country %> is unique!
-    <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
-  </div>
-<% else %>
-  <div id="map"></div>
+<div id="container">
 
-  <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
+  <% if sorted_matches.empty? %>
 
-  <div id="results" class="clearfix">
-    <div id="current-conditions">
-      <h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
-        <% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
-          <%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
-        <% else %>
-          <%= query_observation.station.city %>, <%= query_observation.station.country %>
+    <div id="no-matches">
+      Looks like the weather for <%= query_observation.station.city %>, <%= query_observation.station.country %> is unique!
+      <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
+    </div>
+
+  <% else %>
+
+    <div id="map"></div>
+
+    <div id="results" class="clearfix">
+
+      <div id="current-conditions">
+        <h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
+          <% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
+            <%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
+          <% else %>
+            <%= query_observation.station.city %>, <%= query_observation.station.country %>
+          <% end %>
+        </h3>
+        <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
+      </div>
+
+      <div id="matches">
+        <% sorted_matches.each do |ea| %>
+          <%= erb :_match_view, :locals => { matching_location: ea } %>
         <% end %>
-        matches:
-      </h3>
+      </div>
 
     </div>
 
-      <% sorted_matches.each do |ea| %>
-        <%= erb :_match_view, :locals => { matching_location: ea } %>
-      <% end %>
-  </div>
+  <% end %>
 
-<% end %>
+  <span class="observation-note">*Weather data is updated 3 times a day</span>
 
-<span class="observation-note">*Weather data is updated 3 times a day</span>
+</div>
 
 <%= erb :_search_bar %>
 
@@ -148,11 +156,11 @@
         var humidity = $('.humidity').data('query-humidity');
         var windKPH = $('.wind-kph').data('query-wind-kph');
       } else {
-        var conditions = $('.info-values.' + stationID).data('conditions');
-        var temp = $('.info-values.' + stationID).data('temp');
-        var dewpoint = $('.info-values.' + stationID).data('dewpoint');
-        var humidity = $('.info-values.' + stationID).data('humidity');
-        var windKPH =$('.info-values.' + stationID).data('wind-kph');
+        var conditions = $('.info-values#' + stationID).data('conditions');
+        var temp = $('.info-values#' + stationID).data('temp');
+        var dewpoint = $('.info-values#' + stationID).data('dewpoint');
+        var humidity = $('.info-values#' + stationID).data('humidity');
+        var windKPH =$('.info-values#' + stationID).data('wind-kph');
       };
 
       var marker = new google.maps.Marker({

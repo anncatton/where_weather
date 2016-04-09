@@ -1,6 +1,13 @@
 $(document).ready(function() {
 
+	function getPage() {
+		$.get('/where_weather').then(function(data) {
+			$('body').html($(data.html));
+		});
+	}
+
 	$("time.timeago").timeago();
+	// getPage();
 
 	function dropMenu() {
 		$('.search-results').show();
