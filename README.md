@@ -9,3 +9,4 @@ Matches are based on current conditions, temperature, dewpoint and, to a lesser 
 humidity and windspeed. Currently this is a work in progress. Planning to build this out
 as a mobile app.
 
+Try it out at http://where-weather.herokuapp.com/
