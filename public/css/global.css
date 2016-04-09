@@ -29,19 +29,54 @@ h1, h2, h3, h4, h5, h6 {
 	margin-left: 20%;
 }
 
+.location-input {
+	width: 70%;
+	font-size: 3rem;
+	border-radius: 10px;	
+	padding-left: 2.5%;
+	padding-right: 2.5%;
+	padding-bottom: 0.6rem;
+	padding-top: 0.6rem;
+	margin-top: 3.4rem;
+}
+/*
+.search-bar {
+	position: relative;
+}*/
+
+.search-bar > .location-menu {
+	position: relative;
+	top: 0;
+	left: 0;
+}
+
+.search-bar .location-input {
+	font-size: 1.5rem;
+	border-radius: none;
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.search-bar .search-results {
+  position: absolute;
+  width: 75%;
+  left: 12.5%;
+  top: 3.7rem;
+  background-color: #CEE4E4;
+  opacity: 0.9;
+  z-index: 100;
+  text-align: left;
+}
+
 .search-results {
 	position: absolute;
-  width: 100%;
-  left: 0;
-	top: 5.8rem;
+  width: 75%;
+  left: 12.5%;
+  top: 7.3rem;
 	background-color: #CEE4E4;
 	opacity: 0.9;
 	z-index: 100;
 	text-align: left;
-}
-
-.percentage {
-	float: right;
 }
 
 .search-results li {
@@ -65,19 +100,9 @@ input:focus {
 	color: #ccc;
 }
 
-.location-input {
-	width: 95%;
-	font-size: 3rem;
-	border-radius: 10px;	
-	padding-left: 2.5%;
-	padding-right: 2.5%;
-	padding-bottom: 0.6rem;
-	padding-top: 0.6rem;
-	margin-top: 3.4rem;
-}
-
 .section_header {
 	color: #688888;
+	text-align: left;
 }
 
 #results {
@@ -137,6 +162,10 @@ input:focus {
 	text-align: right;
 }
 
+.percentage {
+	float: right;
+}
+
 ul {
 	-webkit-padding-start: 0px;
 }
@@ -189,4 +218,40 @@ a {
 
 .hidden, .info-values {
 	display: none;
+}
+
+/* map styling */
+.gm-style-iw {
+  color: #2D565A;
+  top: 5px !important;
+  left: 5px !important;
+/*  width: 100% !important;
+  height: 100% !important;*/
+  padding: 5px;
+}
+
+.infowindow-background {
+  display: none !important;
+}
+
+/* arrow colour */
+.gm-style > div:first-child > div + div > div:last-child > div > div:first-child > div > div > div {
+  background-color: #003366 !important; 
+}
+
+/* close button */
+.gm-style > div:first-child > div + div > div:last-child > div > div:last-child {
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+/* image icon inside close button */
+.gm-style > div:first-child > div + div > div:last-child > div > div:last-child > img {
+    display: none;
+}
+
+/* positioning of infowindow */
+.gm-style-iw {
+  top: 5px !important;
+  left: 5px !important;
 }

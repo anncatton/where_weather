@@ -7,28 +7,28 @@
 
 	<body>
 
-		<div class="container">
-			<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
+		<% if query_observation.nil? %>
 
-			<div class="location-menu">
-				<div class="location-search">
-					<input type="text" class="location-input" placeholder="Start typing your location">
-					<ul class="search-results">
-					</ul>
+			<% if query_station.nil? %>
+				<div class="container">
+					<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
+		  	</div>
+			<% else %>
+				<div class="no-result">There is not enough data to find matches for <%= query_station.city %>,
+					<%= query_station.country %>
 				</div>
-			</div>
-  	</div>
+			<% end %>
+			<%= erb :_search_bar %>
 
-		<div id="results" class="clearfix">
-				<% if query_observation.nil? %>
-					<% if query_station.nil? %>
-						<div></div>
-					<% else %>
-						<div class="no-result">There is not enough data to find matches for <%= query_station.city %>,
-							<%= query_station.country %>
-						</div>
-					<% end %>
-				<% else %>
+		<% else %>
+			<div class="search-bar">
+				<%= erb :_search_bar %>
+			</div>
+
+			<div id="map"></div>
+
+			<div id="results" class="clearfix">
+
 				<div id="current-conditions">
 					<h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
 					<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
@@ -65,24 +65,23 @@
 						<time class="timeago" datetime="<%= query_observation.time %>"><%= query_observation.time %></time>
 					</div>
 					<span class="observation-note">*Weather data is updated 3 times a day</span>
-			</div>
+				</div>
 
-			<div id="matches">
-				<h3 class="section_header">Matches Around the World
-					<span class="section_header percentage hidden">Similarity</span>
-				</h3>
-					<% if sorted_matches.empty? %>
-						<div>Nope. Looks like your weather is unique!</div>
-					<% else %>
-						<% sorted_matches.each do |ea| %>
-							<%= erb :_match_view, :locals => {matching_location: ea} %>
+				<div id="matches">
+					<h3 class="section_header">Matches Around the World
+						<span class="section_header percentage hidden">Similarity</span>
+					</h3>
+						<% if sorted_matches.empty? %>
+							<div>Nope. Looks like your weather is unique!</div>
+						<% else %>
+							<% sorted_matches.each do |ea| %>
+								<%= erb :_match_view, :locals => {matching_location: ea} %>
+							<% end %>
 						<% end %>
 					<% end %>
-				<% end %>
-			</div>
+				</div>
 
 		</div>
-		<div id="map"></div>
 
 	</body>
 
