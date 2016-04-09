@@ -30,10 +30,9 @@ get '/where_weather' do
 	station_id = params[:id]
 
 	if station_id.nil?
-		erb :index, layout: :layout, locals: { query_station: nil,
-																										query_observation: nil }
-
-		# { html: content }.to_json
+		erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
+																					query_station: nil,
+																					query_observation: nil }
 
 	else
 		query_observation = Observation.match_in_timeframe(station_id)
@@ -44,10 +43,9 @@ get '/where_weather' do
 
 			query_station = Station.from_table(station_record) unless station_record.nil?
 
-			erb :index, layout: :layout, locals: { query_station: query_station,
-																											query_observation: nil }				
-
-			# { html: content }.to_json
+			erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
+																						query_station: query_station,
+																						query_observation: nil }				
 
 		else
 
@@ -96,11 +94,9 @@ get '/where_weather' do
 				sorted_matches = match_results.sort_by { |hash| hash.score }
 				sorted_matches.reverse!
 
-				erb :matches, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
+				erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
 																							query_observation: query_observation,
 																							sorted_matches: sorted_matches }
-
-				# { html: content }.to_json
 
 			end
 

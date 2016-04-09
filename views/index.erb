@@ -1,14 +1,39 @@
+<div id="map"></div>
+
 <div class="container">
-	<div class="intro">
-	  <h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
-	  <%= erb :_search_bar %>
-	</div>
-	<% if query_station.nil? %>
-	  <div></div>
+	<% if query_observation.nil? %>
+
+		<div class="intro">
+		  <h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
+		  <div class="intro-view"><%= erb :_search_bar %></div>
+		</div>
+
+		<% if query_station.nil? %>
+		  <div></div>
+		<% else %>
+		  <div class="no-result">
+		  	There is not enough data to find matches for <%= query_station.city %>, <%= query_station.country %>
+		  </div>
+		<% end %>
+
 	<% else %>
-	  <div class="no-result">
-	  	There is not enough data to find matches for <%= query_station.city %>, <%= query_station.country %>
-	  </div>
+		<div id="results" class="clearfix">
+			<%= erb :_query_conditions, locals: { query_observation: query_observation } %>
+
+			<div id="matches">
+				<h3 class="section_header">Matches Around the World
+					<span class="section_header percentage hidden">Similarity</span>
+				</h3>
+					<% if sorted_matches.empty? %>
+						<div>Nope. Looks like your weather is unique!</div>
+					<% else %>
+						<% sorted_matches.each do |ea| %>
+							<%= erb :_sorted_matches, :locals => {matching_location: ea} %>
+						<% end %>
+					<% end %>
+			</div>
+		</div>
+
 	<% end %>
 
 </div>
