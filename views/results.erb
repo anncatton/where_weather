@@ -8,16 +8,13 @@
 
   <div id="results">
     <div class="search-bar">
-      <%= erb :_search_bar %>
+      <%= erb :_search_bar, locals: { query_observation: query_observation } %>
     </div>
       <div id="current-conditions">
-        <h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
-        <% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
-          <%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
-        <% else %>
-          <%= query_observation.station.city %>, <%= query_observation.station.country %>
-        <% end %>
-        </h3>
+        <h4 id="observation-note">*Weather data is updated 3 times a day</h4>
+
+        <div class="query" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
+        </div>
         <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
       </div>
 
@@ -25,13 +22,16 @@
         <h3 class="section_header">Matches
           <span class="section_header percentage hidden">Similarity</span>
         </h3>
+        <% if sorted_matches.empty? %>
+          No matches right now!
+        <% else %>
           <% sorted_matches.each do |ea| %>
-            <%= erb :_match_view, :locals => {matching_location: ea} %>
+            <%= erb :_sorted_matches, :locals => { matching_location: ea } %>
           <% end %>
+        <% end %>
       </div>
 
   </div>
-  <span class="observation-note">*Weather data is updated 3 times a day</span>
 
 </div>
 
@@ -100,7 +100,7 @@
     worldMap.setOptions({styles: styles});
 
     var $matches = $('.info-values');
-    var $query = $('.section_header');
+    var $query = $('.query');
     var infoWindow = new google.maps.InfoWindow({
       content: ''
     });
@@ -118,16 +118,15 @@
     }
 
     function mapMatches() {
-      
-      if ($matches.length > 0) {
-        $('#map').removeClass('hidden');
-        $('.percentage').removeClass('hidden');
+      $('#map').removeClass('hidden');
 
+      if ($matches.length > 0) {
+        $('.percentage').removeClass('hidden');
         $matches.each(function(index, ea) {
           createMarker(ea, 'matchLocator');
         });
       } else {
-        $('#map').addClass('hidden');
+        // $('#map').addClass('hidden');
         $('.percentage').addClass('hidden');
       }
     }

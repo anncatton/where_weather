@@ -27,18 +27,6 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.8;
 }
 
-#side-bar {
-
-	opacity: 0.9;
-	background-color: #2D565A;
-	width: 25%;
-	position:fixed !important;
-	position:absolute;
-	top:0;
-	right:0;
-	bottom:0;
-}
-
 #intro {
   text-align: center;
   font-size: 1.8rem;
@@ -83,56 +71,16 @@ h1, h2, h3, h4, h5, h6 {
 	background-color: #566879;*/
 }
 
-.search-bar .location-search {
-	margin-left: 0;
-	margin-right: 0;
-	width: 100%;
-}
+/*.search-bar 
+*/
+/*.search-bar*/ 
 
-.search-bar .location-input {
-	font-size: 1.3rem;
-	display: block;
-	width: 100%;
-	margin-top: 1.5rem;
-	margin-bottom: 1.5rem;
-	border-radius: 0px;
-}
-
-.search-bar #geo-locate {
-	display: none;
-}
-
-.search-bar #city-search {
-	margin-bottom: 2.5rem;
-}
-
-.search-bar .search-results {
-  position: absolute;
-  width: 100%;
-  left: 12.5%;
-  top: 3.7rem;
-  background-color: #CEE4E4;
-  opacity: 0.9;
-  z-index: 100;
-  text-align: left;
-}
-
-.search-results {
-	position: absolute;
-  width: 75%;
-  left: 12.5%;
-  top: 7.3rem;
-	background-color: #CEE4E4;
-	opacity: 0.9;
-	z-index: 100;
-	text-align: left;
-}
-
-.search-results li {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  padding-left: 0.5rem;
-}
+/*.search-bar 
+*/
+/*.search-bar 
+*/
+/*.search-bar 
+*/
 
 input {
 	font-family: Optima, sans-serif;
@@ -149,10 +97,6 @@ input[type="button"] {
   color: #647892;
   cursor: pointer;
   text-align: left;
-}
-
-.search-bar input {
-	box-sizing: border-box;
 }
 
 ::-webkit-input-placeholder {
@@ -249,27 +193,10 @@ a {
 	clear: both;
 }
 
-.observation-note {
-	color: #aaa;
-	font-size: 0.8rem;
-	padding-left: 3%;
-	padding-top: 0.8rem;
-	padding-bottom: 5rem;
-	float: right;
-}
-
 .no-result {
 	font-size: 1.3rem;
   text-align: center;
   margin-top: 5rem;
-}
-
-.no-result .location-search {
-
-}
-
-.no-result .condition-value {
-	margin-right: 45%;
 }
 
 #map {

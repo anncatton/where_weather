@@ -19,7 +19,8 @@
 	<% if query_observation.wind_kph.nil? %>
 		<div class="condition-value wind-kph" data-query-wind-kph="Not observed">Not Observed</div>
 	<% else %>
-		<div class="condition-value wind-kph" data-query-wind-kph="<%= query_observation.wind_kph %>"><%= query_observation.wind_kph %> km/h</div>
+		<div class="condition-value wind-kph" data-query-wind-kph="<%= query_observation.wind_kph %>">
+			<%= query_observation.wind_kph %> kph, from <%= query_observation.wind_direction %></div>
 	<% end %>
 </div>
 <div class="condition clearfix">Observed

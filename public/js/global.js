@@ -50,6 +50,11 @@ $(document).ready(function() {
 
 	var timeout;
 
+	$('.location-input').on('focus', function(event) {
+		$target = $(event.target);
+		$target.select();
+	});
+
  	$('.location-input').keyup(function(event) {
 
  		var $target = $(event.target);

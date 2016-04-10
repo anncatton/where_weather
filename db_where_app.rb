@@ -29,7 +29,7 @@ end
 get '/where_weather' do
 
 	station_id = params[:id]
-
+# do you need both these local vars?
 	if station_id.nil?
 		erb :index, layout: :layout, locals: { query_station: nil,
 																					 query_observation: nil }
