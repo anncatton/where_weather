@@ -8,6 +8,10 @@ html {
   background-repeat: no-repeat;
 }
 
+body {
+	margin: 0;
+}
+
 h1, h2, h3, h4, h5, h6 {
 	font-weight: 100;
 }
@@ -24,10 +28,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #side-bar {
-	background-color: #566879;
-	width: 25%;
-	height: 50rem;
+	position: relative;
 	float: right;
+	opacity: 0.9;
+	background-color: #2D565A;
+	width: 25%;
+	height: auto;
 }
 
 #intro {
@@ -60,23 +66,30 @@ h1, h2, h3, h4, h5, h6 {
   padding-right: 2.5%;
   padding-bottom: 0.6rem;
   padding-top: 0.6rem;
-  margin-top: 3.4rem;
+  margin-top: 1.5rem;
   margin-right: 2%;
 }
 
 .search-bar {
-/*	margin-left: 60%;
-*/	width: 100%;
-}
-
-.search-bar > .location-menu {
-	position: relative;
+/*	position: fixed;
 	top: 0;
 	left: 0;
+	height: 3rem;
+	width: 100%;
+	z-index: 1000;
+	background-color: #566879;*/
+}
+
+.search-bar .location-search {
+	margin-left: 0;
+	margin-right: 0;
+	width: 100%;
 }
 
 .search-bar .location-input {
 	font-size: 1.3rem;
+	display: block;
+	width: 100%;
 	margin-top: 1.5rem;
 	margin-bottom: 1.5rem;
 	border-radius: 0px;
@@ -124,6 +137,7 @@ input:focus, button:focus {
 input[type="button"] {
   color: #647892;
   cursor: pointer;
+  text-align: left;
 }
 
 ::-webkit-input-placeholder {
@@ -136,8 +150,8 @@ input[type="button"] {
 }
 
 #results {
-	 margin-right: 6%; 
-	 margin-left: 6%; 
+	margin-right: 6%; 
+	margin-left: 6%;
 	margin-top: 3em;
 }
 
@@ -227,21 +241,19 @@ a {
 	font-size: 0.8rem;
 	padding-left: 3%;
 	padding-top: 0.8rem;
-	float: left;
+	padding-bottom: 5rem;
+	float: right;
 }
 
 .no-result {
-	font-size: 1.5rem;
+	font-size: 1.4rem;
   text-align: center;
   margin-top: 8rem;
 }
 
 #map {
-	height: 30rem;
-	width: 68%;
-	border: 1px white solid;
-	margin-top: 5rem;
-	margin-left: 1rem;
+	height: 45rem;
+	width: 75%;
 	float: left;
 }
 

@@ -8,7 +8,7 @@
 	<body>
 
 		<% if query_observation.nil? %>
-			<div class="container">
+		<div class="container">
 
 			<% if query_station.nil? %>
 					<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
@@ -19,44 +19,59 @@
 			<% end %>
 			<%= erb :_search_bar %>
 			</div>
-
 		<% else %>
 
-			<div id="map"></div>
-
-			<div id="side-bar">
-				<div class="search-bar">
-					<%= erb :_search_bar %>
-				</div>
-
-				<div id="results">
-
-					<div id="current-conditions">
-						<h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
+			<% if sorted_matches.empty? %>
+				<div class="container no-result">
+					<div>Looks like the weather for
 						<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
 							<%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
 						<% else %>
 							<%= query_observation.station.city %>, <%= query_observation.station.country %>
 						<% end %>
+						is unique!</div>
+					<div id="current-conditions">
+						<h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
+
 						</h3>
 						<%= erb :_query_conditions, locals: { query_observation: query_observation } %>
+						<%= erb :_search_bar %>
 					</div>
+				</div>
+			<% else %>
+			<div id="map"></div>
 
-					<div id="matches">
-						<h3 class="section_header">Matches
-							<span class="section_header percentage hidden">Similarity</span>
-						</h3>
-							<% if sorted_matches.empty? %>
-								<div>Nope. Looks like your weather is unique!</div>
+			<div id="side-bar">
+
+				<div id="results">
+					<div class="search-bar">
+						<%= erb :_search_bar %>
+					</div>
+						<div id="current-conditions">
+							<h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
+							<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
+								<%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
 							<% else %>
+								<%= query_observation.station.city %>, <%= query_observation.station.country %>
+							<% end %>
+							</h3>
+							<%= erb :_query_conditions, locals: { query_observation: query_observation } %>
+						</div>
+
+						<div id="matches">
+							<h3 class="section_header">Matches
+								<span class="section_header percentage hidden">Similarity</span>
+							</h3>
 								<% sorted_matches.each do |ea| %>
 									<%= erb :_match_view, :locals => {matching_location: ea} %>
 								<% end %>
-							<% end %>
-					</div>
+						</div>
+					<% end %>
+
 				</div>
+				<span class="observation-note">*Weather data is updated 3 times a day</span>
+
 			</div>
-									<span class="observation-note">*Weather data is updated 3 times a day</span>
 
 		<% end %>
 

@@ -96,7 +96,7 @@ get '/where_weather' do
 				sorted_matches = match_results.sort_by { |hash| hash.score }
 				sorted_matches.reverse!
 
-				erb :matches, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
+				erb :index, layout: :layout, locals: { google_map_key: GOOGLE_MAP_KEY,
 																							query_observation: query_observation,
 																							sorted_matches: sorted_matches }
 
