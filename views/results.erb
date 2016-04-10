@@ -118,16 +118,11 @@
     }
 
     function mapMatches() {
-      $('#map').removeClass('hidden');
-
       if ($matches.length > 0) {
         $('.percentage').removeClass('hidden');
         $matches.each(function(index, ea) {
           createMarker(ea, 'matchLocator');
         });
-      } else {
-        // $('#map').addClass('hidden');
-        $('.percentage').addClass('hidden');
       }
     }
 

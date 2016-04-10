@@ -8,23 +8,29 @@
 	<body>
 
 		<% if query_observation.nil? %>
-		<div class="container">
+			<div class="container">
 
-			<% if query_station.nil? %>
-					<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
-			<% else %>
-				<div class="no-result">There is not enough data to find matches for <%= query_station.city %>,
-					<%= query_station.country %>
-				</div>
-			<% end %>
-			<div class="location-menu">
-			  <div class="location-search">
-			    <input type="text" class="location-input" id="city-search" placeholder="Search for a city or address"  />
-			    <input type="button" class="location-input" id="geo-locate" value="Or let us find you!" />
-			    <ul class="search-results">
-			    </ul>
-			  </div>
-			</div>
+				<% if query_station.nil? %>
+						<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
+						<div class="location-menu">
+						  <div class="location-search">
+						    <input type="text" class="location-input" id="city-search" placeholder="Search for a city or address"  />
+						    <ul class="search-results">
+						    </ul>
+						  </div>
+						</div>
+				<% else %>
+					<div class="location-menu">
+					  <div class="location-search">
+					    <input type="text" class="location-input" id="city-search" placeholder="Search for a city or address"  />
+					    <ul class="search-results">
+					    </ul>
+					  </div>
+					</div>
+					<div class="no-result">There is not enough data to find matches for <%= query_station.city %>,
+						<%= query_station.country %>
+					</div>
+				<% end %>
 			</div>
 		<% else %>
 

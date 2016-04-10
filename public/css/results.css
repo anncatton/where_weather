@@ -30,13 +30,9 @@ input:focus {
 }
 
 .search-results {
-  position: absolute;
   width: 100%;
   top: 1.8rem;
-  background-color: #CEE4E4;
-  opacity: 0.9;
-  z-index: 100;
-  text-align: left;
+  left: 0;
 }
 
 .search-results li {
@@ -70,4 +66,8 @@ input:focus {
   margin-top: 2rem;
   margin-right: 0;
   padding-left: 0;
+}
+
+.time {
+  margin-top: 1.2rem;
 }
