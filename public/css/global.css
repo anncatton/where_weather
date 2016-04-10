@@ -1,8 +1,15 @@
 html {
-	font-family: Optima, sans-serif;
-	font-size: 14px;
-	color: #aaa;
-	background-color: #566879;
+  font-family: Optima, sans-serif;
+  font-size: 14px;
+  color: #aaa;
+  background-image: url('/images/iberianpeninsula_amo_2016052_lrg.jpg');
+  background-position: left top;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+body {
+	margin: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -10,44 +17,50 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .container {
-	margin-top: 8rem;
+  position: fixed;
+  bottom: 2rem;
+  height: 20rem;
+  width: 100%;
+  margin-top: 18rem;
+  padding-top: 2rem;
+  background-color: #2D565A;
+  opacity: 0.8;
 }
 
 #intro {
-	text-align: center;
-	font-size: 1.8rem;
+  text-align: center;
+  font-size: 1.8rem;
+  color: #E5E6E3;
+  margin-top: 2rem;
+  margin-bottom: -1rem;
 }
 
 .location-menu {
+	margin-top: 4rem;
 	text-align: center;
 }
 
 .location-search {
-	position: relative;
-	width: 60%;
-	margin-right: 20%;
-	margin-left: 20%;
+  position: relative;
+  width: 70%;
+  margin-right: 15%;
+  margin-left: 15%;
 }
 
-.search-results {
-	position: absolute;
-  width: 100%;
-  left: 0;
-	top: 5.8rem;
-	background-color: #CEE4E4;
-	opacity: 0.9;
-	z-index: 100;
-	text-align: left;
-}
-
-.percentage {
-	float: right;
-}
-
-.search-results li {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  padding-left: 0.5rem;
+.location-input {
+  font-family: Optima, sans-serif;
+  color: #666;
+  background-color: #f5f5f5;
+  border: none;
+  display: inline-block;
+  width: 60%;
+  font-size: 1.5rem;
+  border-radius: 4px;
+  padding-left: 2.5%;
+  padding-right: 2.5%;
+  padding-bottom: 0.6rem;
+  padding-top: 0.6rem;
+  margin-top: 1.5rem;
 }
 
 input {
@@ -58,30 +71,26 @@ input {
 }
 
 input:focus {
-	outline-color: #ddd;
+  outline-color: #ddd;
 }
 
-::-webkit-input-placeholder  {
-	color: #ccc;
+input[type="button"] {
+  color: #647892;
+  cursor: pointer;
+  text-align: left;
 }
 
-.location-input {
-	width: 95%;
-	font-size: 3rem;
-	border-radius: 10px;	
-	padding-left: 2.5%;
-	padding-right: 2.5%;
-	padding-bottom: 0.6rem;
-	padding-top: 0.6rem;
-	margin-top: 3.4rem;
+::-webkit-input-placeholder {
+  color: #555;
 }
 
 .section_header {
 	color: #688888;
+	text-align: left;
 }
 
 #results {
-	margin-right: 6%;
+	margin-right: 6%; 
 	margin-left: 6%;
 	margin-top: 3em;
 }
@@ -89,14 +98,11 @@ input:focus {
 #current-conditions,
 #matches {
 	position: relative;
-	float: left;
-	width: 41.5%;
-	font-size: 1.2rem;
 }
 
 #current-conditions {
   text-align: right;
-  margin-left: 7%;
+  margin-left: 15%;
 }
 
 #matches {
@@ -137,6 +143,10 @@ input:focus {
 	text-align: right;
 }
 
+.percentage {
+	float: right;
+}
+
 ul {
 	-webkit-padding-start: 0px;
 }
@@ -146,6 +156,17 @@ li {
 	padding-bottom: 5px;
 	padding-top: 5px;
 	padding-left: 10px;
+}
+
+.search-results {
+	position: absolute;
+	width: 65%;
+	left: 17.5%;
+	top: 3.6rem;
+	background-color: #CEE4E4;
+	opacity: 0.9;
+	z-index: 100;
+	text-align: left;
 }
 
 a {
@@ -164,27 +185,25 @@ a {
 	clear: both;
 }
 
-.observation-note {
-	color: #aaa;
-	font-size: 0.8rem;
-	padding-left: 3%;
-	padding-top: 0.8rem;
-	float: left;
-}
-
 .no-result {
 	font-size: 1.5rem;
+	color: #E5E6E3;
   text-align: center;
-  margin-top: 8rem;
+  margin-top: 3rem;
 }
 
 #map {
-	height: 30rem;
-	width: 85%;
-	border: 1px white solid;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 1rem;
+	height: 45rem;
+	width: 75%;
+	position: fixed !important;
+	top: 0;
+	left: 0;
+}
+
+#intro-image {
+  height: 25rem;
+  width: 100%;
+  margin: 0px;
 }
 
 .hidden, .info-values {

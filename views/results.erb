@@ -1,0 +1,183 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="../css/results.css" />
+</head>
+
+<div id="map"></div>
+
+<div id="side-bar">
+
+  <div id="results">
+    <div class="search-bar">
+      <%= erb :_search_bar, locals: { input_value: "#{query_observation.station.city}, #{query_observation.station.country}" } %>
+    </div>
+      <div id="current-conditions">
+        <h4 id="observation-note">*Weather data is updated 3 times a day</h4>
+
+        <div class="query" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
+        </div>
+        <%= erb :_query_conditions, locals: { query_observation: query_observation } %>
+      </div>
+
+      <div id="matches">
+        <h3 class="section_header">Matches
+          <span class="section_header percentage hidden">Similarity</span>
+        </h3>
+        <% if sorted_matches.empty? %>
+          No matches right now!
+        <% else %>
+          <% sorted_matches.each do |ea| %>
+            <%= erb :_sorted_matches, :locals => { matching_location: ea } %>
+          <% end %>
+        <% end %>
+      </div>
+
+  </div>
+
+</div>
+
+<script>
+  function initMap() {
+  
+    var styles = [
+      {
+        stylers: [
+          { hue: "#8696A8" },
+          { saturation: -20 }
+        ]
+      },{
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [
+          { lightness: 100 },
+          { visibility: "simplified" }
+        ]
+      },{
+        featureType: "road",
+        elementType: "labels",
+        stylers: [
+          { visibility: "off" }
+        ]
+      }
+    ];
+
+    var centralLatLng = {lat: 30, lng: 10.1340487 };
+    var matchMarkers = []
+    var iconBase = 'http://maps.google.com/mapfiles/ms/icons/'
+
+    var star = {
+      path: google.maps.SymbolPath.CIRCLE,
+      fillColor: 'orange',
+      fillOpacity: 1,
+      scale: 5,
+      strokeColor: 'darkblue',
+      strokeWeight: 1.2
+    };
+
+    var dot = {
+      path: google.maps.SymbolPath.CIRCLE,
+      fillColor: 'gold',
+      fillOpacity: 1,
+      scale: 5,
+      strokeColor: 'darkblue',
+      strokeWeight: 1.2
+    }
+
+    var icons = {
+      queryLocator: {
+        icon: star
+      },
+      matchLocator: {
+        icon: dot
+      }
+    };
+
+    var worldMap = new google.maps.Map(document.getElementById('map'), {
+      minZoom: 2,
+      zoom: 2,
+      center: centralLatLng
+    });
+
+    worldMap.setOptions({styles: styles});
+
+    var $matches = $('.info-values');
+    var $query = $('.query');
+    var infoWindow = new google.maps.InfoWindow({
+      content: ''
+    });
+
+    function mapQueryLocation() {
+      createMarker($query, 'queryLocator');
+    }
+
+    function addAListener(marker, markerInfo, content){
+      marker.addListener('click', function() {
+        infoWindow.close();
+        infoWindow.setContent(content);
+        markerInfo.open(worldMap, marker);
+      });
+    }
+
+    function mapMatches() {
+      if ($matches.length > 0) {
+        $('.percentage').removeClass('hidden');
+        $matches.each(function(index, ea) {
+          createMarker(ea, 'matchLocator');
+        });
+      }
+    }
+
+    function createMarker(location, feature) {
+
+      var lat = $(location).data('lat');
+      var lng = $(location).data('lng');
+      var city = $(location).data('city');
+      var country = $(location).data('country');
+      var stationID = $(location).data('station-id');
+
+      if (feature == 'queryLocator') {
+        var conditions = $('.condition-value').data('query-conditions');
+        var temp = $('.temp').data('query-temp');
+        var dewpoint = $('.dewpoint').data('query-dewpoint');
+        var humidity = $('.humidity').data('query-humidity');
+        var windKPH = $('.wind-kph').data('query-wind-kph');
+      } else {
+        var conditions = $('.info-values#' + stationID).data('conditions');
+        var temp = $('.info-values#' + stationID).data('temp');
+        var dewpoint = $('.info-values#' + stationID).data('dewpoint');
+        var humidity = $('.info-values#' + stationID).data('humidity');
+        var windKPH =$('.info-values#' + stationID).data('wind-kph');
+      };
+
+      var marker = new google.maps.Marker({
+        position: {lat: Number(lat), lng: Number(lng)},
+        map: worldMap,
+        title: city + ", " + country,
+        icon: icons[feature].icon,
+      });
+
+      if (windKPH == "Not observed") {
+        windDiv = '<div>Wind: ' + windKPH + '</div>';
+      } else {
+        windDiv = '<div>Wind: ' + windKPH + ' kph</div>';
+      }
+
+      var content = '<div id="info-window">' +
+        '<span>' + city + ', </span>' +
+        '<span>' + country + '</span>' +
+        '<div>Conditions: ' + conditions + '</div>' +
+        '<div>Temperature: ' + temp + ' C</div>' +
+        '<div>Dewpoint: ' + dewpoint + ' C</div>' +
+        '<div>Humidity: ' + humidity + ' %</div>' +
+        windDiv +
+        '</div>';
+
+      matchMarkers.push(marker);
+      addAListener(marker, infoWindow, content);
+    }
+
+    mapQueryLocation();
+    mapMatches();
+
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= google_map_key %>&callback=initMap"></script>
