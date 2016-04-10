@@ -3,7 +3,8 @@ html {
 	font-size: 14px;
 	color: #aaa;
 	background-color: #566879;
-}
+/*	background-image: url('../images/iberianpeninsula_amo_2016052_lrg.jpg');
+*/}
 
 h1, h2, h3, h4, h5, h6 {
 	font-weight: 100;
@@ -16,6 +17,7 @@ h1, h2, h3, h4, h5, h6 {
 #side-bar {
 	background-color: #566879;
 	width: 25%;
+	height: 50rem;
 	float: right;
 }
 
