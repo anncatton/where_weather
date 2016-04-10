@@ -130,7 +130,7 @@ input {
 	border: none;
 }
 
-input:focus, button:focus {
+input:focus {
   outline-color: #ddd;
 }
 
@@ -138,6 +138,10 @@ input[type="button"] {
   color: #647892;
   cursor: pointer;
   text-align: left;
+}
+
+.search-bar input {
+	box-sizing: border-box;
 }
 
 ::-webkit-input-placeholder {
