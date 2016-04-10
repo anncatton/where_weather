@@ -8,7 +8,7 @@
 
   <div id="results">
     <div class="search-bar">
-      <%= erb :_search_bar, locals: { query_observation: query_observation } %>
+      <%= erb :_search_bar, locals: { input_value: "#{query_observation.station.city}, #{query_observation.station.country}" } %>
     </div>
       <div id="current-conditions">
         <h4 id="observation-note">*Weather data is updated 3 times a day</h4>

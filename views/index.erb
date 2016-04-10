@@ -1,60 +1,20 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Where in the World is Your Weather?</title>
-	</head>
+<% if query_observation.nil? %>
 
-	<body>
+	<div class="container">
 
-		<% if query_observation.nil? %>
-			<div class="container">
+		<% if query_station.nil? %>
 
-				<% if query_station.nil? %>
-						<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
-						<div class="location-menu">
-						  <div class="location-search">
-						    <input type="text" class="location-input" id="city-search" placeholder="Search for a city or address"  />
-						    <ul class="search-results">
-						    </ul>
-						  </div>
-						</div>
-				<% else %>
-					<div class="location-menu">
-					  <div class="location-search">
-					    <input type="text" class="location-input" id="city-search" placeholder="Search for a city or address"  />
-					    <ul class="search-results">
-					    </ul>
-					  </div>
-					</div>
-					<div class="no-result">There is not enough data to find matches for <%= query_station.city %>,
-						<%= query_station.country %>
-					</div>
-				<% end %>
-			</div>
+ 			<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
+			<%= erb :_search_bar, locals: { input_value: "" } %>
+
 		<% else %>
 
-			<% if sorted_matches.empty? %>
-				<div class="container no-result">
-					<div>Looks like the weather for
-						<% if query_observation.station.country == "Canada" || query_observation.station.country == "United States" %>
-							<%= query_observation.station.city %>, <%= query_observation.station.region %>, <%= query_observation.station.country %>
-						<% else %>
-							<%= query_observation.station.city %>, <%= query_observation.station.country %>
-						<% end %>
-						is unique!</div>
-					<div id="current-conditions">
-						<h3 class="section_header" data-city="<%= query_observation.station.city %>" data-country="<%= query_observation.station.country %>" data-lat=<%= query_observation.station.latitude %> data-lng=<%= query_observation.station.longitude %>>
+			<%= erb :_search_bar, locals: { input_value: "" } %>
+			<h2 class="no-result">There is not enough data to find matches for <%= query_station.city %>,
+				<%= query_station.country %>
+			</h2>
 
-						</h3>
-						<%= erb :_query_conditions, locals: { query_observation: query_observation } %>
-						<%= erb :_search_bar %>
-					</div>
-				</div>
+		<% end %>
+	</div>
 
 <% end %>
-		<% end %>
-
-	</body>
-
-</html>
