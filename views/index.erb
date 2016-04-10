@@ -8,17 +8,17 @@
 	<body>
 
 		<% if query_observation.nil? %>
+			<div class="container">
 
 			<% if query_station.nil? %>
-				<div class="container">
 					<h2 id="intro">Ever wonder where else in the world has <strong>your</strong> weather?</h2>
-		  	</div>
 			<% else %>
 				<div class="no-result">There is not enough data to find matches for <%= query_station.city %>,
 					<%= query_station.country %>
 				</div>
 			<% end %>
 			<%= erb :_search_bar %>
+			</div>
 
 		<% else %>
 
