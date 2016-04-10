@@ -13,6 +13,12 @@ h1, h2, h3, h4, h5, h6 {
 	margin-top: 8rem;
 }
 
+#side-bar {
+	background-color: #566879;
+	width: 25%;
+	float: right;
+}
+
 #intro {
 	text-align: center;
 	font-size: 1.8rem;
@@ -30,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .location-input {
-	width: 70%;
+	width: 100%;
 	font-size: 3rem;
 	border-radius: 10px;	
 	padding-left: 2.5%;
@@ -39,10 +45,11 @@ h1, h2, h3, h4, h5, h6 {
 	padding-top: 0.6rem;
 	margin-top: 3.4rem;
 }
-/*
+
 .search-bar {
-	position: relative;
-}*/
+/*	margin-left: 60%;
+*/	width: 100%;
+}
 
 .search-bar > .location-menu {
 	position: relative;
@@ -51,15 +58,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .search-bar .location-input {
-	font-size: 1.5rem;
-	border-radius: none;
+	font-size: 1.3rem;
 	margin-top: 1.5rem;
 	margin-bottom: 1.5rem;
+	border-radius: 0px;
 }
 
 .search-bar .search-results {
   position: absolute;
-  width: 75%;
+  width: 100%;
   left: 12.5%;
   top: 3.7rem;
   background-color: #CEE4E4;
@@ -106,17 +113,16 @@ input:focus {
 }
 
 #results {
-	margin-right: 6%;
-	margin-left: 6%;
+	 margin-right: 6%; 
+	 margin-left: 6%; 
 	margin-top: 3em;
 }
 
 #current-conditions,
 #matches {
 	position: relative;
-	float: left;
-	width: 41.5%;
-	font-size: 1.2rem;
+/*	float: left;
+	width: 41.5%;*/
 }
 
 #current-conditions {
@@ -209,11 +215,11 @@ a {
 
 #map {
 	height: 30rem;
-	width: 85%;
+	width: 68%;
 	border: 1px white solid;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 1rem;
+	margin-top: 5rem;
+	margin-left: 1rem;
+	float: left;
 }
 
 .hidden, .info-values {
