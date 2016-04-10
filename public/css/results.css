@@ -1,0 +1,29 @@
+html {
+  background-image: none;
+}
+
+.location-menu {
+  position: fixed;
+  text-align: center;
+  bottom: 0px;
+  width: 100%;
+  height: 7rem;
+  background-color: #2D565A;
+  opacity: 0.3;
+  transition: 0.5s ease;
+}
+
+.location-input {
+  margin-right: 4%;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+}
+
+.location-menu:hover {
+  opacity: 0.8;
+}
+
+#no-matches {
+  font-size: 3rem;
+  text-align: center;
+}
