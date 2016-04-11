@@ -113,7 +113,7 @@ get '/location_search' do
   content_type :json
   query = params[:query]
 
-  matches = stations_table.where(Sequel.ilike(:name, query+'%'))
+  matches = stations_table.where(Sequel.ilike(:name, query+'%')).limit(6)
 	
   content = if matches.empty?
   	erb :_no_result, layout: false

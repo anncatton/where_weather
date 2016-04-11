@@ -6,6 +6,7 @@ html {
   background-position: left top;
   background-size: cover;
   background-repeat: no-repeat;
+  overflow: scroll;
 }
 
 body {
@@ -18,7 +19,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .container {
   position: fixed;
-  bottom: 2rem;
+  bottom: 5.5rem;
   height: 20rem;
   width: 100%;
   margin-top: 18rem;

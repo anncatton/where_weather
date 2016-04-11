@@ -1,3 +1,18 @@
+html {
+  background-image: none;
+}
+
+#side-bar-bg {
+  width: 25%;
+  position:fixed !important;
+  position:absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  background-image: url('/images/iberianpeninsula_amo_2016052_lrg.jpg');
+  background-position: center;
+}
+
 #side-bar {
   opacity: 0.9;
   background-color: #2D565A;

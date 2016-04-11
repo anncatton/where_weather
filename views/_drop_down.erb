@@ -4,8 +4,11 @@
 			<a href="/where_weather?id=<%= ea[:id] %>"><%= ea[:name] %>, <%= ea[:region] %>, <%= ea[:country] %></a>
 		</li>
 	<% else %>
-		<li class="drop-down-item <%= i==0 ? 'selected' : '' %>"">
+		<li class="drop-down-item <%= i==0 ? 'selected' : '' %>">
 			<a href="/where_weather?id=<%= ea[:id] %>"><%= ea[:name] %>, <%= ea[:country] %></a>
 		</li>
 	<% end %>
+<% end %>
+<% unless matches.length < 2 %>
+  <li>Keep typing for more results</li>
 <% end %>
